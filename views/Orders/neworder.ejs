@@ -1,0 +1,111 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Orders</h3>
+                </div>
+                <!-- Card body -->
+                <div class="card-body">
+                    <form>
+                        <div class="form-group row">
+                            <label for="example-text-input"
+                                class="col-md-2 col-form-label form-control-label">Customer Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" value="Enter customer name"
+                                    id="example-text-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-search-input"
+                                class="col-md-2 col-form-label form-control-label">Customer Code</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="search" value="Enter customer code"
+                                    id="example-search-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="number" class="col-md-2 col-form-label form-control-label">Truck
+                                ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" value="Select or enter the truck id"
+                                    id="example-text-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-url-input"
+                                class="col-md-2 col-form-label form-control-label">Zone</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="url" value="Select or enter the zone"
+                                    id="example-url-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-tel-input"
+                                class="col-md-2 col-form-label form-control-label">Route</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="tel" value="Select or enter the route"
+                                    id="example-tel-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-tel-input"
+                                class="col-md-2 col-form-label form-control-label">Quantity (5-Gallon
+                                Bottles)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="tel"
+                                    value="Enter quantity of 5 - gallon bottles" id="example-tel-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-tel-input"
+                                class="col-md-2 col-form-label form-control-label">Quantity (200 ml
+                                Bottles)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="tel" value="Enter quantity of 200 ml bottles"
+                                    id="example-tel-input">
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-success">Submit Order</button>
+                            <button type="button" class="btn btn-danger">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Footer -->
+            <footer class="footer pt-0">
+                <div class="row align-items-center justify-content-lg-between">
+                    <div class="col-lg-6">
+                        <div class="copyright text-center  text-lg-left  text-muted">
+                            &copy; 2024 <a href="https://www.Iconia.ae" class="font-weight-bold ml-1"
+                                target="_blank">Iconia Technologies</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                            <li class="nav-item">
+                                <a href="https://www.Iconia.ae" class="nav-link" target="_blank">Iconia</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://www.iconia.ae/aboutus" class="nav-link" target="_blank">About
+                                    Us</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

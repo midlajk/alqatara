@@ -16,8 +16,8 @@
             <h3 class="mb-0">Truck Delivery and Details</h3>
           </div>
           <!-- Light table -->
-          <div class="table-responsive">
-            <table class="table align-items-center table-flush">
+          <div id="truckTable" class="table-responsive">
+            <table  class="table align-items-center table-flush">
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Truck ID</th>
@@ -67,7 +67,45 @@
       </div>
     </div>
     <!-- Footer -->
-  
+
+ 
+ <!-- Load jQuery first -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Then load DataTables -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    
+<script>
+  $(document).ready(function () {
+    console.log('hehe')
+    if (!$.fn.DataTable) {
+    console.error('DataTables library is not loaded correctly');
+    return;
+  }
+    // Initialize DataTable
+    $('#truckTable').DataTable({
+      ajax: {
+        url: 'http://localhost:5000/gettrucks', // Backend API endpoint
+        method: 'GET',
+        dataSrc: '' // Data source is the root of the response array
+      },
+      columns: [
+        { data: 'id' }, // Truck ID
+        { data: 'salesmanId' }, // In-Charge
+        { data: 'delivered5galBottles' }, // Today's 5-Gallon Bottles Delivered
+        { data: 'delivered200mlBottles' }, // Total Bottles Delivered
+        { data: 'remaining5galBottles' }, // Bottle Balance
+        { data: 'damaged5galBottles' }, // Damaged 5-Gallon Bottles
+        { 
+          data: 'updatedAt', // Last Delivery Date and Time
+          render: function (data) {
+            return new Date(data).toLocaleString(); // Format the timestamp
+          }
+        }
+      ]
+    });
+  });
+</script>
 
 <%- include('../includes/footer.ejs') -%>
 

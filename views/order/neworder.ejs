@@ -1,0 +1,82 @@
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+<a href="/orders/neworder" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Create Orders</h3>
+                </div>
+                <!-- Card body -->
+                <div class="card-body">
+                    <form action="/orders/neworder" method="POST">
+                        <div class="form-group row">
+                            <label for="customerName"
+                                class="col-md-2 col-form-label form-control-label">Customer Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" name="name" type="text" placeholder="Enter customer name" id="customerName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="customerCode"
+                                class="col-md-2 col-form-label form-control-label">Customer Code</label>
+                            <div class="col-md-10">
+                                <input class="form-control" name="customerId" type="text" placeholder="Enter customer code" id="customerCode" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="truckId" class="col-md-2 col-form-label form-control-label">Truck ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" name="truckId" type="text" placeholder="Select or enter the truck id" id="truckId">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="zone"
+                                class="col-md-2 col-form-label form-control-label">Zone</label>
+                            <div class="col-md-10">
+                                <input class="form-control" name="area" type="text" placeholder="Select or enter the zone" id="zone" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="route"
+                                class="col-md-2 col-form-label form-control-label">Route</label>
+                            <div class="col-md-10">
+                                <input class="form-control" name="route" type="text" placeholder="Select or enter the route" id="route">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="quantity5gal"
+                                class="col-md-2 col-form-label form-control-label">Quantity (5-Gallon Bottles)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" name="noOf5galBottles" type="number" placeholder="Enter quantity of 5-gallon bottles" id="quantity5gal">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="quantity200ml"
+                                class="col-md-2 col-form-label form-control-label">Quantity (200 ml Bottles)</label>
+                            <div class="col-md-10">
+                                <input class="form-control" name="noOf200mlBottles" type="number" placeholder="Enter quantity of 200 ml bottles" id="quantity200ml">
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-success">Submit Order</button>
+                            <a href="/" class="btn btn-danger">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Footer -->
+          
+        </div>
+    </div>
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

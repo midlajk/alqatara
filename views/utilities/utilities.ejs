@@ -4,6 +4,9 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
+<a href="/utilities/addtruck" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -16,8 +19,8 @@
             <h3 class="mb-0">Truck Delivery and Details</h3>
           </div>
           <!-- Light table -->
-          <div id="truckTable" class="table-responsive">
-            <table  class="table align-items-center table-flush">
+          <div  class="table-responsive">
+            <table id="truckTable"  class="table align-items-center table-flush">
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Truck ID</th>
@@ -38,7 +41,7 @@
             </table>
           </div>
           <!-- Card footer -->
-          <div class="card-footer py-4">
+          <!-- <div class="card-footer py-4">
             <nav aria-label="...">
               <ul class="pagination justify-content-end mb-0">
                 <li class="page-item disabled">
@@ -62,7 +65,7 @@
                 </li>
               </ul>
             </nav>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -71,23 +74,27 @@
  
  <!-- Load jQuery first -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<!-- Then load DataTables -->
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    
+
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
 <script>
   $(document).ready(function () {
     console.log('hehe')
-    if (!$.fn.DataTable) {
-    console.error('DataTables library is not loaded correctly');
-    return;
-  }
+    
     // Initialize DataTable
-    $('#truckTable').DataTable({
+   var datatable = $('#truckTable').DataTable({
+    responsive: true,
+          processing: true,
+          serverSide: true,
       ajax: {
         url: 'http://localhost:5000/gettrucks', // Backend API endpoint
-        method: 'GET',
-        dataSrc: '' // Data source is the root of the response array
+        dataSrc: 'docs', // Key that holds the array of data in the API response
+            data: function (d) {
+              return d;
+  
+              // Add any additional parameters you want to send to the server here
+            },// Data source is the root of the response array
       },
       columns: [
         { data: 'id' }, // Truck ID

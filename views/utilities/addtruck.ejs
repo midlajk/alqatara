@@ -1,9 +1,12 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
+
+<a href="/utilities/addtruck" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -16,80 +19,45 @@
                 </div>
                 <!-- Card body -->
                 <div class="card-body">
-                    <form>
+                    <form id="addTruckForm" action="/addtrucks" method="POST">
                         <div class="form-group row">
-                            <label for="example-text-input"
-                                class="col-md-2 col-form-label form-control-label">Truck ID</label>
+                            <label for="truck-id" class="col-md-2 col-form-label form-control-label">Truck ID</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="text" placeholder="Enter Truck ID"
-                                    id="example-text-input">
+                                <input class="form-control" type="text" placeholder="Enter Truck ID" id="truck-id" name="truckId" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="example-search-input"
-                                class="col-md-2 col-form-label form-control-label">City</label>
+                            <label for="city" class="col-md-2 col-form-label form-control-label">City</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="search" placeholder="Select or enter the city"
-                                    id="example-search-input">
+                                <input class="form-control" type="text" placeholder="Select or enter the city" id="city" name="city" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="example-email-input"
-                                class="col-md-2 col-form-label form-control-label">Max Stock (5-Gallon
-                                Bottles)</label>
+                            <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Max Stock (5-Gallon Bottles)</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="email"
-                                    placeholder="Enter maximum stock for 5 - gallon bottles" id="example-email-input">
+                                <input class="form-control" type="number" placeholder="Enter maximum stock for 5-gallon bottles" id="max-stock-5gallon" name="maxStock5Gallon" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="example-url-input"
-                                class="col-md-2 col-form-label form-control-label">Max Stock (200ml
-                                Bottles)</label>
+                            <label for="max-stock-200ml" class="col-md-2 col-form-label form-control-label">Max Stock (200ml Bottles)</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="url"
-                                    placeholder="Enter maximum stock for 200 ml bottles" id="example-url-input">
+                                <input class="form-control" type="number" placeholder="Enter maximum stock for 200ml bottles" id="max-stock-200ml" name="maxStock200ml" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="example-tel-input"
-                                class="col-md-2 col-form-label form-control-label">Assigned Routes</label>
+                            <label for="assigned-routes" class="col-md-2 col-form-label form-control-label">Assigned Routes</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="tel"
-                                    placeholder="Enter or select the assigned routes" id="example-tel-input">
+                                <input class="form-control" type="text" placeholder="Enter or select the assigned routes" id="assigned-routes" name="assignedRoutes" required>
                             </div>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-success">Add Truck</button>
-                            <button type="button" class="btn btn-danger">Cancel</button>
+                            <button type="submit" class="btn btn-success">Add Truck</button>
+                            <button type="reset" class="btn btn-danger">Cancel</button>
                         </div>
                     </form>
                 </div>
             </div>
             <!-- Footer -->
-            <footer class="footer pt-0">
-                <div class="row align-items-center justify-content-lg-between">
-                    <div class="col-lg-6">
-                        <div class="copyright text-center  text-lg-left  text-muted">
-                            &copy; 2024 <a href="https://www.Iconia.ae" class="font-weight-bold ml-1"
-                                target="_blank">Iconia Technologies</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-                            <li class="nav-item">
-                                <a href="https://www.Iconia.ae" class="nav-link" target="_blank">Iconia</a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="https://www.iconia.ae/aboutus" class="nav-link" target="_blank">About
-                                    Us</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </footer>
-        </div>
-    </div>
+          
 <%- include('../includes/footer.ejs') -%>
-
 <%- include('../includes/end.ejs') -%>

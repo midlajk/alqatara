@@ -1,0 +1,61 @@
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+<a href="/routes/addroute" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Add New Route</h3>
+                </div>
+                <!-- Card body -->
+                <div class="card-body">
+                    <form action="/addRoute" method="POST">
+                        <div class="form-group row">
+                            <label for="routeId" class="col-md-2 col-form-label form-control-label">Route ID</label>
+                            <div class="col-md-10">
+                                <input
+                                    class="form-control"
+                                    type="text"
+                                    name="routeId"
+                                    placeholder="Enter Route ID"
+                                    id="routeId"
+                                    required
+                                >
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="city" class="col-md-2 col-form-label form-control-label">City</label>
+                            <div class="col-md-10">
+                                <input
+                                    class="form-control"
+                                    type="text"
+                                    name="city"
+                                    placeholder="Enter the City"
+                                    id="city"
+                                    required
+                                >
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-success">Add Route</button>
+                            <a href="/" class="btn btn-danger">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+          
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

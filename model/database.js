@@ -129,7 +129,7 @@ const orderSchema = new mongoose.Schema({
   name: { type: String, required: true },
   area: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
+  customerId: { type: String, ref: 'Customer', required: true },
   salesmanId: { type: String },
   truckId: { type: String },
   updatedAt: { type: Date, default: Date.now },
@@ -172,7 +172,7 @@ const salesmanSchema = new mongoose.Schema({
   const truckSchema = new mongoose.Schema({
     id: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
-    salesmanId: { type: String, required: true },
+    salesmanId: { type: String},
     updatedAt: { type: Date, default: Date.now },
     damaged5galBottles: { type: Number, default: 0 },
     delivered200mlBottles: { type: Number, default: 0 },
@@ -205,7 +205,17 @@ const salesmanSchema = new mongoose.Schema({
     routeId: { type: String, required: true },
     updatedBottleType: { type: String, enum: ['BOTH', '200ML', '5GAL'], required: true }
   });
+  const zoneSchema = new mongoose.Schema({
+    zoneId: { type: String, required: true, unique: true },  // Zone ID (Unique)
+    route: { type: String, required: true },  // Route
+    creationDate: { type: Date, default: Date.now },  // Creation Date
+    updatedAt: { type: Date, default: Date.now },  // Updated At
+  }, {
+    timestamps: true  // Automatically adds createdAt and updatedAt fields
+  });
   
+  // Create the Zone Model
+  const Zone = mongoose.model('Zone', zoneSchema);
   // Export all the models
   module.exports = {
     Customer: mongoose.model('Customer', customerSchema),
@@ -218,6 +228,7 @@ const salesmanSchema = new mongoose.Schema({
     Order: mongoose.model('Order', orderSchema),
     Salesman: mongoose.model('Salesman', salesmanSchema),
     Truck: mongoose.model('Truck', truckSchema),
-    TruckHistory: mongoose.model('TruckHistory', truckHistorySchema)
+    TruckHistory: mongoose.model('TruckHistory', truckHistorySchema),
+    Zone:Zone
   };
   

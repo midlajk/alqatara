@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const utilitiesApis = require('../controller/utilities');
+const customerapi = require('../controller/customers');
 // const authMiddleware = require('../middleware/authcheck.js');
 
 /* GET home page. */
-router.get('/gettrucks', utilitiesApis.gettrucks);
-router.post('/addtrucks', utilitiesApis.addtrucks);
+router.get('/getcustomers', customerapi.getcustomer);
+router.post('/addCustomer', customerapi.newcustomer);
 
 
 module.exports = router;

@@ -2,9 +2,11 @@
 require('../model/database')
 const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck')
+const Zone = mongoose.model('Zone')
 
+const Customer = mongoose.model('Customer')
 
-exports.gettrucks = async (req, res) => {
+exports.getzones = async (req, res) => {
     console.log('Processing DataTables request...');
     try {
       const { start, length, draw, search } = req.query; // Extract DataTables parameters
@@ -19,9 +21,9 @@ exports.gettrucks = async (req, res) => {
   
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-        Truck.find(query).skip(skip).limit(limit), // Fetch paginated data
-        Truck.countDocuments(), // Total records count
-        Truck.countDocuments(query) // Filtered records count
+        Zone.find(query).skip(skip).limit(limit), // Fetch paginated data
+        Zone.countDocuments(), // Total records count
+        Zone.countDocuments(query) // Filtered records count
       ]);
   
       // Respond with DataTables-compatible JSON
@@ -39,23 +41,14 @@ exports.gettrucks = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.addtrucks = async (req, res) => {
-    try {
-      const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes } = req.body;
-      console.log(req.body)
-  
-      const newTruck = new Truck({
-        id: truckId,
-        city,
-        stockOf5galBottles: parseInt(maxStock5Gallon, 10),
-        stockOf200mlBottles: parseInt(maxStock200ml, 10),
-        routeId: assignedRoutes
-      });
-  
-      await newTruck.save();
-      res.redirect('/getorders');
-    } catch (err) {
-      console.error('Error adding truck:', err);
-      res.status(500).send('Failed to add truck.');
-    }
+    exports.newzones = async (req, res) => {
+ 
+      try {
+        const cutomer = new Zone(req.body);
+        await cutomer.save();
+        res.redirect('/zones');
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+      }
+ 
   };

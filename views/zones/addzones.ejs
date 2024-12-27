@@ -1,0 +1,63 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+<a href="/zones/addzone" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Add New Zone</h3>
+                </div>
+                <!-- Card body -->
+                <div class="card-body">
+                    <form action="/addzones" method="POST">
+                        <div class="form-group row">
+                            <label for="zoneId" class="col-md-2 col-form-label form-control-label">Zone ID</label>
+                            <div class="col-md-10">
+                                <input
+                                    class="form-control"
+                                    type="text"
+                                    name="zoneId"
+                                    id="zoneId"
+                                    placeholder="Enter Zone ID"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="route" class="col-md-2 col-form-label form-control-label">Route</label>
+                            <div class="col-md-10">
+                                <input
+                                    class="form-control"
+                                    type="text"
+                                    name="route"
+                                    id="route"
+                                    placeholder="Select or enter the Route"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button type="submit" class="btn btn-success">Add Zone</button>
+                                <a href="/" class="btn btn-danger">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

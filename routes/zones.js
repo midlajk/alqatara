@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-const utilitiesApis = require('../controller/utilities');
+const zonesapi = require('../controller/zones');
 // const authMiddleware = require('../middleware/authcheck.js');
 
 /* GET home page. */
-router.get('/gettrucks', utilitiesApis.gettrucks);
-router.post('/addtrucks', utilitiesApis.addtrucks);
+router.get('/getzones', zonesapi.getzones);
+router.post('/addzones', zonesapi.newzones);
 
 
 module.exports = router;

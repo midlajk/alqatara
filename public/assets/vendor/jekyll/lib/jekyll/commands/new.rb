@@ -70,7 +70,7 @@ module Jekyll
         end
 
         def site_template
-          File.expand_path("site_template", File.dirname(__FILE__))
+          File.expand_path("../../site_template", File.dirname(__FILE__))
         end
 
         def scaffold_path

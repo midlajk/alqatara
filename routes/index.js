@@ -47,4 +47,8 @@ router.get('/routes/addroute', function(req, res, next) {
 router.get('/reports', function(req, res, next) {
   res.render('customers/customers', { title: 'Express' ,route:'reports'});
 });
+
+router.get('/login', function(req, res, next) {
+  res.render('login/login.ejs', { title: 'Express' ,route:'reports'});
+});
 module.exports = router;

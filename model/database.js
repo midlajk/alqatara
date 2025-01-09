@@ -14,7 +14,7 @@ const customerSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   apartmentNumber: { type: String },
   mobileNumber2: { type: String },
-  uid: { type: String },
+  uid: { type: String , unique: true},
   noOf5galBottles: { type: Number, default: 0 },
   priceForA5galBottle: { type: Number },
   address: { type: String },
@@ -35,7 +35,30 @@ const customerSchema = new mongoose.Schema({
   deliveryDay: { type: String },
   otherDetails: { type: String }
 });
+customerSchema.pre('save', async function (next) {
+  if (!this.uid) {
+    const generateUid = (length) => {
+      const randomDigits = Math.random().toString().slice(2, 2 + length);
+      return randomDigits;
+    };
 
+    let unique = false;
+    let uid;
+
+    while (!unique) {
+      // Generate 6-digit or 10-digit UID
+      uid = generateUid(6); // Change to 10 for 10-digit UID
+      // Check for uniqueness
+      const existingCustomer = await mongoose.model('Customer').findOne({ uid });
+      if (!existingCustomer) {
+        unique = true;
+      }
+    }
+
+    this.uid = uid;
+  }
+  next();
+});
 const rechargeSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
@@ -47,11 +70,13 @@ const rechargeSchema = new mongoose.Schema({
 });
 
 const routeSchema = new mongoose.Schema({
+ 
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   city: { type: String, required: true },
   mobileNumber: { type: String },
-  supervisorMobileNumber: { type: String }
+  supervisorMobileNumber: { type: String } ,
+  id:Number,
 });
 
 const creditOrderHistorySchema = new mongoose.Schema({
@@ -206,13 +231,12 @@ const salesmanSchema = new mongoose.Schema({
     updatedBottleType: { type: String, enum: ['BOTH', '200ML', '5GAL'], required: true }
   });
   const zoneSchema = new mongoose.Schema({
-    zoneId: { type: String, required: true, unique: true },  // Zone ID (Unique)
-    route: { type: String, required: true },  // Route
+    id: { type: String, },  // Zone ID (Unique)
+    routeId: { type: String, required: true },  // Route
     creationDate: { type: Date, default: Date.now },  // Creation Date
     updatedAt: { type: Date, default: Date.now },  // Updated At
-  }, {
-    timestamps: true  // Automatically adds createdAt and updatedAt fields
-  });
+  }
+);
   
   // Create the Zone Model
   const Zone = mongoose.model('Zone', zoneSchema);

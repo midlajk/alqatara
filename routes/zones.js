@@ -7,5 +7,6 @@ const zonesapi = require('../controller/zones');
 router.get('/getzones', zonesapi.getzones);
 router.post('/addzones', zonesapi.newzones);
 
+router.get('/zoneids', zonesapi.zoneids);
 
 module.exports = router;

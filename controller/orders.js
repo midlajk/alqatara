@@ -6,7 +6,7 @@ const Order = mongoose.model('Order')
 
 
 exports.getorders = async (req, res) => {
-    console.log('Processing DataTables request...');
+    console.log('Processing order request...');
     try {
       const { start, length, draw, search } = req.query; // Extract DataTables parameters
       const searchQuery = search && search.value ? search.value : ''; // Search value
@@ -46,8 +46,9 @@ exports.getorders = async (req, res) => {
       try {
         const order = new Order(req.body);
         await order.save();
-        res.redirect('/utilities');
+        res.redirect('/orders');
     } catch (error) {
+      console.log(error)
         res.status(400).send({ error: error.message });
       }
  

@@ -101,7 +101,19 @@
       return data ? 'Verified' : 'Not Verified'; // Display customer verification status
     }
   }, // Status (Verified or Not Verified)
-  { data: 'otherDetails', title: 'Caption' }, // Caption (using 'otherDetails' as caption, adjust as needed)
+  // { data: 'otherDetails', title: 'Caption' }, // Caption (using 'otherDetails' as caption, adjust as needed)
+  {
+  data: null, // Using null since the data will be determined dynamically
+  title: 'Caption',
+  render: function (data, type, row) {
+    if (row.otherDetails && row.otherDetails.trim() !== '') {
+      return row.otherDetails; // Display otherDetails if available
+    } else if (row.city && row.city.trim() !== '') {
+      return row.city; // Otherwise, display city if available
+    }
+    return 'N/A'; // Default to 'N/A' if neither is available
+  }
+}
 ]
 });
       });

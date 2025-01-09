@@ -24,6 +24,7 @@
                 <thead class="thead-light">
                   <tr>
                     <th scope="col" class="sort" data-sort="name">Route ID</th>
+                    <th scope="col" class="sort" data-sort="name">City</th>
                     <th scope="col" class="sort" data-sort="budget">Creation Date</th>
                     <th scope="col" class="sort" data-sort="status">Updated At</th>
                     <th scope="col" class="sort" data-sort="completion">Actions</th>
@@ -38,7 +39,7 @@
               </table>
             </div>
             <!-- Card footer -->
-            <div class="card-footer py-4">
+            <!-- <div class="card-footer py-4">
               <nav aria-label="...">
                 <ul class="pagination justify-content-end mb-0">
                   <li class="page-item disabled">
@@ -62,7 +63,7 @@
                   </li>
                 </ul>
               </nav>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -94,7 +95,8 @@
             },// Data source is the root of the response array
       },
       columns: [
-  { data: 'routeId', title: 'Route ID' }, // A unique ID for each route (add a routeId field to schema for this column).
+  { data: 'id', title: 'Route ID' }, // A unique ID for each route (add a routeId field to schema for this column).
+  { data: 'city', title: 'City' }, // A unique ID for each route (add a routeId field to schema for this column).
   { data: 'createdAt', title: 'Creation Date', render: DataTable.render.date() }, // Date the route was created.
   { data: 'updatedAt', title: 'Updated At', render: DataTable.render.date() },   // Date the route was last updated.
   { 

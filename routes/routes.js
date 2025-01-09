@@ -6,6 +6,7 @@ const routeapi = require('../controller/route.js');
 /* GET home page. */
 router.get('/getroutes', routeapi.getroutes);
 router.post('/addRoute', routeapi.newroutes);
+router.get('/routeids', routeapi.routeids);
 
 
 module.exports = router;

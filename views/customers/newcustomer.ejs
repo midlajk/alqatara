@@ -21,7 +21,7 @@
               <h3 class="mb-0">Personal Information</h3>
             </div>
             <!-- Card body -->
-            <div class="card-body">
+            <div class="card-body" id="cardb">
               <form class="needs-validation" action="/addCustomer" method="POST" novalidate>
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
@@ -53,7 +53,8 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label class="form-control-label" for="zone">Zone</label>
-                      <input class="form-control" id="zone" name="zone" placeholder="Zone" type="text" required>
+                      <select class="zone-js form-control" name="zoneId" id="zoneId" required></select>
+                      <!-- <input class="form-control" id="zone" name="zone" placeholder="Zone" type="text" required> -->
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -74,7 +75,9 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label class="form-control-label" for="route">Route</label>
-                      <input class="form-control" id="route" name="route" placeholder="Route" type="text" required>
+                      <select class="items-js form-control" name="routeId" id="routeId" required></select>
+
+                      <!-- <input class="form-control" id="route" name="route" placeholder="Route" type="text" required> -->
                     </div>
                   </div>
                 </div>
@@ -100,6 +103,54 @@
           </div>
         </div>
       </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+      <!-- Include Select2 CSS -->
+      
+      <!-- Include Select2 JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+      <script>
+        $(document).ready(function () {
+          // Initialize Select2 for the element with the correct ID or class
+          $('.zone-js').select2({
+            dropdownParent: $("#cardb"),
+  ajax: {
+    url: '/zoneids', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.id, text: item.id }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+        });
+      </script>   
+          <script>
+            $(document).ready(function () {
+              // Initialize Select2 for the element with the correct ID or class
+              $('.items-js').select2({
+                dropdownParent: $("#cardb"),
+      ajax: {
+        url: '/routeids', // Backend endpoint
+        dataType: 'json',
+        delay: 250, // Debounce for performance
+        processResults: function (data) {
+          return {
+            results: data.map(function (item) {
+              return { id: item.id, text: item.id }; // Customize text display
+            }),
+          };
+        },
+      
+      },
+    });
+            });
+          </script>   
       
 <%- include('../includes/footer.ejs') -%>
 

@@ -83,7 +83,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Session middleware (must come before routes)
 app.use(sessions);
-
+app.use((req, res, next) => {
+  if (req.session && req.session.user) {
+    res.locals.user = req.session.user;
+    res.locals.resptype = req.session.user.resp||true;
+    //added resptype to true 
+  } 
+  next();
+});
 // Routes
 app.use('/', indexRouter);
 app.use('/', usersRouter);

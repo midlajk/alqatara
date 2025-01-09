@@ -20,7 +20,7 @@
                     <h3 class="mb-0">Add New Zone</h3>
                 </div>
                 <!-- Card body -->
-                <div class="card-body">
+                <div class="card-body" id="cardb">
                     <form action="/addzones" method="POST">
                         <div class="form-group row">
                             <label for="zoneId" class="col-md-2 col-form-label form-control-label">Zone ID</label>
@@ -28,8 +28,8 @@
                                 <input
                                     class="form-control"
                                     type="text"
-                                    name="zoneId"
-                                    id="zoneId"
+                                    name="id"
+                                    id="id"
                                     placeholder="Enter Zone ID"
                                     required
                                 />
@@ -38,14 +38,17 @@
                         <div class="form-group row">
                             <label for="route" class="col-md-2 col-form-label form-control-label">Route</label>
                             <div class="col-md-10">
-                                <input
+                                <!-- <input
                                     class="form-control"
                                     type="text"
-                                    name="route"
-                                    id="route"
+                                    name="routeId"
+                                    id="routeId"
                                     placeholder="Select or enter the Route"
                                     required
-                                />
+                                /> -->
+                                <select class="items-js form-control" name="routeId" id="route-select" required></select>
+                               
+                                  
                             </div>
                         </div>
                         <div class="form-group row">
@@ -57,6 +60,38 @@
                     </form>
                 </div>
             </div>
+           <!-- Include jQuery -->
+
+     <!-- Include jQuery -->
+
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Include Select2 CSS -->
+
+<!-- Include Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+          <script>
+            $(document).ready(function () {
+              // Initialize Select2 for the element with the correct ID or class
+              $('.items-js').select2({
+                dropdownParent: $("#cardb"),
+      ajax: {
+        url: '/routeids', // Backend endpoint
+        dataType: 'json',
+        delay: 250, // Debounce for performance
+        processResults: function (data) {
+          return {
+            results: data.map(function (item) {
+              return { id: item.id, text: item.id }; // Customize text display
+            }),
+          };
+        },
+      
+      },
+    });
+            });
+          </script>   
             
 <%- include('../includes/footer.ejs') -%>
 

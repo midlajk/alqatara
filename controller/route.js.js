@@ -44,13 +44,28 @@ exports.getroutes = async (req, res) => {
 
 //   app.post('/addtruck', async (req, res) => {
     exports.newroutes = async (req, res) => {
+      console.log(req.body)
  
       try {
-        const cutomer = new Route(req.body);
-        await cutomer.save();
+        const routes = new Route(req.body);
+        await routes.save();
         res.redirect('/routes');
     } catch (error) {
         res.status(400).send({ error: error.message });
       }
  
   };
+
+  exports.routeids = async (req, res) => {
+    try {
+      const routes = await Route.find({}, { id: 1}); // Fetch only required fields
+      console.log(routes)
+      res.json(routes);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error fetching routes');
+    }
+
+    
+
+};

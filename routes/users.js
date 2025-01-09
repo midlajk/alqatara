@@ -20,13 +20,11 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-    console.log(user)
-
-    // // Compare passwords
-    // const isMatch = await bcrypt.compare(password, user.password);
-    // if (!isMatch) {
-    //   return res.status(401).json({ success: false, message: 'Invalid password' });
-    // }
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid password' });
+    }
 
     // Save session
     req.session.user = {

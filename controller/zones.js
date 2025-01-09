@@ -42,13 +42,29 @@ exports.getzones = async (req, res) => {
 
 //   app.post('/addtruck', async (req, res) => {
     exports.newzones = async (req, res) => {
+      console.log(req.body)
  
       try {
         const cutomer = new Zone(req.body);
         await cutomer.save();
         res.redirect('/zones');
     } catch (error) {
+      console.log(error.message)
         res.status(400).send({ error: error.message });
       }
  
   };
+
+  exports.zoneids = async (req, res) => {
+    console.log('here')
+    try {
+      const routes = await Zone.find({}, { id: 1}); // Fetch only required fields
+      res.json(routes);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error fetching routes');
+    }
+
+    
+
+};

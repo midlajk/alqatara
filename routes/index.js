@@ -4,52 +4,64 @@ const authMiddleware = require('../middleware/auth');
 
 /* GET home page. */
 router.get('/',authMiddleware, function(req, res, next) {
-  res.render('index', { title: 'Express',route:'Dashboard',sub :'Default'});
+  res.render('index', { title: 'Al Qattara',route:'Dashboard',sub :'Default'});
 });
 
 router.get('/utilities',authMiddleware, function(req, res, next) {
-  res.render('utilities/utilities', { title: 'Express' ,route:'Utilities',sub :'Manage Utilities'});
+  res.render('utilities/utilities', { title: 'Al Qattara' ,route:'Utilities',sub :'Manage Utilities'});
 });
 router.get('/utilities/addtruck',authMiddleware, function(req, res, next) {
-  res.render('utilities/addtruck', { title: 'Express',route:'Utilities',sub :'New Utilities' });
+  res.render('utilities/addtruck', { title: 'Al Qattara',route:'Utilities',sub :'New Utilities' });
 });
 
 router.get('/orders',authMiddleware, function(req, res, next) {
-  res.render('order/orders', { title: 'Express',route:'Orders',sub :'Manage Orders' });
+  res.render('order/orders', { title: 'Al Qattara',route:'Orders',sub :'Manage Orders' });
 });
 router.get('/orders/neworder',authMiddleware, function(req, res, next) {
-  res.render('order/neworder', { title: 'Express',route:'Orders',sub :'New Order' });
+  res.render('order/neworder', { title: 'Al Qattara',route:'Orders',sub :'New Order' });
 });
 
 router.get('/customers',authMiddleware, function(req, res, next) {
-  res.render('customers/customers', { title: 'Express',route:'Customer',sub :'Manage Customer' });
+  res.render('customers/customers', { title: 'Al Qattara',route:'Customer',sub :'Manage Customer' });
 });
 router.get('/customers/newcustomer',authMiddleware, function(req, res, next) {
-  res.render('customers/newcustomer', { title: 'Express',route:'Customer',sub :'New Customer' });
+  res.render('customers/newcustomer', { title: 'Al Qattara',route:'Customer',sub :'New Customer' });
 });
 
 
 router.get('/zones',authMiddleware, function(req, res, next) {
-  res.render('zones/zones', { title: 'Express',route:'Zones',sub :'Manage Zones' });
+  res.render('zones/zones', { title: 'Al Qattara',route:'Zones',sub :'Manage Zones' });
 });
 router.get('/zones/addzone',authMiddleware, function(req, res, next) {
-  res.render('zones/addzones', { title: 'Express',route:'Zones',sub :'New Zone' });
+  res.render('zones/addzones', { title: 'Al Qattara',route:'Zones',sub :'New Zone' });
 });
 
 
 
 router.get('/routes',authMiddleware, function(req, res, next) {
-  res.render('route/routes', { title: 'Express',route:'Routes',sub :'Manage Routes' });
+  res.render('route/routes', { title: 'Al Qattara',route:'Routes',sub :'Manage Routes' });
 });
 router.get('/routes/addroute',authMiddleware, function(req, res, next) {
-  res.render('route/newroutes', { title: 'Express',route:'Routes',sub :'New Route' });
+  res.render('route/newroutes', { title: 'Al Qattara',route:'Routes',sub :'New Route' });
 });
 
-router.get('/reports',authMiddleware, function(req, res, next) {
-  res.render('customers/customers', { title: 'Express' ,route:'Reports',sub :'Manage Reports'});
+router.get('/report',authMiddleware, function(req, res, next) {
+  res.render('reports/reports', { title: 'Al Qattara' ,route:'Reports',sub :'Manage Reports'});
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login/login.ejs', { title: 'Express' ,route:'reports'});
+  res.render('login/login.ejs', { title: 'Al Qattara' ,route:'reports'});
+});
+
+router.get('/manageprevilages',authMiddleware, function(req, res, next) {
+  res.render('previliages/manageprevilage', { title: 'Al Qattara' ,route:'Previlages',sub :'Manage Previlages'});
+});
+
+router.get('/masters',authMiddleware, function(req, res, next) {
+  res.render('master/masters', { title: 'Al Qattara' ,route:'Masters',sub :'Manage Masters'});
+});
+
+router.get('/wallet',authMiddleware, function(req, res, next) {
+  res.render('wallet/wallet', { title: 'Al Qattara' ,route:'Wallet',sub :'Manage Wallet'});
 });
 module.exports = router;

@@ -151,6 +151,7 @@ const employeeSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
+  id: { type: String,unique: true},
   name: { type: String, required: true },
   area: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
@@ -174,7 +175,30 @@ const orderSchema = new mongoose.Schema({
   creditAmountPaid: { type: Number, default: 0 },
   isCredit: { type: Boolean, default: false }
 });
+orderSchema.pre('save', async function (next) {
+  if (!this.id) {
+    const generateUid = (length) => {
+      const randomDigits = Math.random().toString().slice(2, 2 + length);
+      return randomDigits;
+    };
 
+    let unique = false;
+    let id;
+
+    while (!unique) {
+      // Generate 6-digit or 10-digit UID
+      id = generateUid(10); // Change to 10 for 10-digit UID
+      // Check for uniqueness
+      const existingCustomer = await mongoose.model('Customer').findOne({ id });
+      if (!existingCustomer) {
+        unique = true;
+      }
+    }
+
+    this.id = id;
+  }
+  next();
+});
 const salesmanSchema = new mongoose.Schema({
   id: { type: String, required: true },
   name: { type: String, required: true },

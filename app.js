@@ -68,6 +68,9 @@ const ordersapi = require('./routes/orders');
 const customerapi = require('./routes/customers');
 const zoneapi = require('./routes/zones');
 const routeapi = require('./routes/routes');
+const salesmanapi = require('./routes/salesman');
+const employeeapi = require('./routes/employees');
+const previlageapis = require('./routes/previlageclass');
 
 const app = express();
 
@@ -86,7 +89,7 @@ app.use(sessions);
 app.use((req, res, next) => {
   if (req.session && req.session.user) {
     res.locals.user = req.session.user;
-    res.locals.resptype = req.session.user.resp||true;
+    
     //added resptype to true 
   } 
   next();
@@ -99,6 +102,9 @@ app.use('/', ordersapi);
 app.use('/', customerapi);
 app.use('/', zoneapi);
 app.use('/', routeapi);
+app.use('/', salesmanapi);
+app.use('/', employeeapi);
+app.use('/', previlageapis);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -4,6 +4,8 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
+<a href="/createprevilages" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+
 </div>
 </div>
 </div>
@@ -19,15 +21,13 @@
           </div>
           <!-- Light table -->
           <div class="table-responsive">
-            <table class="table align-items-center table-flush">
+            <table class="table align-items-center table-flush" id="previlagetable">
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Users/Application roles</th>
                   <th scope="col" class="sort" data-sort="budget">Read</th>
                   <th scope="col" class="sort" data-sort="status">Read/Write</th>
-                  <th scope="col" class="sort">No Access</th>
-                  <th scope="col" class="sort" data-sort="completion">Default</th>
-                  <th scope="col"></th>
+                  <th scope="col">Created</th>
                 </tr>
               </thead>
               <tbody class="list">
@@ -70,6 +70,44 @@
 </div>
 </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    
+    // Initialize DataTable
+   var datatable = $('#previlagetable').DataTable({
+    responsive: true,
+          processing: true,
+          serverSide: true,
+      ajax: {
+        url: 'http://localhost:5000/getclass', // Backend API endpoint
+        dataSrc: 'docs', // Key that holds the array of data in the API response
+            data: function (d) {
+              return d;
+  
+              // Add any additional parameters you want to send to the server here
+            },// Data source is the root of the response array
+      },
+      columns: [
+{ data: 'className', title: 'class Name' }, // Customer Name
+{ data: 'readonly', title: 'readonly' }, // Customer ID (assuming 'uid' is the customer ID)
+{ data: 'readwrite', title: 'read write' },// Contact (assuming 'mobileNumber' is the primary contact)
+{ 
+data: 'createdAt', 
+title: 'Registered On', 
+render: function (data) {
+  return new Date(data).toLocaleDateString(); // Format the date as required
+}
+}, // Registered On
+
+]
+});
+  });
+</script>
     <%- include('../includes/footer.ejs') -%>
 
     <%- include('../includes/end.ejs') -%>

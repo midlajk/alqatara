@@ -1,7 +1,7 @@
 // Mongoose models for Customer, Recharge, Route, CreditOrderHistory, CustomerAssetHistory, DeletedCustomer, Employee, Order, Salesman, Truck, and TruckHistory
 
 const mongoose = require('mongoose');
-
+const { v4: uuidv4 } = require('uuid');
 const customerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   location: { type: String },
@@ -139,13 +139,14 @@ const deletedCustomerSchema = new mongoose.Schema({
 });
 
 const employeeSchema = new mongoose.Schema({
+  id: { type: String,unique: true, default: uuidv4},
   email: { type: String, required: true },
   name: { type: String, required: true },
   password: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   mobileNumber: { type: String, required: true },
   updatedAt: { type: Date, default: Date.now },
-  uid: { type: String, required: true },
+  uid: { type: String, required: true , default: uuidv4},
   designation: { type: String, required: true },
   permissions: { type: [String], required: true }
 });
@@ -261,7 +262,41 @@ const salesmanSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },  // Updated At
   }
 );
-  
+
+const PrevilageClassSchema = new mongoose.Schema({
+  className: {
+    type: String,
+    required: true,
+    unique: true, // Ensures the class name is unique
+  },
+  readonly: {
+    type: [String], // Array of strings for readonly access options
+    required: true, // Marked as required to ensure permissions are provided
+    validate: {
+      validator: function (v) {
+        return v && v.length > 0; // Ensures the array is not empty
+      },
+      message: 'At least one readonly access must be selected',
+    },
+  },
+  readwrite: {
+    type: [String], // Array of strings for read/write access options
+    required: true, // Marked as required to ensure permissions are provided
+    validate: {
+      validator: function (v) {
+        return v && v.length > 0; // Ensures the array is not empty
+      },
+      message: 'At least one read/write access must be selected',
+    },
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now, // Automatically sets the creation date
+  },
+});
+
+const PrevilageClass = mongoose.model('PrevilageClass', PrevilageClassSchema);
+
   // Create the Zone Model
   const Zone = mongoose.model('Zone', zoneSchema);
   // Export all the models
@@ -277,6 +312,7 @@ const salesmanSchema = new mongoose.Schema({
     Salesman: mongoose.model('Salesman', salesmanSchema),
     Truck: mongoose.model('Truck', truckSchema),
     TruckHistory: mongoose.model('TruckHistory', truckHistorySchema),
-    Zone:Zone
+    Zone:Zone,
+    PrevilageClass:PrevilageClass
   };
   

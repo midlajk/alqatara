@@ -1,0 +1,105 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Previlage Class Registration</h3>
+                </div>
+                <!-- Card body -->
+                <div class="card-body" id="cardb">
+                    <form class="needs-validation" action="/addprevilageclass" method="POST" novalidate>
+                        <div class="form-group row">
+                            <label for="example-text-input"
+                                class="col-md-2 col-form-label form-control-label">Previlage Class</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text"
+                                    placeholder="Class name" name="className" id="example-text-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="readonly-select" class="col-md-2 col-form-label form-control-label">ReadOnly Access</label>
+                            <div class="col-md-10">
+                                <select class="form-control readonly-select" id="readonly-select" name="readonly" multiple="multiple">
+                                    <!-- Options will be added dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="readwrite-select" class="col-md-2 col-form-label form-control-label">Read/Write Access</label>
+                            <div class="col-md-10">
+                                <select class="form-control readwrite-select" id="readwrite-select" name="readwrite" multiple="multiple">
+                                    <!-- Options will be added dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Register</button>
+                        <button type="button" class="btn btn-danger">Cancel</button>
+                     </form>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Include Select2 CSS -->
+    
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+    
+    <script>
+        $(document).ready(function() {
+            // List of options
+            const options = [
+                { id: 'dashboard', text: 'Dashboard' },
+                { id: 'utilities', text: 'Utilities' },
+                { id: 'orders', text: 'Orders' },
+                { id: 'customers', text: 'Customers' },
+                { id: 'reports', text: 'Reports' },
+                { id: 'wallets', text: 'Wallets' },
+                { id: 'zones', text: 'Zones' },
+                { id: 'routes', text: 'Routes' },
+                { id: 'salesman', text: 'Salesman' },
+                { id: 'masters', text: 'Masters' },
+                { id: 'privileges', text: 'Privileges' }
+            ];
+    
+            // Initialize Select2 for ReadOnly Access
+            $('.readonly-select').select2({
+                dropdownParent: $("#cardb"),
+
+                placeholder: "Select ReadOnly Access",
+                allowClear: true,
+                data: options // Add options dynamically
+            });
+    
+            // Initialize Select2 for Read/Write Access
+            $('.readwrite-select').select2({
+                dropdownParent: $("#cardb"),
+
+                placeholder: "Select Read/Write Access",
+                allowClear: true,
+                data: options // Add options dynamically
+            });
+    
+            // Example: Preselect some options (optional)
+            // $('.readonly-select').val(['dashboard', 'utilities']).trigger('change');
+            // $('.readwrite-select').val(['orders', 'customers']).trigger('change');
+        });
+    </script>
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

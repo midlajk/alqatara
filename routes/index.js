@@ -56,12 +56,27 @@ router.get('/login', function(req, res, next) {
 router.get('/manageprevilages',authMiddleware, function(req, res, next) {
   res.render('previliages/manageprevilage', { title: 'Al Qattara' ,route:'Previlages',sub :'Manage Previlages'});
 });
-
+router.get('/createprevilages',authMiddleware, function(req, res, next) {
+  res.render('previliages/createprevilage', { title: 'Al Qattara' ,route:'Previlages',sub :'Create Previlages'});
+});
 router.get('/masters',authMiddleware, function(req, res, next) {
   res.render('master/masters', { title: 'Al Qattara' ,route:'Masters',sub :'Manage Masters'});
+});
+
+router.get('/addnewemployee',authMiddleware, function(req, res, next) {
+  res.render('master/newemployee', { title: 'Al Qattara' ,route:'Masters',sub :'Register Employee'});
 });
 
 router.get('/wallet',authMiddleware, function(req, res, next) {
   res.render('wallet/wallet', { title: 'Al Qattara' ,route:'Wallet',sub :'Manage Wallet'});
 });
+
+router.get('/salesman',authMiddleware, function(req, res, next) {
+  res.render('salesman/salesmans', { title: 'Al Qattara' ,route:'Salesman',sub :'Manage Salesman'});
+});
+
+router.get('/addnewsalesman',authMiddleware, function(req, res, next) {
+  res.render('salesman/newsalesman', { title: 'Al Qattara' ,route:'Salesman',sub :'Register Salesman'});
+});
+
 module.exports = router;

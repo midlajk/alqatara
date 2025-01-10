@@ -4,7 +4,7 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/addnewemployee" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+<a href="/addnewsalesman" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
 
 </div>
 
@@ -22,15 +22,15 @@
           </div>
           <!-- Light table -->
           <div class="table-responsive">
-            <table class="table align-items-center table-flush" id="mastertable">
+            <table class="table align-items-center table-flush" id="salesmantable">
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Full Name</th>
-                  <th scope="col" class="sort" data-sort="budget">Email Address</th>
-                  <th scope="col" class="sort" data-sort="status">Date of joining</th>
-                  <th scope="col" class="sort">Job Title</th>
-                  <!-- <th scope="col" class="sort" data-sort="completion">Action</th>
-                  <th scope="col"></th> -->
+                  <th scope="col" class="sort" data-sort="budget">id</th>
+                  <th scope="col" class="sort" data-sort="status">City</th>
+                  <th scope="col" class="sort" data-sort="status">Created</th>
+
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody class="list">
@@ -79,12 +79,12 @@
       $(document).ready(function () {
         
         // Initialize DataTable
-       var datatable = $('#mastertable').DataTable({
+       var datatable = $('#salesmantable').DataTable({
         responsive: true,
               processing: true,
               serverSide: true,
           ajax: {
-            url: 'http://localhost:5000/getemployees', // Backend API endpoint
+            url: 'http://localhost:5000/getsalesman', // Backend API endpoint
             dataSrc: 'docs', // Key that holds the array of data in the API response
                 data: function (d) {
                   return d;
@@ -94,8 +94,8 @@
           },
           columns: [
   { data: 'name', title: 'Customer Name' }, // Customer Name
-  { data: 'email', title: 'Customer ID' }, // Customer ID (assuming 'uid' is the customer ID)
-   // Contact (assuming 'mobileNumber' is the primary contact)
+  { data: 'id', title: 'Customer ID' }, // Customer ID (assuming 'uid' is the customer ID)
+  { data: 'city', title: 'Contact' }, // Contact (assuming 'mobileNumber' is the primary contact)
   { 
     data: 'createdAt', 
     title: 'Registered On', 
@@ -103,7 +103,7 @@
       return new Date(data).toLocaleDateString(); // Format the date as required
     }
   }, // Registered On
-  { data: 'designation', title: 'Contact' },
+  
 ]
 });
       });

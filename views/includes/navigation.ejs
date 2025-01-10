@@ -70,6 +70,12 @@
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link <%= route=='Salesman'?'active':'' %>" href="/salesman">
+                <i class="ni ni-single-02 text-primary"></i>
+                <span class="nav-link-text">Salesman</span>
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link <%= route=='Masters'?'active':'' %>" href="/masters">
                 <i class="ni ni-laptop text-primary"></i>
                 <span class="nav-link-text">Master</span>
@@ -77,7 +83,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link <%= route=='Previlages'?'active':'' %>" href="/manageprevilages">
-                <i class="ni ni-single-02 text-primary"></i>
+                <i class="ni ni-lock-circle-open text-primary"></i>
                 <span class="nav-link-text">Privilages</span>
               </a>
             </li>
@@ -157,7 +163,7 @@
                 <div class="dropdown-header noti-title">
                   <h6 class="text-overflow m-0">Welcome!</h6>
                 </div>
-                <a href="#!" class="dropdown-item">
+                <!-- <a href="#!" class="dropdown-item">
                   <i class="ni ni-single-02"></i>
                   <span>My profile</span>
                 </a>
@@ -172,7 +178,7 @@
                 <a href="#!" class="dropdown-item">
                   <i class="ni ni-support-16"></i>
                   <span>Support</span>
-                </a>
+                </a> -->
                 <div class="dropdown-divider"></div>
                 <a href="#!" class="dropdown-item" onclick="handleLogout()">
                   <i class="ni ni-user-run"></i>

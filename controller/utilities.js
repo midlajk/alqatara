@@ -59,3 +59,16 @@ exports.gettrucks = async (req, res) => {
       res.status(500).send('Failed to add truck.');
     }
   };
+
+
+  exports.gettruckname =  async (req, res) => {
+    const searchQuery = req.query.search || "";
+    try {
+      const trucks = await Truck.find({
+        id: { $regex: searchQuery, $options: "i" },
+      }).limit(50); // Limit results for performance
+      res.json(trucks);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch trucks" });
+    }
+  };

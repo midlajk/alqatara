@@ -6,6 +6,7 @@ const utilitiesApis = require('../controller/utilities');
 /* GET home page. */
 router.get('/gettrucks', utilitiesApis.gettrucks);
 router.post('/addtrucks', utilitiesApis.addtrucks);
+router.get('/gettrucknames', utilitiesApis.gettruckname);
 
 
 module.exports = router;

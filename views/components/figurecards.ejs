@@ -1,7 +1,37 @@
+<style>
+  .toggle-btn.selected {
+      background-color: #007bff;
+      /* Example: Blue background for selected */
+      color: #fff;
+      /* White text for selected */
+      border-color: #007bff;
+      /* Matching border color */
+  }
+</style>
 <div class="col-lg-6 col-5 text-right">
-  <a href="#" class="btn btn-sm btn-neutral">New</a>
-  <a href="#" class="btn btn-sm btn-neutral">Filters</a>
+  <button class="btn btn-sm btn-neutral toggle-btn selected" onclick="selectButton(this)">Al
+      Ain</button>
+  <button class="btn btn-sm btn-neutral toggle-btn" onclick="selectButton(this)">Abu
+      Dhabi</button>
+  <button class="btn btn-sm btn-neutral toggle-btn" onclick="selectButton(this)">Both</button>
 </div>
+<script>
+  function selectButton(button) {
+      // Remove the 'selected' class from all buttons
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+          btn.classList.remove('selected');
+      });
+
+      // Add the 'selected' class to the clicked button
+      button.classList.add('selected');
+  }
+
+  // Ensure Al Ain button is selected on page load
+  document.addEventListener("DOMContentLoaded", function () {
+      document.querySelector('.toggle-btn.selected').click();
+  });
+</script>
+
 </div>
 <div class="row">
     <div class="col-xl-3 col-md-6">

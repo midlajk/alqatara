@@ -20,11 +20,89 @@
                       </div>
                   </div>
               </div>
-              <div class="card-body" style="height: 50vh;">
+              <style>
+                .card-body {
+  font-family: Arial, sans-serif;
+}
 
+#searchTruck {
+  margin-bottom: 10px;
+}
+
+#truckContainer > div:hover {
+  background-color: #f0f0f0;
+}
+
+              </style>
+              <!-- <div class="card-body" style="height: 50vh;">
+                <div style="width: 100%;height: 70px;border-radius: 5px;box-shadow: 2px 1px 5px;margin-bottom: 5px;padding: 10px;">
+
+                    <label for="">Truck Id</label> <br>
+                    <label for="">Sales Person</label>
+
+                </div>
+                <div style="width: 100%;height: 70px;border-radius: 5px;box-shadow: 2px 1px 5px;margin-bottom: 5px;padding: 10px;">
+
+                    <label for="">Truck Id</label> <br>
+                    <label for="">Sales Person</label>
+                </div>
+              </div> -->
+              <div class="card-body" style="height: 50vh; overflow-y: auto;">
+                <div style="margin-bottom: 10px;">
+                  <input
+                    type="text"
+                    id="searchTruck"
+                    placeholder="Search Truck ID"
+                    style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"
+                  />
+                </div>
+                <div id="truckContainer">
+                  <!-- Truck cards will be dynamically appended here -->
+                </div>
               </div>
           </div>
       </div>
+      <script>
+        // Fetch trucks from the backend and render them
+        async function fetchTrucks(searchQuery = "") {
+          try {
+            const response = await fetch(`/gettrucknames?search=${searchQuery}`);
+            const trucks = await response.json();
+            const truckContainer = document.getElementById("truckContainer");
+            truckContainer.innerHTML = ""; // Clear previous data
+      
+            trucks.forEach((truck) => {
+              const truckDiv = document.createElement("div");
+              truckDiv.style.cssText =
+                "width: 100%; height: 70px; border-radius: 5px; box-shadow: 2px 1px 5px; margin-bottom: 5px; padding: 10px; cursor: pointer;";
+              truckDiv.onclick = () => showDashboard(truck.id);
+      
+              truckDiv.innerHTML = `
+                <label>Truck ID: ${truck.id}</label> <br>
+                <label>Sales Person ID: ${truck.salesmanId || "N/A"}</label>
+              `;
+              truckContainer.appendChild(truckDiv);
+            });
+          } catch (error) {
+            console.error("Error fetching trucks:", error);
+          }
+        }
+      
+        // Call this function when the page loads
+        document.addEventListener("DOMContentLoaded", () => fetchTrucks());
+      
+        // Add search functionality
+        document.getElementById("searchTruck").addEventListener("input", (event) => {
+          const searchQuery = event.target.value;
+          fetchTrucks(searchQuery);
+        });
+      
+        // Example function for handling truck dashboard display
+        function showDashboard(truckId) {
+          alert(`Showing dashboard for Truck ID: ${truckId}`);
+          // Add logic to redirect or display the truck dashboard
+        }
+      </script>
       <div class="col-xl-5">
           <div class="card bg-default">
               <div class="card-header bg-transparent">

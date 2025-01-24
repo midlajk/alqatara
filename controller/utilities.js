@@ -61,17 +61,28 @@ exports.gettrucks = async (req, res) => {
   };
 
 
-  exports.gettruckname =  async (req, res) => {
+  exports.gettruckname = async (req, res) => {
     const searchQuery = req.query.search || "";
+    const selectedCity = req.query.city || ""; // Get city filter from query
+    console.log(searchQuery,selectedCity)
+
     try {
-      const trucks = await Truck.find({
-        id: { $regex: searchQuery, $options: "i" },
-      }).limit(50); // Limit results for performance
-      res.json(trucks);
+        let query = {
+            id: { $regex: searchQuery, $options: "i" },
+        };
+
+        // Apply city filter only if a city is selected (excluding "All")
+        if (selectedCity && selectedCity !== "All") {
+            query.city = selectedCity;
+        }
+
+        const trucks = await Truck.find(query).limit(50); // Limit results for performance
+        res.json(trucks);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch trucks" });
+        console.error("Error fetching trucks:", error);
+        res.status(500).json({ error: "Failed to fetch trucks" });
     }
-  };
+};
 
   
   exports.truckids = async (req, res) => {

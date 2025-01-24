@@ -22,9 +22,8 @@
         <option value="All" selected>All</option>
       </select>
 
-  <button class="btn btn-neutral toggle-btn" onclick="selectButton(this)">Update</button>
 </div>
-<script>
+<!-- <script>
   function selectButton(button) {
       // Remove the 'selected' class from all buttons
       document.querySelectorAll('.toggle-btn').forEach(btn => {
@@ -39,7 +38,7 @@
   document.addEventListener("DOMContentLoaded", function () {
       document.querySelector('.toggle-btn.selected').click();
   });
-</script>
+</script> -->
 
 </div>
 <div class="row">
@@ -140,33 +139,54 @@
   <!-- Include Select2 JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
   <script>
-    $(document).ready(function () {
-      $('.city-js').select2({
-        dropdownParent: $("#cardb"),
-        tags: true, // Enables adding custom options
-        placeholder: "Select or enter a city", // Placeholder text
-        allowClear: true, // Enables clearing selection
-        ajax: {
-          url: '/citynames', // Backend endpoint
-          dataType: 'json',
-          delay: 250, // Debounce for performance
-          processResults: function (data) {
-            // Add "All" as the first option
-            let cityOptions = [{ id: "All", text: "All" }];
-            
-            // Append server response options
-            cityOptions = cityOptions.concat(data.map(function (item) {
-              return { id: item.city, text: item.city }; // Customize text display
-            }));
-            
-  
-            return { results: cityOptions };
+  $(document).ready(function () {
+    console.log("jQuery Ready");
 
-            
-          },
-        },
-      
-      });
+    // Initialize Select2
+    $('.city-js').select2({
+        dropdownParent: $("#cardb"),
+        tags: true,
+        placeholder: "Select or enter a city",
+        allowClear: true,
+        ajax: {
+            url: '/citynames',
+            dataType: 'json',
+            delay: 250,
+            processResults: function (data) {
+
+                let cityOptions = [{ id: "All", text: "All" }];
+                cityOptions = cityOptions.concat(data.map(item => ({ id: item.city, text: item.city })));
+
+                return { results: cityOptions };
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching city names:", error);
+            }
+        }
     });
-  </script>
-  
+});
+</script>
+  <script>
+  $(document).ready(function () {
+
+    // Ensure city dropdown exists before attaching event listener
+    
+    
+
+    // Fetch trucks when the page loads
+    fetchTrucks();
+
+    // Add event listener for city selection change
+    $("#city").on("change", function () {
+        var search = $("#searchTruck").val()
+        fetchTrucks(search,$(this).val());
+    });
+
+    // Add search functionality
+    $("#searchTruck").on("input", function () {
+      var city = $("#city").val()
+        fetchTrucks($(this).val(),city);
+    });
+});
+
+</script>

@@ -64,9 +64,11 @@
       </div>
       <script>
         // Fetch trucks from the backend and render them
-        async function fetchTrucks(searchQuery = "") {
+        async function fetchTrucks(searchQuery = "",city = "All") {
           try {
-            const response = await fetch(`/gettrucknames?search=${searchQuery}`);
+         
+              console.log(city)
+            const response = await fetch(`/gettrucknames?search=${searchQuery}&city=${city}`);
             const trucks = await response.json();
             const truckContainer = document.getElementById("truckContainer");
             truckContainer.innerHTML = ""; // Clear previous data
@@ -92,16 +94,22 @@
         document.addEventListener("DOMContentLoaded", () => fetchTrucks());
       
         // Add search functionality
-        document.getElementById("searchTruck").addEventListener("input", (event) => {
-          const searchQuery = event.target.value;
-          fetchTrucks(searchQuery);
-        });
+        // document.getElementById("searchTruck").addEventListener("input", (event) => {
+        //   const searchQuery = event.target.value;
+        //   fetchTrucks(searchQuery);
+        // });
       
-        // Example function for handling truck dashboard display
-        function showDashboard(truckId) {
-          alert(`Showing dashboard for Truck ID: ${truckId}`);
-          // Add logic to redirect or display the truck dashboard
-        }
+        // // Example function for handling truck dashboard display
+        // function showDashboard(truckId) {
+        //   alert(`Showing dashboard for Truck ID: ${truckId}`);
+        //   // Add logic to redirect or display the truck dashboard
+        // }
+        // document.addEventListener("DOMContentLoaded", () => fetchTrucks());
+
+// Update truck list when city selection changes
+
+
+
       </script>
       <div class="col-xl-5">
           <div class="card bg-default">

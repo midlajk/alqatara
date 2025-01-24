@@ -85,7 +85,10 @@
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="city">City</label>
-                    <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
+                    <!-- <input type="text" class="form-control" id="city" name="city" placeholder="City" required> -->
+
+                    <select class="city-js form-control" name="city" id="city" required></select>
+
                   </div>
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="walletBalance">Wallet Balance</label>
@@ -152,6 +155,27 @@
             });
           </script>   
       
+      <script>
+        $(document).ready(function () {
+          // Initialize Select2 for the element with the correct ID or class
+          $('.city-js').select2({
+            dropdownParent: $("#cardb"),
+  ajax: {
+    url: '/citynames', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.city, text: item.city }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+        });
+      </script> 
 <%- include('../includes/footer.ejs') -%>
 
 <%- include('../includes/end.ejs') -%>

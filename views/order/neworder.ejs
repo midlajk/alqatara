@@ -17,40 +17,50 @@
                     <h3 class="mb-0">Create Orders</h3>
                 </div>
                 <!-- Card body -->
-                <div class="card-body">
+                <div class="card-body" id="cardb">
                     <form action="/orders/neworder" method="POST">
                         <div class="form-group row">
                             <label for="customerName"
                                 class="col-md-2 col-form-label form-control-label">Customer Name</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="name" type="text" placeholder="Enter customer name" id="customerName" required>
+                                <!-- <input class="form-control" name="name" type="text" placeholder="Enter customer name" id="customerName" required> -->
+                                <select class="customer-name-js form-control" id="customerName" name="name" required></select>
+
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="customerCode"
                                 class="col-md-2 col-form-label form-control-label">Customer Code</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="customerId" type="text" placeholder="Enter customer code" id="customerCode" required>
+                                <!-- <input class="form-control" name="customerId" type="text" placeholder="Enter customer code" id="customerCode" required> -->
+                                <select class="customer-code-js form-control" id="customerCode" name="customerId" required></select>
+
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="truckId" class="col-md-2 col-form-label form-control-label">Truck ID</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="truckId" type="text" placeholder="Select or enter the truck id" id="truckId">
+                                <select class="items-js form-control" id="truckId" name="truckId" required></select>
+
+                                <!-- <input class="form-control" name="truckId" type="text" placeholder="Select or enter the truck id" id="truckId"> -->
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="zone"
                                 class="col-md-2 col-form-label form-control-label">Zone</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="area" type="text" placeholder="Select or enter the zone" id="zone" required>
+                                <select class="zone-js form-control" id="zone" name="zone" required></select>
+
+                                <!-- <input class="form-control" name="area" type="text" placeholder="Select or enter the zone" id="zone" required> -->
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="route"
                                 class="col-md-2 col-form-label form-control-label">Route</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="route" type="text" placeholder="Select or enter the route" id="route">
+                                <select class="truck-js form-control" id="route" name="route" required></select>
+
+                                <!-- <input class="form-control" name="route" type="text" placeholder="Select or enter the route" id="route"> -->
                             </div>
                         </div>
                         <div class="form-group row">
@@ -78,5 +88,141 @@
           
         </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Include Select2 CSS -->
+    
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+    <script>
+        $(document).ready(function () {
+          // Initialize Select2 for the element with the correct ID or class
+          $('.items-js').select2({
+            dropdownParent: $("#cardb"),
+  ajax: {
+    url: '/routeids', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.id, text: item.id }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+        });
+      </script>   
+      <script>
+        $(document).ready(function () {
+          // Initialize Select2 for the element with the correct ID or class
+          $('.zone-js').select2({
+            dropdownParent: $("#cardb"),
+  ajax: {
+    url: '/zoneids', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.id, text: item.id }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+        });
+      </script>   
+      <script>
+        $(document).ready(function () {
+          // Initialize Select2 for the element with the correct ID or class
+          $('.truck-js').select2({
+            dropdownParent: $("#cardb"),
+  ajax: {
+    url: '/truckids', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.id, text: item.id }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+        });
+      </script>  
+      
+      <script>
+    $(document).ready(function () {
+    function initializeCustomerSelects() {
+        $(".customer-name-js").select2({
+            placeholder: "Select Customer Name",
+            allowClear: true,
+            ajax: {
+                url: "/customersee", // Your backend URL
+                dataType: "json",
+                delay: 250,
+                data: function (params) {
+                    return {
+                        search: params.term || "",
+                        customerId: $("#customerCode").val() || "" // If customerId exists, filter by it
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return { id: item.name, text: item.name }; // Adjust field names as needed
+                        }),
+                    };
+                },
+            },
+        });
+
+        $(".customer-code-js").select2({
+            placeholder: "Select Customer Code",
+            allowClear: true,
+            ajax: {
+                url: "/customersee",
+                dataType: "json",
+                delay: 250,
+                data: function (params) {
+                    return {
+                        search: params.term || "",
+                        customerName: $("#customerName").val() || "" // If customerName exists, filter by it
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return { id: item.id, text: item.id }; // Adjust field names as needed
+                        }),
+                    };
+                },
+            },
+        });
+    }
+
+    // Initialize Select2
+    initializeCustomerSelects();
+
+    // Event Listener: Reset customer code or name based on selection
+    // $("#customerName").on("change", function () {
+    //     $("#customerCode").val(null).trigger("change"); // Reset customer code
+    //     initializeCustomerSelects();
+    // });
+
+    // $("#customerCode").on("change", function () {
+    //     $("#customerName").val(null).trigger("change"); // Reset customer name
+    //     initializeCustomerSelects();
+    // });
+});
+
+      </script>
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

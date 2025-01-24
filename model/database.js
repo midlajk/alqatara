@@ -33,7 +33,8 @@ const customerSchema = new mongoose.Schema({
   zoneId: { type: String },
   trnNumber: { type: String },
   deliveryDay: { type: String },
-  otherDetails: { type: String }
+  otherDetails: { type: String },
+  id:Number,
 });
 customerSchema.pre('save', async function (next) {
   if (!this.uid) {
@@ -294,7 +295,15 @@ const PrevilageClassSchema = new mongoose.Schema({
     default: Date.now, // Automatically sets the creation date
   },
 });
-
+const citySchema = new mongoose.Schema({
+ 
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  city: { type: String, required: true },
+  mobileNumber: { type: String },
+  supervisorMobileNumber: { type: String } ,
+  id:Number,
+});
 const PrevilageClass = mongoose.model('PrevilageClass', PrevilageClassSchema);
 
   // Create the Zone Model
@@ -312,6 +321,7 @@ const PrevilageClass = mongoose.model('PrevilageClass', PrevilageClassSchema);
     Salesman: mongoose.model('Salesman', salesmanSchema),
     Truck: mongoose.model('Truck', truckSchema),
     TruckHistory: mongoose.model('TruckHistory', truckHistorySchema),
+    CitySchema:mongoose.model('CitySchema', citySchema),
     Zone:Zone,
     PrevilageClass:PrevilageClass
   };

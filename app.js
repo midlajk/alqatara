@@ -71,9 +71,12 @@ const routeapi = require('./routes/routes');
 const salesmanapi = require('./routes/salesman');
 const employeeapi = require('./routes/employees');
 const previlageapis = require('./routes/previlageclass');
+const cities = require('./routes/cities');
+const cors = require("cors");
+
 
 const app = express();
-
+app.use(cors());
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -105,6 +108,7 @@ app.use('/', routeapi);
 app.use('/', salesmanapi);
 app.use('/', employeeapi);
 app.use('/', previlageapis);
+app.use('/', cities);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

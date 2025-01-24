@@ -4,7 +4,7 @@
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
 
-<a href="/routes/addroute" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+<a href="/city/addnewcity" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
 </div>
 </div>
 
@@ -16,20 +16,20 @@
         <div class="col">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0">Add New Route</h3>
+                    <h3 class="mb-0">Add New City</h3>
                 </div>
                 <!-- Card body -->
-                <div class="card-body" id="cardb">
-                    <form action="/addRoute" method="POST">
+                <div class="card-body">
+                    <form action="/addcity" method="POST">
                         <div class="form-group row">
-                            <label for="routeId" class="col-md-2 col-form-label form-control-label">Route ID</label>
+                            <label for="routeId" class="col-md-2 col-form-label form-control-label">City ID</label>
                             <div class="col-md-10">
                                 <input
                                     class="form-control"
                                     type="number"
                                     name="id"
                                     placeholder="Enter Route ID"
-                                    id="routeId"
+                                    id="cityId"
                                     required
                                 >
                             </div>
@@ -37,17 +37,14 @@
                         <div class="form-group row">
                             <label for="city" class="col-md-2 col-form-label form-control-label">City</label>
                             <div class="col-md-10">
-                                <!-- <input
+                                <input
                                     class="form-control"
                                     type="text"
                                     name="city"
                                     placeholder="Enter the City"
                                     id="city"
                                     required
-                                > -->
-
-                                <select class="city-js form-control" name="city" id="city" required></select>
-
+                                >
                             </div>
                         </div>
                         <div>
@@ -57,34 +54,8 @@
                     </form>
                 </div>
             </div>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-            <!-- Include Select2 CSS -->
             
-            <!-- Include Select2 JS -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-              
             <!-- Footer -->
-            <script>
-                $(document).ready(function () {
-                  // Initialize Select2 for the element with the correct ID or class
-                  $('.city-js').select2({
-                    dropdownParent: $("#cardb"),
-          ajax: {
-            url: '/citynames', // Backend endpoint
-            dataType: 'json',
-            delay: 250, // Debounce for performance
-            processResults: function (data) {
-              return {
-                results: data.map(function (item) {
-                  return { id: item.city, text: item.city }; // Customize text display
-                }),
-              };
-            },
           
-          },
-        });
-                });
-              </script> 
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

@@ -52,3 +52,35 @@ exports.getcustomer = async (req, res) => {
       }
  
   };
+
+
+  exports.customerids = async (req, res) => {
+    console.log('sdsds')
+    try {
+        const search = req.query.search || ""; // Search input from frontend
+        const customerId = req.query.customerId || ""; // If customerId is provided
+        const customerName = req.query.customerName || ""; // If customerName is provided
+        console.log(customerId,customerName)
+
+        let query = {};
+
+        if (customerId) {
+            query.id = customerId; // Find customer by UID
+        } else if (customerName) {
+            query.name = { $regex: new RegExp(customerName, "i") }; // Find by name
+        } else if (search) {
+            query = {
+                $or: [
+                    { name: { $regex: new RegExp(search, "i") } }, // Match customer name
+                    { id: { $regex: new RegExp(search, "i") } }, // Match UID
+                ],
+            };
+        }
+
+        const customers = await Customer.find(query).limit(10);
+        res.json(customers);
+    } catch (error) {
+        console.error("Error fetching customers:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};

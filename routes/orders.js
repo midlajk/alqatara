@@ -6,6 +6,7 @@ const ordersapi = require('../controller/orders');
 /* GET home page. */
 router.get('/getorders', ordersapi.getorders);
 router.post('/orders/neworder', ordersapi.neworder);
+router.get('/assignedorders', ordersapi.assignedorders);
 
 
 module.exports = router;

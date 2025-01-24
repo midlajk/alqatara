@@ -7,13 +7,22 @@
       border-color: #007bff;
       /* Matching border color */
   }
+  #cardb {
+    display: flex;
+    align-items: center; /* Aligns items vertically */
+    gap: 10px; /* Adds some space between elements */
+}
 </style>
-<div class="col-lg-6 col-5 text-right">
-  <button class="btn btn-sm btn-neutral toggle-btn selected" onclick="selectButton(this)">Al
+<div class="col-lg-6 col-5 text-right" id="cardb">
+  <!-- <button class="btn btn-sm btn-neutral toggle-btn selected" onclick="selectButton(this)">Al
       Ain</button>
   <button class="btn btn-sm btn-neutral toggle-btn" onclick="selectButton(this)">Abu
-      Dhabi</button>
-  <button class="btn btn-sm btn-neutral toggle-btn" onclick="selectButton(this)">Both</button>
+      Dhabi</button> -->
+      <select class="city-js form-control" style="width: 60%;" name="city" id="city" required>
+        <option value="All" selected>All</option>
+      </select>
+
+  <button class="btn btn-neutral toggle-btn" onclick="selectButton(this)">Update</button>
 </div>
 <script>
   function selectButton(button) {
@@ -123,3 +132,41 @@
       </div>
     </div>
   </div>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <!-- Include Select2 CSS -->
+  
+  <!-- Include Select2 JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+  <script>
+    $(document).ready(function () {
+      $('.city-js').select2({
+        dropdownParent: $("#cardb"),
+        tags: true, // Enables adding custom options
+        placeholder: "Select or enter a city", // Placeholder text
+        allowClear: true, // Enables clearing selection
+        ajax: {
+          url: '/citynames', // Backend endpoint
+          dataType: 'json',
+          delay: 250, // Debounce for performance
+          processResults: function (data) {
+            // Add "All" as the first option
+            let cityOptions = [{ id: "All", text: "All" }];
+            
+            // Append server response options
+            cityOptions = cityOptions.concat(data.map(function (item) {
+              return { id: item.city, text: item.city }; // Customize text display
+            }));
+            
+  
+            return { results: cityOptions };
+
+            
+          },
+        },
+      
+      });
+    });
+  </script>
+  

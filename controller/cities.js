@@ -2,10 +2,12 @@
 require('../model/database')
 const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck')
+const Zone = mongoose.model('Zone')
+const Route = mongoose.model('Route')
+const Customer = mongoose.model('Customer')
+const CitySchema = mongoose.model('CitySchema')
 
-
-exports.gettrucks = async (req, res) => {
-    console.log('Processing DataTables request...');
+exports.getcities = async (req, res) => {
     try {
       const { start, length, draw, search } = req.query; // Extract DataTables parameters
       const searchQuery = search && search.value ? search.value : ''; // Search value
@@ -19,10 +21,11 @@ exports.gettrucks = async (req, res) => {
   
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-        Truck.find(query).skip(skip).limit(limit), // Fetch paginated data
-        Truck.countDocuments(), // Total records count
-        Truck.countDocuments(query) // Filtered records count
+        CitySchema.find(query).skip(skip).limit(limit), // Fetch paginated data
+        CitySchema.countDocuments(), // Total records count
+        CitySchema.countDocuments(query) // Filtered records count
       ]);
+
   
       // Respond with DataTables-compatible JSON
       res.json({
@@ -39,45 +42,22 @@ exports.gettrucks = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.addtrucks = async (req, res) => {
-    try {
-      const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes } = req.body;
-      console.log(req.body)
-  
-      const newTruck = new Truck({
-        id: truckId,
-        city,
-        stockOf5galBottles: parseInt(maxStock5Gallon, 10),
-        stockOf200mlBottles: parseInt(maxStock200ml, 10),
-        routeId: assignedRoutes
-      });
-  
-      await newTruck.save();
-      res.redirect('/getorders');
-    } catch (err) {
-      console.error('Error adding truck:', err);
-      res.status(500).send('Failed to add truck.');
-    }
-  };
-
-
-  exports.gettruckname =  async (req, res) => {
-    const searchQuery = req.query.search || "";
-    try {
-      const trucks = await Truck.find({
-        id: { $regex: searchQuery, $options: "i" },
-      }).limit(50); // Limit results for performance
-      res.json(trucks);
+    exports.newcity = async (req, res) => {
+ 
+      try {
+        const city = new CitySchema(req.body);
+        await city.save();
+        res.redirect('/cities');
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch trucks" });
-    }
+        res.status(400).send({ error: error.message });
+      }
+ 
   };
 
-  
-  exports.truckids = async (req, res) => {
+  exports.citynames = async (req, res) => {
     try {
-      const routes = await Truck.find({}, { id: 1}); // Fetch only required fields
-      res.json(routes);
+      const cities = await CitySchema.find({}, { city: 1}); // Fetch only required fields
+      res.json(cities);
     } catch (err) {
       console.error(err);
       res.status(500).send('Error fetching routes');

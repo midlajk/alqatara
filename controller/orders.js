@@ -53,3 +53,23 @@ exports.getorders = async (req, res) => {
       }
  
   };
+
+
+
+// Fetch orders for a specific salesman or truck
+exports.assignedorders= async (req, res) => {
+  console.log('here')
+    try {
+        const { salesmanId, truckId } = req.query;
+        let query = {};
+
+        if (salesmanId) query.salesmanId = salesmanId;
+        if (truckId) query.truckId = truckId;
+
+        const orders = await Order.find(query);
+        res.json(orders);
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};

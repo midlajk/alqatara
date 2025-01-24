@@ -79,4 +79,12 @@ router.get('/addnewsalesman',authMiddleware, function(req, res, next) {
   res.render('salesman/newsalesman', { title: 'Al Qattara' ,route:'Salesman',sub :'Register Salesman'});
 });
 
+router.get('/cities',authMiddleware, function(req, res, next) {
+  console.log('here')
+  res.render('city/cities', { title: 'Al Qattara',route:'City',sub :'Manage City' });
+});
+router.get('/city/addnewcity',authMiddleware, function(req, res, next) {
+  res.render('city/newcity', { title: 'Al Qattara',route:'City',sub :'New City' });
+});
+
 module.exports = router;

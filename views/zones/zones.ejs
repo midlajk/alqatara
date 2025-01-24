@@ -60,7 +60,7 @@
               processing: true,
               serverSide: true,
           ajax: {
-            url: 'http://localhost:5000/getzones', // Backend API endpoint
+            url: '/getzones', // Backend API endpoint
             dataSrc: 'docs', // Key that holds the array of data in the API response
                 data: function (d) {
                   return d;
@@ -84,30 +84,7 @@
         });
       });
     </script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<script>
-  $(document).ready(function () {
-    $('#route-select').select2({
-      placeholder: 'Select a route',
-      ajax: {
-        url: '/api/routes', // Backend endpoint
-        dataType: 'json',
-        delay: 250, // Debounce for performance
-        processResults: function (data) {
-          return {
-            results: data.map(function (item) {
-              return { id: item.id, text: item.name || item.id }; // Customize text display
-            }),
-          };
-        },
-        cache: true,
-      },
-      minimumInputLength: 1, // Minimum characters to start search
-    });
-  });
-</script>
 <%- include('../includes/footer.ejs') -%>
 
 <%- include('../includes/end.ejs') -%>

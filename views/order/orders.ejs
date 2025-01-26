@@ -105,9 +105,26 @@
             render: function (data) {
               return data || 'N/A'; // Display mode of payment or N/A
             }
+          },
+        { data: null, render: function(data, type, row) {
+            return `
+              <button class="btn btn-primary edit-zone" data-id="${row._id}">Edit</button>
+              <button class="btn btn-danger history-zone" data-id="${row._id}">History</button>
+            `;
           }
+        }
 ]
    });
+   $('#ordertable tbody').on('click', '.edit-zone', function () {
+        var orderId = $(this).data('id');
+        window.location.href = '/editorder/' + orderId;
+    });
+
+    // Handle History button click
+    $('#ordertable tbody').on('click', '.history-zone', function () {
+        var orderId = $(this).data('id');
+        window.location.href = '/orderhistory/' + orderId;
+    });
       });
     </script>
 

@@ -23,7 +23,8 @@ const customerSchema = new mongoose.Schema({
   representativeId: { type: String },
   noOfCoolers: { type: Number, default: 0 },
   walletBalance: { type: Number, default: 0 },
-  routeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Route' },
+  // routeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Route' },
+  routeId: { type: String },
   isCompany: { type: Boolean, default: false },
   bottleLendType: { type: String },
   coolerLendType: { type: String },
@@ -81,7 +82,7 @@ const routeSchema = new mongoose.Schema({
 });
 
 const creditOrderHistorySchema = new mongoose.Schema({
-  orderId: { type: String, required: true },
+  orderId: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   modeOfPayment: { type: String, required: true },

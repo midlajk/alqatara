@@ -3,7 +3,6 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/orders/neworder" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
 </div>
 </div>
 </div>
@@ -18,13 +17,15 @@
                 </div>
                 <!-- Card body -->
                 <div class="card-body" id="cardb">
-                    <form action="/orders/neworder" method="POST">
+                    <form action="/updateorder" method="POST">
                         <div class="form-group row">
                             <label for="customerName"
                                 class="col-md-2 col-form-label form-control-label">Customer Name</label>
                             <div class="col-md-10">
                                 <!-- <input class="form-control" name="name" type="text" placeholder="Enter customer name" id="customerName" required> -->
-                                <select class="customer-name-js form-control" id="customerName" name="name" required></select>
+                                <select class="customer-name-js form-control" id="customerName" disabled name="name" required>
+                                    <option value="<%=order.name%>"><%=order.name%></option>
+                                </select>
 
                             </div>
                         </div>
@@ -33,14 +34,18 @@
                                 class="col-md-2 col-form-label form-control-label">Customer Code</label>
                             <div class="col-md-10">
                                 <!-- <input class="form-control" name="customerId" type="text" placeholder="Enter customer code" id="customerCode" required> -->
-                                <select class="customer-code-js form-control" id="customerCode" name="customerId" required></select>
+                                <select class="customer-code-js form-control" disabled id="customerCode" name="customerId" required>
+                                    <option value="<%=order.customerId%>"><%=order.customerId%></option>
+                                </select>
 
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="truckId" class="col-md-2 col-form-label form-control-label">Truck ID</label>
                             <div class="col-md-10">
-                                <select class="items-js form-control" id="truckId" name="truckId" required></select>
+                                <select class="items-js form-control" id="truckId" name="truckId" required>
+                                    <option value="<%=order.truckId%>"><%=order.truckId%></option>
+                                </select>
 
                                 <!-- <input class="form-control" name="truckId" type="text" placeholder="Select or enter the truck id" id="truckId"> -->
                             </div>
@@ -49,7 +54,9 @@
                             <label for="zone"
                                 class="col-md-2 col-form-label form-control-label">Zone</label>
                             <div class="col-md-10">
-                                <select class="zone-js form-control" id="zone" name="area" required></select>
+                                <select class="zone-js form-control" id="zone" name="area" required>
+                                    <option value="<%=order.area%>"><%=order.area%></option>
+                                </select>
 
                                 <!-- <input class="form-control" name="area" type="text" placeholder="Select or enter the zone" id="zone" required> -->
                             </div>
@@ -67,19 +74,20 @@
                             <label for="quantity5gal"
                                 class="col-md-2 col-form-label form-control-label">Quantity (5-Gallon Bottles)</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="noOf5galBottles" type="number" placeholder="Enter quantity of 5-gallon bottles" id="quantity5gal">
+                                <input class="form-control" name="noOf5galBottles" type="number" value="<%=order.noOf5galBottles%>" placeholder="Enter quantity of 5-gallon bottles" id="quantity5gal">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="quantity200ml"
                                 class="col-md-2 col-form-label form-control-label">Quantity (200 ml Bottles)</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="noOf200mlBottles" type="number" placeholder="Enter quantity of 200 ml bottles" id="quantity200ml">
+                                <input class="form-control" name="noOf200mlBottles" value="<%=order.noOf200mlBottles%>" type="number" placeholder="Enter quantity of 200 ml bottles" id="quantity200ml">
                             </div>
+                            <input type="hidden" name="orderId" value="<%= order._id %>">
+
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-success">Submit Order</button>
-                            <!-- <a href="/" class="btn btn-danger">Cancel</a> -->
+                            <button type="submit" class="btn btn-success">Update Order</button>
                         </div>
                     </form>
                 </div>

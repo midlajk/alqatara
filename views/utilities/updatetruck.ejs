@@ -14,23 +14,25 @@
         <div class="col">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0">Add New Truck</h3>
+                    <h3 class="mb-0">Update Truck</h3>
                 </div>
                 <!-- Card body -->
                 <div class="card-body" id="cardb">
-                    <form id="addTruckForm" action="/addtrucks" method="POST">
+                    <form id="addTruckForm" action="/updateTruck" method="POST">
                         <div class="form-group row">
                             <label for="truck-id" class="col-md-2 col-form-label form-control-label">Truck ID</label>
                             <div class="col-md-10">
 
                                 
-                                <input class="form-control" type="text" placeholder="Enter Truck ID" id="truck-id" name="truckId" required>
+                                <input class="form-control" type="text" placeholder="Enter Truck ID" value="<%=truck.id%>" id="truck-id" name="truckId" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="city" class="col-md-2 col-form-label form-control-label">City</label>
                             <div class="col-md-10">
-                                <select class="city-js form-control" id="city" name="city" required></select>
+                                <select class="city-js form-control" id="city" name="city" required>
+                                  <option value="<%=truck.city%>"><%=truck.city%></option>
+                                </select>
 
                                 <!-- <input class="form-control" type="text" placeholder="Select or enter the city"  required> -->
                             </div>
@@ -38,11 +40,11 @@
                         <div class="form-group row">
                             <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Max Stock (5-Gallon Bottles)</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="number" placeholder="Enter maximum stock for 5-gallon bottles" id="max-stock-5gallon" name="maxStock5Gallon" required>
+                                <input class="form-control" type="number" value="<%=truck.stockOf5galBottles%>" placeholder="Enter maximum stock for 5-gallon bottles" id="max-stock-5gallon" name="maxStock5Gallon" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="max-stock-200ml" class="col-md-2 col-form-label form-control-label">Max Stock (200ml Bottles)</label>
+                            <label for="max-stock-200ml" value="<%=truck.stockOf200mlBottles%>" class="col-md-2 col-form-label form-control-label">Max Stock (200ml Bottles)</label>
                             <div class="col-md-10">
                                 <input class="form-control" type="number" placeholder="Enter maximum stock for 200ml bottles" id="max-stock-200ml" name="maxStock200ml" required>
                             </div>
@@ -50,14 +52,17 @@
                         <div class="form-group row">
                             <label for="assigned-routes" class="col-md-2 col-form-label form-control-label">Assigned Routes</label>
                             <div class="col-md-10">
-                                <select class="items-js form-control" id="assigned-routes" name="assignedRoutes"  required></select>
+                                <select class="items-js form-control"  id="assigned-routes" name="assignedRoutes"  required>
+
+                                  <option value="<%=truck.routeId%>"><%=truck.routeId%></option>
+
+                                </select>
 
                                 <!-- <input class="form-control" type="text" placeholder="Enter or select the assigned routes" required> -->
                             </div>
                         </div>
                         <div>
-                            <button type="submit" class="btn btn-success">Add Truck</button>
-                            <button type="reset" class="btn btn-danger">Cancel</button>
+                            <button type="submit" class="btn btn-success">Update Truck</button>
                         </div>
                     </form>
                 </div>

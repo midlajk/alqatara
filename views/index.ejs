@@ -67,7 +67,6 @@
         async function fetchTrucks(searchQuery = "",city = "All") {
           try {
          
-              console.log(city)
             const response = await fetch(`/gettrucknames?search=${searchQuery}&city=${city}`);
             const trucks = await response.json();
             const truckContainer = document.getElementById("truckContainer");

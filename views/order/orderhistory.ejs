@@ -1,0 +1,114 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+<a href="/orders/neworder" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add updation</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Truck Delivery and Details</h3>
+            <h3></h3>
+          </div>
+          <!-- Light table -->
+          <div class="table-responsive">
+            <table id="ordertable" class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="sort" data-sort="orderId">Order ID</th>
+                  <th scope="col" class="sort" data-sort="createdAt">Created At</th>
+                  <th scope="col" class="sort" data-sort="updatedAt">Updated At</th>
+                  <th scope="col" class="sort" data-sort="modeOfPayment">Mode of Payment</th>
+                  <th scope="col" class="sort" data-sort="creditAmountPaid">Credit Amount Paid</th>
+                  <th scope="col" class="sort" data-sort="totalCreditAmountDue">Total Credit Amount Due</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                <tr>
+                  
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Card footer -- -->
+        </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    
+    <script>
+      $(document).ready(function () {
+        
+        // Initialize DataTable
+        $('#ordertable').DataTable({
+  responsive: true,
+  processing: true,
+  serverSide: true,
+  
+  ajax: {
+    url: '/getorderhistorydata', // Update endpoint to fetch order history data
+    dataSrc: 'docs',
+    data: {
+    id:'<%=order.id%>' // Send the orderId as a query parameter
+        }, 
+  },
+  
+  columns: [
+    { data: 'orderId', title: 'Order ID' },
+    { 
+      data: 'createdAt', 
+      title: 'Created At', 
+      render: function (data) {
+        return new Date(data).toLocaleDateString(); 
+      }
+    },
+    { 
+      data: 'updatedAt', 
+      title: 'Updated At', 
+      render: function (data) {
+        return new Date(data).toLocaleDateString(); 
+      }
+    },
+    { data: 'modeOfPayment', title: 'Mode of Payment' },
+    { data: 'creditAmountPaid', title: 'Credit Amount Paid' },
+    { data: 'totalCreditAmountDue', title: 'Total Credit Amount Due' },
+    // { 
+    //   data: null, 
+    //   render: function(data, type, row) {
+    //     return `
+    //       <button class="btn btn-primary view-details" data-id="${row.orderId}">View</button>
+    //     `;
+    //   }
+    // }
+  ]
+});
+//  $('#ordertable tbody').on('click', '.edit-zone', function () {
+//         var orderId = $(this).data('id');
+//         window.location.href = '/editorder/' + orderId;
+//     });
+
+//     // Handle History button click
+//     $('#ordertable tbody').on('click', '.history-zone', function () {
+//         var orderId = $(this).data('id');
+//         window.location.href = '/orderhistory/' + orderId;
+//     });
+      });
+    </script>
+
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

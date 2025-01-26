@@ -5,7 +5,6 @@ const Truck = mongoose.model('Truck')
 
 
 exports.gettrucks = async (req, res) => {
-    console.log('Processing DataTables request...');
     try {
       const { start, length, draw, search } = req.query; // Extract DataTables parameters
       const searchQuery = search && search.value ? search.value : ''; // Search value
@@ -42,7 +41,6 @@ exports.gettrucks = async (req, res) => {
     exports.addtrucks = async (req, res) => {
     try {
       const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes } = req.body;
-      console.log(req.body)
   
       const newTruck = new Truck({
         id: truckId,
@@ -53,7 +51,7 @@ exports.gettrucks = async (req, res) => {
       });
   
       await newTruck.save();
-      res.redirect('/getorders');
+      res.redirect('/utilities');
     } catch (err) {
       console.error('Error adding truck:', err);
       res.status(500).send('Failed to add truck.');
@@ -95,5 +93,56 @@ exports.gettrucks = async (req, res) => {
     }
 
     
+
+};
+
+exports.editutilitiespage = async (req, res) => {
+
+  const id = req.params.id
+  const truck = await Truck.findById(id)
+  res.render('utilities/updatetruck',  { title: 'Al Qattara',route:'Orders',sub :'Manage Orders' });
+
+
+  
+
+};
+
+exports.updateTruck = async (req, res) => {
+  console.log('here')
+  try {
+      const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes } = req.body;
+
+      // Find the truck by ID and update it
+      const updatedTruck = await Truck.findOneAndUpdate(
+          { id: truckId }, // Find by truck ID
+          {
+              city,
+              stockOf5galBottles: parseInt(maxStock5Gallon, 10),
+              stockOf200mlBottles: parseInt(maxStock200ml, 10),
+              routeId: assignedRoutes,
+              updatedAt: new Date() // Update timestamp
+          },
+          { new: true, upsert: false } // Return updated document, don't create new one
+      );
+
+      if (!updatedTruck) {
+          return res.status(404).send('Truck not found');
+      }
+
+      res.redirect('/utilities'); // Redirect after successful update
+  } catch (err) {
+      console.error('Error updating truck:', err);
+      res.status(500).send('Failed to update truck.');
+  }
+};
+
+exports.truckhistorypage = async (req, res) => {
+
+  const id = req.params.id
+  const truck = await Truck.findById(id)
+  res.render('utilities/truckhistory', { title: 'Al Qattara',route:'Utilities',sub :'Truck History',truck:truck });
+
+
+  
 
 };

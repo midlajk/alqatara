@@ -7,6 +7,7 @@ const cityapi = require('../controller/cities');
 router.get('/getcities', cityapi.getcities);
 router.post('/addcity', cityapi.newcity);
 router.get('/citynames', cityapi.citynames);
+router.post('/delete-city', cityapi.deletecities);
 
 
 module.exports = router;

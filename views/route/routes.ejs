@@ -78,40 +78,71 @@
 
 <script>
   $(document).ready(function () {
-    
-    // Initialize DataTable
-   var datatable = $('#routetable').DataTable({
-    responsive: true,
-          processing: true,
-          serverSide: true,
+    // Initialize DataTable for routes
+    var datatable = $('#routetable').DataTable({
+      responsive: true,
+      processing: true,
+      serverSide: true,
       ajax: {
-        url: '/getroutes', // Backend API endpoint
-        dataSrc: 'docs', // Key that holds the array of data in the API response
-            data: function (d) {
-              return d;
-  
-              // Add any additional parameters you want to send to the server here
-            },// Data source is the root of the response array
+        url: '/getroutes', // Backend API endpoint to fetch route data
+        dataSrc: 'docs',   // Key that holds the array of data in the API response
+        data: function (d) {
+          return d; // Optionally, add more parameters if needed
+        }
       },
       columns: [
-  { data: 'id', title: 'Route ID' }, // A unique ID for each route (add a routeId field to schema for this column).
-  { data: 'city', title: 'City' }, // A unique ID for each route (add a routeId field to schema for this column).
-  { data: 'createdAt', title: 'Creation Date', render: DataTable.render.date() }, // Date the route was created.
-  { data: 'updatedAt', title: 'Updated At', render: DataTable.render.date() },   // Date the route was last updated.
-  { 
-    data: null, 
-    title: 'Actions', 
-    render: function (data, type, row) {
-      return `
-        <button class="btn btn-primary btn-sm edit" data-id="${row._id}">Edit</button>
-        <button class="btn btn-danger btn-sm delete" data-id="${row._id}">Delete</button>
-      `;
-    }
-  }
-]
+        { data: 'id', title: 'Route ID' }, // Unique Route ID
+        { data: 'city', title: 'City' }, // City for the route
+        { 
+          data: 'createdAt', 
+          title: 'Creation Date', 
+          render: DataTable.render.date() // Format creation date
+        },
+        { 
+          data: 'updatedAt', 
+          title: 'Updated At', 
+          render: DataTable.render.date() // Format update date
+        },
+        { 
+          data: null, 
+          title: 'Actions', 
+          render: function (data, type, row) {
+            return `
+              <button class="btn btn-danger btn-sm delete" data-id="${row._id}">Delete</button>
+            `;
+          }
+        }
+      ]
+    });
+
+    // Attach click event handler for the Delete button
+    $(document).on('click', '.delete', function () {
+      var id = $(this).data('id');
+      
+      if (confirm("Are you sure you want to delete this route?")) {
+        $.ajax({
+          url: '/delete-route',  // Backend endpoint to handle deletion
+          method: 'POST',
+          data: { id: id },
+          success: function (response) {
+            if (response.success) {
+              alert("Route deleted successfully!");
+              // Reload the DataTable to reflect the deletion without resetting pagination
+              datatable.ajax.reload(null, false);
+            } else {
+              alert("Error: " + response.message);
+            }
+          },
+          error: function (error) {
+            console.error("Error deleting route:", error);
+            alert("An error occurred while deleting the route.");
+          }
+        });
+      }
     });
   });
 </script>
+
 
 <%- include('../includes/footer.ejs') -%>
 

@@ -66,3 +66,19 @@ exports.getcities = async (req, res) => {
     
 
 };
+
+
+
+exports.deletecities = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const deletedCity = await CitySchema.findByIdAndDelete(id);
+    if (!deletedCity) {
+      return res.status(404).json({ success: false, message: 'City not found' });
+    }
+    res.json({ success: true, message: 'City deleted successfully' });
+  } catch (error) {
+    console.error("Error deleting city:", error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};

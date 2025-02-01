@@ -12,5 +12,8 @@ router.get('/editorder/:id', ordersapi.editorderpage);
 router.post('/updateorder', ordersapi.updateOrder);
 router.get('/orderhistory/:id', ordersapi.orderhistory);
 router.get('/getorderhistorydata', ordersapi.orderhistorydata);
+router.post('/delete-order', ordersapi.deleteorder);
+router.post('/updateOrderStatus', ordersapi.updateOrderStatus);
+router.post('/add-payment', ordersapi.addpayments);
 
 module.exports = router;

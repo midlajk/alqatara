@@ -6,6 +6,7 @@ const salesmanapiapi = require('../controller/salesman');
 /* GET home page. */
 router.get('/getsalesman', salesmanapiapi.getsalesman);
 router.post('/addsalesman', salesmanapiapi.newsalesman);
+router.get('/salesmanids', salesmanapiapi.salesmanids);
 
 
 module.exports = router;

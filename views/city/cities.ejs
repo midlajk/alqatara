@@ -81,36 +81,68 @@
     console.log('hehe')
     
     // Initialize DataTable
-   var datatable = $('#routetable').DataTable({
+    var datatable = $('#routetable').DataTable({
     responsive: true,
-          processing: true,
-          serverSide: true,
-      ajax: {
-        url: '/getcities', // Backend API endpoint
-        dataSrc: 'docs', // Key that holds the array of data in the API response
-            data: function (d) {
-              return d;
-  
-              // Add any additional parameters you want to send to the server here
-            },// Data source is the root of the response array
+    processing: true,
+    serverSide: true,
+    ajax: {
+      url: '/getcities', // Backend API endpoint
+      dataSrc: 'docs',   // Key that holds the array of data in the API response
+      data: function (d) {
+        return d;
+        // Add any additional parameters you want to send to the server here
+      }
+    },
+    columns: [
+      { data: 'id', title: 'Route ID' },
+      { data: 'city', title: 'City' },
+      { 
+        data: 'createdAt', 
+        title: 'Creation Date', 
+        render: DataTable.render.date() 
       },
-      columns: [
-  { data: 'id', title: 'Route ID' }, // A unique ID for each route (add a routeId field to schema for this column).
-  { data: 'city', title: 'City' }, // A unique ID for each route (add a routeId field to schema for this column).
-  { data: 'createdAt', title: 'Creation Date', render: DataTable.render.date() }, // Date the route was created.
-  { data: 'updatedAt', title: 'Updated At', render: DataTable.render.date() },   // Date the route was last updated.
-  { 
-    data: null, 
-    title: 'Actions', 
-    render: function (data, type, row) {
-      return `
-        <button class="btn btn-primary btn-sm edit" data-id="${row._id}">Edit</button>
-        <button class="btn btn-danger btn-sm delete" data-id="${row._id}">Delete</button>
-      `;
+      { 
+        data: 'updatedAt', 
+        title: 'Updated At', 
+        render: DataTable.render.date() 
+      },
+      { 
+        data: null, 
+        title: 'Actions', 
+        render: function (data, type, row) {
+          return `
+            <button class="btn btn-danger btn-sm delete" data-id="${row._id}">Delete</button>
+          `;
+        }
+      }
+    ]
+  });
+  
+  // Attach click event handler to Delete buttons
+  $(document).on('click', '.delete', function () {
+    var id = $(this).data('id');
+    
+    if (confirm("Are you sure you want to delete this city?")) {
+      $.ajax({
+        url: '/delete-city',  // Your backend endpoint to delete the city
+        method: 'POST',
+        data: { id: id },
+        success: function (response) {
+          if (response.success) {
+            alert("City deleted successfully!");
+            // Reload the DataTable to reflect the changes
+            datatable.ajax.reload(null, false);
+          } else {
+            alert("Error: " + response.message);
+          }
+        },
+        error: function (error) {
+          console.error("Error deleting city:", error);
+          alert("An error occurred while deleting the city.");
+        }
+      });
     }
-  }
-]
-    });
+  });
   });
 </script>
 

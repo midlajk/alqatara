@@ -88,7 +88,9 @@
                         </div>
                         <div>
                             <button type="submit" class="btn btn-success">Update Order</button>
+                            <button type="button" class="btn btn-danger" id="deleteOrderBtn" data-id="ORDER_ID">Delete order</button>
                         </div>
+                        
                     </form>
                 </div>
             </div>
@@ -232,5 +234,36 @@
 });
 
       </script>
+
+<script>
+    document.getElementById("deleteOrderBtn").addEventListener("click", function () {
+        const orderId = '<%= order._id %>'; // Get order ID from button
+    
+        if (!confirm("Are you sure you want to delete this order?")) {
+            return; // Stop if user cancels
+        }
+    
+        fetch('/delete-order', { // Replace with your actual delete API URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: orderId }) // Send order ID in request
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Order deleted successfully!");
+                window.location.href = "/orders"; // Redirect to /orders
+            } else {
+                alert("Failed to delete order: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while deleting the order.");
+        });
+    });
+    </script>
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

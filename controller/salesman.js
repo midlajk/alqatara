@@ -7,7 +7,7 @@ const Order = mongoose.model('Order')
 const Salesman = mongoose.model('Salesman')
 
 exports.getsalesman = async (req, res) => {
-    console.log('sdsds..');
+
     try {
       const { start, length, draw, search } = req.query; // Extract DataTables parameters
       const searchQuery = search && search.value ? search.value : ''; // Search value
@@ -52,3 +52,18 @@ exports.getsalesman = async (req, res) => {
       }
  
   };
+
+    
+  exports.salesmanids = async (req, res) => {
+    try {
+      const salesmans = await Salesman.find({}, { id: 1}); // Fetch only required fields
+      console.log(salesmans)
+      res.json(salesmans);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error fetching routes');
+    }
+
+    
+
+};

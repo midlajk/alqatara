@@ -97,26 +97,31 @@
             },// Data source is the root of the response array
       },
       columns: [
-        { data: 'id' }, // Truck ID
-        { data: 'salesmanId' }, // In-Charge
-        { data: 'delivered5galBottles' }, // Today's 5-Gallon Bottles Delivered
-        { data: 'delivered200mlBottles' }, // Total Bottles Delivered
-        { data: 'remaining5galBottles' }, // Bottle Balance
-        { data: 'damaged5galBottles' }, // Damaged 5-Gallon Bottles
-        { 
-          data: 'updatedAt', // Last Delivery Date and Time
-          render: function (data) {
-            return new Date(data).toLocaleString(); // Format the timestamp
-          }
-        },
-        { data: null, render: function(data, type, row) {
-            return `
-              <button class="btn btn-primary edit-zone" data-id="${row._id}">Edit</button>
-              <button class="btn btn-danger history-zone" data-id="${row._id}">History</button>
-            `;
-          }
-        }
-      ]
+  { data: 'id', render: data => data ? data : 'N/A' }, // Truck ID
+  { data: 'salesmanId', render: data => data ? data : 'N/A' }, // In-Charge
+  { data: 'delivered5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Today's 5-Gallon Bottles Delivered
+  { data: 'delivered200mlBottles', render: data => data !== undefined ? data : 'N/A' }, // Total Bottles Delivered
+  { data: 'remaining5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Bottle Balance
+  { data: 'damaged5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Damaged 5-Gallon Bottles
+  { 
+    data: 'updatedAt', // Last Delivery Date and Time
+    render: function (data) {
+      return data ? new Date(data).toLocaleString() : 'N/A';
+    }
+  },
+  { 
+    data: null, 
+    orderable: false, // Prevent sorting on this column
+    searchable: false, // Prevent search filter on buttons
+    render: function(data, type, row) {
+      return `
+        <button class="btn btn-primary edit-zone" data-id="${row._id}">Edit</button>
+        <button class="btn btn-danger history-zone" data-id="${row.id}">History</button>
+      `;
+    }
+  }
+]
+
     });
     $('#truckTable tbody').on('click', '.edit-zone', function () {
         var truckId = $(this).data('id');

@@ -24,21 +24,27 @@
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Order ID</th>
+                  <th scope="col" class="sort" data-sort="name">createdAt</th>
                   <th scope="col" class="sort" data-sort="budget">Customer Name</th>
                   <th scope="col" class="sort" data-sort="status">No:of 5-gal bottles</th>
+                  <th scope="col" class="sort" data-sort="status">No:of 200ml bottles</th>
+
                   <th scope="col" class="sort">Truck</th>
                   <th scope="col" class="sort" data-sort="completion">Delivery Date</th>
-                  <th scope="col" class="sort">Time</th>
+                  <!-- <th scope="col" class="sort">Time</th> -->
+                  
+                  <!-- <th scope="col" class="sort" data-sort="completion">Price 5-gal</th> -->
+                  <th scope="col" class="sort" data-sort="completion">Total Price</th>
                   <th scope="col" class="sort" data-sort="completion">Credit Status</th>
-                  <th scope="col" class="sort" data-sort="completion">Price 5-gal</th>
-                  <th scope="col" class="sort" data-sort="completion">Price 200ml</th>
-                  <th scope="col" class="sort" data-sort="completion">Pay b</th>
+                  <th scope="col" class="sort" data-sort="completion">Pay by</th>
+                  <th scope="col" class="sort" data-sort="completion">Updated At</th>
+
                   <th scope="col"></th>
                 </tr>
               </thead>
               <tbody class="list">
                 <tr>
-                  
+
                 </tr>
               </tbody>
             </table>
@@ -50,13 +56,13 @@
     <!-- Footer -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    
+
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-    
+
     <script>
       $(document).ready(function () {
         console.log('hehe')
-        
+
         // Initialize DataTable
        var datatable = $('#ordertable').DataTable({
         responsive: true,
@@ -67,43 +73,60 @@
             dataSrc: 'docs', // Key that holds the array of data in the API response
                 data: function (d) {
                   return d;
-      
+
                   // Add any additional parameters you want to send to the server here
                 },// Data source is the root of the response array
           },
           columns: [
          { data: 'id', title: 'Order ID' }, // Order ID
-           { data: 'name', title: 'Customer Name' }, // Customer Name
-          { data: 'noOf5galBottles', title: 'No:of 5-gal bottles' }, // No. of 5-gal bottles
-        { data: 'truckId', title: 'Truck' }, // Truck
-           { 
-            data: 'deliveredAt', 
-            title: 'Delivery Date', 
+         {
+            data: 'createdAt',
+            title: 'Creation Date',
             render: function (data) {
               return new Date(data).toLocaleDateString(); // Format date
             }
-          }, 
-          { 
-            data: 'deliveredAt', 
-            title: 'Time', 
-            render: function (data) {
-              return new Date(data).toLocaleTimeString(); // Format time
-            }
           },
-          { 
-            data: 'isCreditCustomerPaid', 
-            title: 'Credit Status', 
+           { data: 'name', title: 'Customer Name' }, // Customer Name
+          { data: 'noOf5galBottles', title: 'No:of 5-gal bottles' }, // No. of 5-gal bottles
+          { data: 'noOf200mlBottles', title: 'No:of 200ml bottles' },
+        { data: 'truckId', title: 'Truck' }, // Truck
+        { data: 'status', title: 'Delivery Status' },
+          //  {
+          //   data: 'status',
+          //   title: 'Delivery Status',
+          //   render: function (data) {
+          //     return new Date(data).toLocaleDateString(); // Format date
+          //   }
+          // },
+          // {
+          //   data: 'delivered_at',
+          //   title: 'Time',
+          //   render: function (data) {
+          //     return new Date(data).toLocaleTimeString(); // Format time
+          //   }
+          // },
+          
+          // { data: 'priceFor5galBottles', title: 'Price 5-gal' }, // Price 5-gal
+          { data: 'totalPrice', title: 'Total' }, // Price 200ml
+         {
+            data: 'isCreditCustomerPaid',
+            title: 'Credit Status',
             render: function (data) {
               return data ? 'Paid' : 'Unpaid'; // Render credit status
             }
           },
-          { data: 'priceFor5galBottles', title: 'Price 5-gal' }, // Price 5-gal
-          { data: 'priceFor200mlBottles', title: 'Price 200ml' }, // Price 200ml
-          { 
-            data: 'modeOfPayment', 
-            title: 'Pay b', 
+           {
+            data: 'modeOfPayment',
+            title: 'Pay b',
             render: function (data) {
               return data || 'N/A'; // Display mode of payment or N/A
+            }
+          },
+          {
+            data: 'updatedAt',
+            title: 'Updated At',
+            render: function (data) {
+              return new Date(data).toLocaleString(); // Format date
             }
           },
         { data: null, render: function(data, type, row) {

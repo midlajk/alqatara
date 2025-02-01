@@ -74,47 +74,83 @@
                 },// Data source is the root of the response array
           },
           columns: [
-  { data: 'name', title: 'Customer Name' }, // Customer Name
-  { data: 'uid', title: 'Customer ID' }, // Customer ID (assuming 'uid' is the customer ID)
-  { data: 'mobileNumber', title: 'Contact' }, // Contact (assuming 'mobileNumber' is the primary contact)
+  { 
+    data: 'name', 
+    title: 'Customer Name',
+    render: function(data) {
+      return data ? data : 'N/A';
+    }
+  },
+  { 
+    data: 'id', 
+    title: 'Customer ID',
+    render: function(data) {
+      return data ? data : 'N/A';
+    }
+  },
+  { 
+    data: 'mobileNumber', 
+    title: 'Contact',
+    render: function(data) {
+      return data ? data : 'N/A';
+    }
+  },
   { 
     data: 'createdAt', 
     title: 'Registered On', 
-    render: function (data) {
-      return new Date(data).toLocaleDateString(); // Format the date as required
+    render: function(data) {
+      return data ? new Date(data).toLocaleDateString() : 'N/A';
     }
-  }, // Registered On
+  },
   { 
     data: 'lastOrderedAt', 
     title: 'Recent Delivery', 
-    render: function (data) {
-      return data ? new Date(data).toLocaleDateString() : 'N/A'; // Format the date or display 'N/A'
+    render: function(data) {
+      return data ? new Date(data).toLocaleDateString() : 'N/A';
     }
-  }, // Recent Delivery (Last order date)
-  { data: 'walletBalance', title: 'Wallet Balance' }, // Wallet Balance
-  { data: 'city', title: 'City' }, // City
-  { data: 'address', title: 'Address' }, // Address
+  },
+  { 
+    data: 'walletBalance', 
+    title: 'Wallet Balance',
+    render: function(data) {
+      return (data !== null && data !== undefined) ? data : 'N/A';
+    }
+  },
+  { 
+    data: 'city', 
+    title: 'City',
+    render: function(data) {
+      return data ? data : 'N/A';
+    }
+  },
+  { 
+    data: 'address', 
+    title: 'Address',
+    render: function(data) {
+      return data ? data : 'N/A';
+    }
+  },
   { 
     data: 'verified', 
     title: 'Status', 
-    render: function (data) {
-      return data ? 'Verified' : 'Not Verified'; // Display customer verification status
+    render: function(data) {
+      return (data !== null && data !== undefined) ? (data ? 'Verified' : 'Not Verified') : 'N/A';
     }
-  }, // Status (Verified or Not Verified)
-  // { data: 'otherDetails', title: 'Caption' }, // Caption (using 'otherDetails' as caption, adjust as needed)
+  },
   {
-  data: null, // Using null since the data will be determined dynamically
-  title: 'Caption',
-  render: function (data, type, row) {
-    if (row.otherDetails && row.otherDetails.trim() !== '') {
-      return row.otherDetails; // Display otherDetails if available
-    } else if (row.city && row.city.trim() !== '') {
-      return row.city; // Otherwise, display city if available
+    data: null, 
+    title: 'Caption',
+    render: function(data, type, row) {
+      if (row.otherDetails && row.otherDetails.trim() !== '') {
+        return row.otherDetails;
+      } else if (row.city && row.city.trim() !== '') {
+        return row.city;
+      }
+      return 'N/A';
     }
-    return 'N/A'; // Default to 'N/A' if neither is available
   }
-}
 ]
+
 });
       });
     </script>

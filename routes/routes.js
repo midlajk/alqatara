@@ -7,6 +7,7 @@ const routeapi = require('../controller/route.js');
 router.get('/getroutes', routeapi.getroutes);
 router.post('/addRoute', routeapi.newroutes);
 router.get('/routeids', routeapi.routeids);
+router.post('/delete-route', routeapi.deleteroutes);
 
 
 module.exports = router;

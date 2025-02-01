@@ -20,7 +20,7 @@ exports.getorders = async (req, res) => {
   
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-        Order.find(query).skip(skip).limit(limit), // Fetch paginated data
+        Order.find(query).sort({ _id: -1 }).skip(skip).limit(limit), // Fetch paginated data
         Order.countDocuments(), // Total records count
         Order.countDocuments(query) // Filtered records count
       ]);
@@ -41,7 +41,7 @@ exports.getorders = async (req, res) => {
 
 //   app.post('/addtruck', async (req, res) => {
     exports.neworder = async (req, res) => {
-        console.log(req.body)
+       
  
       try {
         const order = new Order(req.body);
@@ -79,7 +79,6 @@ exports.editorderpage = async (req, res) => {
 
   const id = req.params.id
   const order = await Order.findById(id)
-  console.log(order)
   res.render('order/updateorder',  { title: 'Al Qattara',route:'Orders',sub :'Edit Orders' ,order:order});
 
 
@@ -123,6 +122,7 @@ exports.orderhistory = async (req, res) => {
 
   const id = req.params.id
   const order = await Order.findById(id)
+  console.log(order)
   res.render('order/orderhistory', { title: 'Al Qattara',route:'Orders',sub :'Order History',order:order });
 
 
@@ -156,7 +156,7 @@ exports.orderhistorydata = async (req, res) => {
 
     // Fetch filtered data and total count
     const [filteredHistory, totalRecords, totalFiltered] = await Promise.all([
-      CreditOrderHistory.find(query).skip(skip).limit(limit), // Fetch paginated data
+      CreditOrderHistory.find(query).sort({_id:-1}).skip(skip).limit(limit), // Fetch paginated data
       CreditOrderHistory.countDocuments(), // Total records count
       CreditOrderHistory.countDocuments(query), // Filtered records count
     ]);
@@ -174,3 +174,74 @@ exports.orderhistorydata = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch order history" });
   }
 };
+
+exports.deleteorder = async (req, res) => {
+  try {
+    const { id } = req.body;
+    await Order.findByIdAndDelete(id); // Delete order from DB
+    res.json({ success: true });
+} catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Error deleting order" });
+}
+  
+
+};
+
+exports.updateOrderStatus = async (req, res) => {
+  try {
+    const {_id, id, delivered_at, assistants, ...updateData } = req.body;
+    console.log(delivered_at)
+
+    // Ensure delivered_at is a proper Date object
+    if (delivered_at) {
+      updateData.delivered_at = new Date(delivered_at);
+    }
+
+    // Ensure assistants is stored as an array
+    if (assistants) {
+      updateData.assistants = Array.isArray(assistants) ? assistants : [assistants];
+    }
+
+    // Update the order in the database
+    const updatedOrder = await Order.findByIdAndUpdate({ _id }, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure the data follows schema rules
+    });
+    console.log(updatedOrder)
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    res.redirect('/orderhistory/'+_id);
+  } catch (error) {
+    console.error("Error updating order:", error);
+    res.status(500).json({ success: false, message: "Error updating order" });
+  }
+};
+
+exports.addpayments = async (req, res) => {
+
+try {
+  const { orderId, paymentDate, modeOfPayment, amountpaid } = req.body;
+  console.log(req.body)
+
+    const payment = new CreditOrderHistory({
+      orderId:orderId,
+      createdAt:new Date(),
+      updatedAt:new Date(paymentDate),
+      modeOfPayment:modeOfPayment,
+      creditAmountPaid:amountpaid,
+      totalCreditAmountDue:0
+    });
+    await payment.save();
+
+  // Find the order and update payment details
+
+  res.json({ success: true, message: "Payment added successfully", payment });
+} catch (error) {
+  console.error("Error adding payment:", error);
+  res.status(500).json({ success: false, message: "Server error" });
+}
+}

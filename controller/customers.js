@@ -21,7 +21,7 @@ exports.getcustomer = async (req, res) => {
   
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-        Customer.find(query).skip(skip).limit(limit), // Fetch paginated data
+        Customer.find(query).sort({_id:-1}).skip(skip).limit(limit), // Fetch paginated data
         Customer.countDocuments(), // Total records count
         Customer.countDocuments(query) // Filtered records count
       ]);

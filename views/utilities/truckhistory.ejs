@@ -4,7 +4,6 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/utilities/addtruck" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
 </div>
 </div>
 </div>
@@ -25,11 +24,11 @@
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Truck ID</th>
                   <th scope="col" class="sort" data-sort="budget">In-Charge</th>
-                  <th scope="col" class="sort" data-sort="status">Today's 5 gallon bottle delivery</th>
-                  <th scope="col" class="sort">Total bottles Delivered Today</th>
+                  <th scope="col" class="sort" data-sort="status">Delivered 5 gal</th>
+                  <th scope="col" class="sort">Bottle Delivered 200ml</th>
                   <th scope="col" class="sort" data-sort="completion">Bottle Balance</th>
-                  <th scope="col" class="sort">Damaged 5-Gallon Bottles</th>
-                  <th scope="col" class="sort" data-sort="completion">Last Delivery Date and Time</th>
+                  <th scope="col" class="sort">Damaged Bottles</th>
+                  <th scope="col" class="sort" data-sort="completion">Updated At</th>
                   <th scope="col"></th>
                 </tr>
               </thead>
@@ -80,7 +79,6 @@
 
 <script>
   $(document).ready(function () {
-    console.log('hehe')
     
     // Initialize DataTable
    var datatable = $('#truckTable').DataTable({
@@ -88,46 +86,30 @@
           processing: true,
           serverSide: true,
       ajax: {
-        url: '/gettrucks', // Backend API endpoint
+        url: '/gettruchhistory', // Backend API endpoint
         dataSrc: 'docs', // Key that holds the array of data in the API response
             data: function (d) {
+              d.id = '<%= id %>'; // Dynamically pass id parameter to the server
               return d;
-  
               // Add any additional parameters you want to send to the server here
             },// Data source is the root of the response array
       },
       columns: [
-        { data: 'id' }, // Truck ID
-        { data: 'salesmanId' }, // In-Charge
-        { data: 'delivered5galBottles' }, // Today's 5-Gallon Bottles Delivered
-        { data: 'delivered200mlBottles' }, // Total Bottles Delivered
-        { data: 'remaining5galBottles' }, // Bottle Balance
-        { data: 'damaged5galBottles' }, // Damaged 5-Gallon Bottles
-        { 
-          data: 'updatedAt', // Last Delivery Date and Time
-          render: function (data) {
-            return new Date(data).toLocaleString(); // Format the timestamp
-          }
-        },
-        { data: null, render: function(data, type, row) {
-            return `
-              <button class="btn btn-primary edit-zone" data-id="${row._id}">Edit</button>
-              <button class="btn btn-danger history-zone" data-id="${row._id}">History</button>
-            `;
-          }
-        }
-      ]
-    });
-    $('#truckTable tbody').on('click', '.edit-zone', function () {
-        var truckId = $(this).data('id');
-        window.location.href = '/editutilities/' + truckId;
+  { data: 'truckId', render: data => data ? data : 'N/A' }, // Truck ID
+  { data: 'salesmanId', render: data => data ? data : 'N/A' }, // In-Charge
+  { data: 'delivered5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Today's 5-Gallon Bottles Delivered
+  { data: 'delivered200mlBottles', render: data => data !== undefined ? data : 'N/A' }, // Total Bottles Delivered
+  { data: 'remaining5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Bottle Balance
+  { data: 'damaged5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Damaged 5-Gallon Bottles
+  { 
+    data: 'updatedAt', // Last Delivery Date and Time
+    render: function (data) {
+      return data ? new Date(data).toLocaleString() : 'N/A'; // Format timestamp or show 'N/A'
+    }
+  }
+]
     });
 
-    // Handle History button click
-    $('#truckTable tbody').on('click', '.history-zone', function () {
-        var truckId = $(this).data('id');
-        window.location.href = '/truckhistory/' + truckId;
-    });
   });
 </script>
 

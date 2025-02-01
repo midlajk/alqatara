@@ -69,3 +69,20 @@ exports.getroutes = async (req, res) => {
     
 
 };
+
+
+
+exports.deleteroutes = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const deletedRoute = await Route.findByIdAndDelete(id);
+    if (!deletedRoute) {
+      return res.status(404).json({ success: false, message: 'Route not found' });
+    }
+    res.json({ success: true, message: 'Route deleted successfully' });
+  } catch (error) {
+    console.error("Error deleting route:", error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+
+};

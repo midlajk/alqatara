@@ -4,7 +4,15 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/orders/neworder" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add updation</a>
+<!-- Bootstrap CSS -->
+
+<!-- jQuery, Popper.js, and Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+
+<button type="button" class="btn btn-danger ml-3" data-toggle="modal" data-target="#paymentModal">
+  Add Payment
+</button>
 </div>
 </div>
 </div>
@@ -12,11 +20,100 @@
 </div>
 <div class="container-fluid mt--6">
     <div class="row">
-      <div class="col">
+      <div class="col-12">
         <div class="card">
           <!-- Card header -->
           <div class="card-header border-0">
-            <h3 class="mb-0">Truck Delivery and Details</h3>
+            <h3 class="mb-0">Order Status of <%= order.id %></h3>
+          </div>
+      
+          <!-- Card body -->
+          <div class="card-body"  id="cardb">
+            <form id="orderForm" action="/updateOrderStatus" method="post">
+              <div class="row"  id="cardb">
+                <!-- Name -->
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="name">Customer Name</label>
+                    <input type="text" class="form-control" id="name" disabled name="name1" value="<%= order.name %>">
+                  </div>
+                </div>
+      
+                <!-- Salesman -->
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="salesmanId">Salesman ID</label>
+                    <select class="salesman-js form-control" id="salesmanId" name="salesmanId" >
+                      <option value="<%=order.salesmanId%>"><%=order.salesmanId%></option>
+                    </select>
+                  </div>
+                </div>
+      
+                <!-- Status -->
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="status">Status</label>
+                    <select class="form-control" id="status" name="status">
+                      <option value="PENDING" <%= order.status === 'PENDING' ? 'selected' : '' %>>PENDING</option>
+                      <option value="DELIVERED" <%= order.status === 'DELIVERED' ? 'selected' : '' %>>DELIVERED</option>
+                      <option value="CANCELLED" <%= order.status === 'CANCELLED' ? 'selected' : '' %>>CANCELLED</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="delivered_at">Delivery Date</label>
+                    
+                    <input type="date" class="form-control" id="delivered_at" name="delivered_at" value="<%= order.delivered_at ? order.delivered_at.toISOString().split('T')[0] : '' %>">
+                  </div>
+                </div>
+                
+                <!-- Mode of Payment -->
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="modeOfPayment">Mode of Payment</label>
+                    <input type="text" class="form-control" id="modeOfPayment" name="modeOfPayment" value="<%= order.modeOfPayment %>">
+                  </div>
+                </div>
+      
+                
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="assistants">Assistant<!-- s (Comma-separated) --></label>
+                    <select class="assistant-js form-control" id="assistants" name="assistants" >
+                      <option value="<%= order.assistants[0] %>"><%= order.assistants[0] %></option>
+                    </select>
+                  </div>
+                </div>
+      
+                <!-- Credit Amount Paid -->
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="creditAmountPaid">Credit Amount Paid</label>
+                    <input type="number" class="form-control" id="creditAmountPaid" name="creditAmountPaid" value="<%= order.creditAmountPaid %>">
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" name="_id" id="_id" value="<%= order._id%>">
+      
+              <!-- Submit Button (Centered) -->
+              <div>
+                <button type="submit" class="btn btn-success">Update Order</button>
+              
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Optional: Ensure responsiveness adjusts properly -->
+     
+      
+      <div class="col-12">
+        <div class="card">
+          <!-- Card header -->
+          <div class="card-header border-0">
+            <h3 class="mb-0">Order History of <%=order.id%></h3>
             <h3></h3>
           </div>
           <!-- Light table -->
@@ -24,8 +121,7 @@
             <table id="ordertable" class="table align-items-center table-flush">
               <thead class="thead-light">
                 <tr>
-                  <th scope="col" class="sort" data-sort="orderId">Order ID</th>
-                  <th scope="col" class="sort" data-sort="createdAt">Created At</th>
+              
                   <th scope="col" class="sort" data-sort="updatedAt">Updated At</th>
                   <th scope="col" class="sort" data-sort="modeOfPayment">Mode of Payment</th>
                   <th scope="col" class="sort" data-sort="creditAmountPaid">Credit Amount Paid</th>
@@ -44,17 +140,63 @@
         </div>
       </div>
     </div>
+    <!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentModalLabel">Add Payment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="paymentForm">
+          <!-- Date Field -->
+          <div class="form-group">
+            <label for="paymentDate">Payment Date</label>
+            <input type="date" class="form-control" id="paymentDate" name="paymentDate" required>
+          </div>
+
+          <!-- Mode of Payment -->
+          <div class="form-group">
+            <label for="modeOfPayment">Mode of Payment</label>
+            <select class="form-control" id="modeOfPayment" name="modeOfPayment">
+              <option value="Cash">Cash</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
+
+          <!-- Credit Amount Paid -->
+          <div class="form-group">
+            <label for="creditAmountPaid">Credit Amount Paid</label>
+            <input type="number" class="form-control" id="amountpaid" value="0" name="amountpaid" required>
+          </div>
+
+          <input type="hidden" name="orderId" id="orderId" value="<%= order.id %>">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" id="savePayment">Save Payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- Footer -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
     <script>
+      var ordertable
       $(document).ready(function () {
         
         // Initialize DataTable
-        $('#ordertable').DataTable({
+        ordertable =  $('#ordertable').DataTable({
   responsive: true,
   processing: true,
   serverSide: true,
@@ -68,14 +210,7 @@
   },
   
   columns: [
-    { data: 'orderId', title: 'Order ID' },
-    { 
-      data: 'createdAt', 
-      title: 'Created At', 
-      render: function (data) {
-        return new Date(data).toLocaleDateString(); 
-      }
-    },
+   
     { 
       data: 'updatedAt', 
       title: 'Updated At', 
@@ -108,6 +243,93 @@
 //     });
       });
     </script>
+          <script>
+            $(document).ready(function () {
+              // Initialize Select2 for the element with the correct ID or class
+              $('.salesman-js').select2({
+                dropdownParent: $("#cardb"),
+      ajax: {
+        url: '/salesmanids', // Backend endpoint
+        dataType: 'json',
+        delay: 250, // Debounce for performance
+        processResults: function (data) {
+          return {
+            results: data.map(function (item) {
+              return { id: item.id, text: item.id }; // Customize text display
+            }),
+          };
+        },
+      
+      },
+    });
+            });
+          </script> 
+                <script>
+                  $(document).ready(function () {
+                    // Initialize Select2 for the element with the correct ID or class
+                    $('.assistant-js').select2({
+                      dropdownParent: $("#cardb"),
+            ajax: {
+              url: '/salesmanids', // Backend endpoint
+              dataType: 'json',
+              delay: 250, // Debounce for performance
+              processResults: function (data) {
+                return {
+                  results: data.map(function (item) {
+                    return { id: item.id, text: item.id }; // Customize text display
+                  }),
+                };
+              },
+            
+            },
+          });
+                  });
+                </script> 
+<script>
+  $(document).ready(function () {
+    // Open Modal when button is clicked
+    // $("#openPaymentModal").on("click", function (e) {
+    //   e.preventDefault();
+    //   $("#paymentModal").modal("show");
+    // });
+
+
+
+    // Submit the Payment Form
+    $("#savePayment").on("click", function () {
+      const formData = {
+        orderId: $("#orderId").val(),
+        paymentDate: $("#paymentDate").val(),
+        
+        modeOfPayment: $("#modeOfPayment").val(),
+        amountpaid: $("#amountpaid").val()
+      };
+      if(!formData.paymentDate){
+        return alert('Please choose date')
+      }
+      // Send data via AJAX
+      $.ajax({
+        url: "/add-payment",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(formData),
+        success: function (response) {
+          if (response.success) {
+            alert("Payment added successfully!");
+            $("#paymentModal").modal("hide");
+            ordertable.reload(); // Refresh page to update payment table
+          } else {
+            alert("Error: " + response.message);
+          }
+        },
+        error: function (error) {
+          alert("An error occurred while adding payment.");
+          console.error(error);
+        }
+      });
+    });
+  });
+</script>
 
 <%- include('../includes/footer.ejs') -%>
 

@@ -11,6 +11,7 @@ router.get('/truckids', utilitiesApis.truckids);
 router.get('/editutilities/:id', utilitiesApis.editutilitiespage);
 router.post('/updateTruck', utilitiesApis.updateTruck);
 router.get('/truckhistory/:id', utilitiesApis.truckhistorypage);
+router.get('/gettruchhistory', utilitiesApis.gettruckhistory);
 
 
 module.exports = router;

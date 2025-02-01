@@ -61,6 +61,30 @@ customerSchema.pre('save', async function (next) {
   }
   next();
 });
+customerSchema.pre('save', async function (next) {
+  if (!this.id) {
+    // Helper function to generate a six-digit number
+    const generateSixDigitId = () => {
+      // Generates a random number between 100000 and 999999 (inclusive)
+      return Math.floor(100000 + Math.random() * 900000);
+    };
+
+    let unique = false;
+    let newId;
+
+    while (!unique) {
+      newId = generateSixDigitId();
+      // Check if any customer already has this id
+      const existingCustomer = await mongoose.model('Customer').findOne({ id: newId });
+      if (!existingCustomer) {
+        unique = true;
+      }
+    }
+
+    this.id = newId;
+  }
+  next();
+});
 const rechargeSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
@@ -170,7 +194,7 @@ const orderSchema = new mongoose.Schema({
   priceFor200mlBottles: { type: Number, default: 0 },
   priceFor5galBottles: { type: Number, default: 0 },
   totalPrice: { type: Number, default: 0 },
-  deliveredAt: { type: Date },
+  delivered_at: { type: Date },
   modeOfPayment: { type: String },
   createdBy: { type: String },
   assistants: { type: [String], default: [] },

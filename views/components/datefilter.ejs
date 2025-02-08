@@ -1,0 +1,25 @@
+<button class="btn btn-danger ml-3" type="button" data-bs-toggle="modal" data-bs-target="#dateModal">Filter</button>
+
+<div class="modal fade" id="dateModal" tabindex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="dateModalLabel">Select Date Range</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="dateForm">
+            <div class="mb-3">
+              <label for="fromDate" class="form-label">From:</label>
+              <input type="date" class="form-control" id="fromDate">
+            </div>
+            <div class="mb-3">
+              <label for="toDate" class="form-label">To:</label>
+              <input type="date" class="form-control" id="toDate">
+            </div>
+            <button type="submit" class="btn btn-primary" id="applyFilterBtn">Apply</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

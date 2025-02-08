@@ -46,7 +46,7 @@ router.get('/routes/addroute',authMiddleware, function(req, res, next) {
 });
 
 router.get('/report',authMiddleware, function(req, res, next) {
-  res.render('reports/reports', { title: 'Al Qattara' ,route:'Reports',sub :'Manage Reports'});
+  res.render('reports/salespersonreports', { title: 'Al Qattara' ,route:'Reports',sub :'Sales Reports'});
 });
 
 router.get('/login', function(req, res, next) {

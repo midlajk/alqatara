@@ -7,8 +7,8 @@
 <!-- Bootstrap CSS -->
 
 <!-- jQuery, Popper.js, and Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script> -->
 
 <button type="button" class="btn btn-danger ml-3" data-toggle="modal" data-target="#paymentModal">
   Add Payment
@@ -69,14 +69,46 @@
                 </div>
                 
                 <!-- Mode of Payment -->
+                
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="modeOfPayment">Number of 5 gal</label>
+                    <input type="text" class="form-control" id="noOf5galBottles" name="noOf5galBottles" value="<%= order.noOf5galBottles || '' %>">
+                  </div>
+                </div>   <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="modeOfPayment">Number of 200ml</label>
+                    <input type="text" class="form-control" id="noOf200mlBottles" name="noOf200mlBottles" value="<%= order.noOf200mlBottles || '' %>">
+                  </div>
+                </div>   <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="modeOfPayment">Price of 5 gal</label>
+                    <input type="text" class="form-control" id="priceFor5galBottles" name="priceFor5galBottle" value="<%= priceForA5galBottle || 0 %>">
+                  </div>
+                </div>
+                   <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="modeOfPayment">Price of 200 ml</label>
+                    <input type="text" class="form-control" id="priceFor200mlBottles" name="priceFor200mlBottle" value="0">
+                  </div>
+                </div>
+                <div class="col-12 col-md-3">
+                  <div class="form-group">
+                    <label for="modeOfPayment">Total</label>
+                    <input type="text" class="form-control" id="totalPrice" name="totalPrice" value="0">
+                  </div>
+                </div>
                 <div class="col-12 col-md-3">
                   <div class="form-group">
                     <label for="modeOfPayment">Mode of Payment</label>
-                    <input type="text" class="form-control" id="modeOfPayment" name="modeOfPayment" value="<%= order.modeOfPayment %>">
-                  </div>
+                    <select class="form-control" id="modeOfPayment" name="modeOfPayment">
+                      <option value="Cash" <%= order.modeOfPayment === 'Cash' ? 'selected' : '' %>>Cash</option>
+                      <option value="Wallet" <%= order.modeOfPayment === 'Wallet' ? 'selected' : '' %>>Wallet</option>
+                      <option value="Online" <%= order.modeOfPayment === 'Online' ? 'selected' : '' %>>Online</option>
+                      <option value="Other" <%= order.modeOfPayment === 'Other' ? 'selected' : '' %>>Other</option>
+                  </select>
+                                  </div>
                 </div>
-      
-                
                 <div class="col-12 col-md-3">
                   <div class="form-group">
                     <label for="assistants">Assistant<!-- s (Comma-separated) --></label>
@@ -89,7 +121,7 @@
                 <!-- Credit Amount Paid -->
                 <div class="col-12 col-md-3">
                   <div class="form-group">
-                    <label for="creditAmountPaid">Credit Amount Paid</label>
+                    <label for="creditAmountPaid">Amount Paid</label>
                     <input type="number" class="form-control" id="creditAmountPaid" name="creditAmountPaid" value="<%= order.creditAmountPaid %>">
                   </div>
                 </div>
@@ -316,20 +348,43 @@
         success: function (response) {
           if (response.success) {
             alert("Payment added successfully!");
-            $("#paymentModal").modal("hide");
-            ordertable.reload(); // Refresh page to update payment table
+            location.reload(); // Reload the entire page
           } else {
             alert("Error: " + response.message);
           }
         },
         error: function (error) {
-          alert("An error occurred while adding payment.");
-          console.error(error);
+          alert(error.responseJSON.message);
         }
       });
     });
   });
+  $(document).ready(function () {
+    function calculateTotal() {
+        // Get input values
+        let noOf5galBottles = parseFloat($("#noOf5galBottles").val()) || 0;
+        let noOf200mlBottles = parseFloat($("#noOf200mlBottles").val()) || 0;
+        let priceFor5galBottles = parseFloat($("#priceFor5galBottles").val()) || 0;
+        let priceFor200mlBottles = parseFloat($("#priceFor200mlBottles").val()) || 0;
+
+        // Calculate total price
+        let totalPrice = (noOf5galBottles * priceFor5galBottles) + (noOf200mlBottles * priceFor200mlBottles);
+
+        // Update the total price field
+        $("#totalPrice").val(totalPrice.toFixed(2));
+    }
+
+    // Run calculation on page load
+    calculateTotal();
+
+    // Add event listeners to update total when any input field changes
+    $("#noOf5galBottles, #noOf200mlBottles, #priceFor5galBottles, #priceFor200mlBottles").on("input", calculateTotal);
+});
+
+
 </script>
+
+
 
 <%- include('../includes/footer.ejs') -%>
 

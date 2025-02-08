@@ -15,7 +15,7 @@
               <div class="card-header bg-transparent">
                   <div class="row align-items-center">
                       <div class="col">
-                          <h6 class="text-uppercase text-muted ls-1 mb-1">Truck</h6>
+                          <h6 class="text-uppercase text-muted ls-1 mb-1">Truck <span id="selectedtruck"></span></h6>
                           <!-- <h5 class="h3 text-white mb-0">Sales value</h5> -->
                       </div>
                   </div>
@@ -76,7 +76,10 @@
               const truckDiv = document.createElement("div");
               truckDiv.style.cssText =
                 "width: 100%; height: 70px; border-radius: 5px; box-shadow: 2px 1px 5px; margin-bottom: 5px; padding: 10px; cursor: pointer;";
-              truckDiv.onclick = () => showDashboard(truck.id);
+               
+              truckDiv.onclick = () => {
+                document.getElementById('selectedtruck').innerText = ' - '+ truck.id;
+                fetchDashboardData(truck.id)};
       
               truckDiv.innerHTML = `
                 <label>Truck ID: ${truck.id}</label> <br>
@@ -118,7 +121,7 @@
                           <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
                           <h5 class="h3 text-white mb-0">Sales value</h5>
                       </div>
-                      <div class="col">
+                      <!-- <div class="col">
                           <ul class="nav nav-pills justify-content-end">
                               <li class="nav-item mr-2 mr-md-0" data-toggle="chart"
                                   data-target="#chart-sales-dark"
@@ -138,7 +141,7 @@
                                   </a>
                               </li>
                           </ul>
-                      </div>
+                      </div> -->
                   </div>
               </div>
               <div class="card-body">
@@ -163,15 +166,200 @@
               <div class="card-body">
                   <!-- Chart -->
                   <div class="chart">
-                      <canvas id="chart-bars" class="chart-canvas"></canvas>
+                      <canvas id="chart-bar" class="chart-canvas"></canvas>
                   </div>
               </div>
           </div>
       </div>
   </div>
+  <script src="/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+<script src="/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
    <!-- Footer -->
+   <script src="/assets/vendor/js-cookie/js.cookie.js"></script>
+<!-- Optional JS -->
+<script src="assets/vendor/chart.js/dist/Chart.min.js"></script>
+<script src="assets/vendor/chart.js/dist/Chart.extension.js"></script>  
 
-
+<script src="assets/js/argon.js?v=1.2.1"></script>
 <%- include('./includes/footer.ejs') -%>
+<script>
+var SalesChart = (function() {
+       let truck = truckids||'All';
+       let fromDate = $("#fromDate").val();
+       let toDate = $("#toDate").val();
+       if (!fromDate || !toDate) {
+        let { startOfMonth, endOfMonth } = getDefaultMonthDates();
+        fromDate = startOfMonth;
+        toDate = endOfMonth;
+    }
+      // Variables
+  var $chart = $('#chart-sales-dark');
+  fetchSalesData(fromDate, toDate, truck);     
+  // Method to fetch sales data and update the chart
+  function fetchSalesData(fromDate, toDate, truckId) {
+    $.ajax({
+      url: '/sales-data',
+      type: 'GET',
+      data: { fromDate: fromDate, toDate: toDate, truckId: truckId },
+      dataType: 'json',
+      success: function(response) {
+        updateChart(response.labels, response.data);
+      },
+      error: function(xhr, status, error) {
+        console.error("Error fetching sales data:", error);
+      }
+    });
+  }
+
+  // Method to update the chart with new data
+  function updateChart(labels, data) {
+    var salesChart = $chart.data('chart');
+
+    // Update the chart's labels and data dynamically
+    salesChart.data.labels = labels;
+    salesChart.data.datasets[0].data = data;
+
+    // Re-render the chart
+    salesChart.update();
+  }
+
+  // Method to initialize the chart
+  function init($this) {
+    var salesChart = new Chart($this, {
+      type: 'line',
+      options: {
+        scales: {
+          yAxes: [{
+            gridLines: {
+              color: Charts.colors.gray[700],
+              zeroLineColor: Charts.colors.gray[700]
+            },
+            ticks: {
+              beginAtZero: true,
+            }
+          }]
+        }
+      },
+      data: {
+        labels: [], // Will be dynamically updated
+        datasets: [{
+          label: 'Sales Performance',
+          data: [] // Will be dynamically updated
+        }]
+      }
+    });
+
+    // Save chart instance to the DOM element
+    $this.data('chart', salesChart);
+  }
+
+  // Events
+  if ($chart.length) {
+    init($chart);
+
+    // Initialize filter and update chart on filter change
+    $("#applyFilterBtn").click(function() {
+      var fromDate = $("#fromDate").val();
+      var toDate = $("#toDate").val();
+   
+
+      fetchSalesData(fromDate, toDate, truckids);
+    
+    });
+  }
+
+})();
+
+</script>
+<script>
+async function fetchOrderData(startDate, endDate, truckId = '', area = '') {
+    try {
+        const response = await fetch(`/getOrdersCount?startDate=${startDate}&endDate=${endDate}&truckId=${truckId}&area=${area}`);
+        const data = await response.json();
+
+        // Process data for Chart.js
+        const labels = data.map(entry => entry._id);
+        const values = data.map(entry => entry.totalOrders);
+
+        updateChart(labels, values);
+    } catch (error) {
+        console.error('Error fetching order data:', error);
+    }
+}
+
+function updateChart(labels, data) {
+    var ctx = document.getElementById('chart-bar').getContext('2d');
+
+    if (window.ordersChart) {
+        window.ordersChart.destroy(); // Destroy old chart before creating a new one
+    }
+
+    window.ordersChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Orders',
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+// Example Usage:
+fetchOrderData('2024-01-01', '2025-02-01'); // Pass date range dynamically
+
+
+// var BarsChart = (function() {
+
+// //
+// // Variables
+// //
+
+// var $chart = $('#chart-bars');
+
+
+// //
+// // Methods
+// //
+
+// // Init chart
+// function initChart($chart) {
+
+//   // Create chart
+//   var ordersChart = new Chart($chart, {
+//     type: 'bar',
+//     data: {
+//       labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+//       datasets: [{
+//         label: 'Sales',
+//         data: [25, 20, 30, 22, 17, 29]
+//       }]
+//     }
+//   });
+
+//   // Save to jQuery object
+//   $chart.data('chart', ordersChart);
+// }
+
+
+// // Init chart
+// if ($chart.length) {
+//   initChart($chart);
+// }
+
+// })();
+</script>
+<script src="/assets/vendor/chart.js/dist/Chart.min.js"></script>
+<script src="/assets/vendor/chart.js/dist/Chart.extension.js"></script>  
 
 <%- include('./includes/end.ejs') -%>

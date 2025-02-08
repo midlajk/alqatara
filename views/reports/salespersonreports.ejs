@@ -1,0 +1,179 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+<style>
+  /* Scoped styles for custom-nav-tabs */
+  .custom-nav-tabs {
+    display: flex;
+    gap: 10px;
+    /* Add space between tabs for clear distinction */
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+
+
+  .custom-nav-tabs .nav-link {
+    text-align: center;
+    padding: 10px 15px;
+    color: #000000;
+    /* Slightly darker version of #61A3C0 */
+    font-weight: bold;
+    border: 1px solid #d1d9de;
+    /* Subtle border for separation */
+    border-radius: 5px;
+    background-color: #e7e7e7;
+    /* Light background to distinguish tabs */
+    transition: all 0.3s ease;
+  }
+
+  .custom-nav-tabs {
+    border-bottom: 0px;
+  }
+
+  .custom-nav-tabs .nav-link:hover {
+    color: #ffffff;
+    background-color: #61A3C0;
+    /* Your primary color */
+  }
+
+  .custom-nav-tabs .nav-link.active {
+    color: #ffffff;
+    background-color: #4d8da9;
+    /* Slightly darker primary color */
+    border-color: #61A3C0;
+  }
+</style>
+<%- include('../components/datefilter.ejs') -%>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <style>
+            .tab-button {
+              padding: 10px 15px;
+              border: 1px solid #ccc;
+              cursor: pointer;
+              background: #e7e7e7;
+              font-weight: bold;
+              margin-right: 5px;
+              transition: 0.3s;
+            }
+          
+            .tab-button.active {
+              background: #4d8da9;
+              color: #ffffff;
+            }
+          
+            .report-table {
+              display: none;
+            }
+          
+            .report-table.active {
+              display: block;
+            }
+          </style>
+          
+          <div>
+            <a class="tab-button active" href="/report" data-table="salesmanTable">Salesman Report</a>
+            <a class="tab-button" href="/customerreport" data-table="customerTable">Customer Report</a>
+            <a class="tab-button" href="/creditreport" data-table="creditTable">Credit Report</a>
+            <a class="tab-button" href="/truckreport" data-table="truckTable">Truck Report</a>
+          </div>
+          <br>
+          <div class="table-responsive">
+            <table id="reporttable" class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col" class="sort" data-sort="name">ID</th>
+                  <th scope="col" class="sort" data-sort="budget">Name</th>
+                  <th scope="col" class="sort" data-sort="status">Bottle Security Deposit</th>
+                  <th scope="col" class="sort">Cooler Security Deposit</th>
+                  <th scope="col">Collection</th>
+                  <th scope="col" class="sort" data-sort="completion">City</th>
+                </tr>
+              </thead>
+              <tbody class="list">
+                <tr>
+
+                </tr>
+              </tbody>
+            </table>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Footer -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<!-- <script>
+
+$(document).ready(function () {
+    // Dummy Data
+    const dummyData = [
+      { truck_id: "T001", route: "A1", stock_5gal: 50, stock_200ml: 200, city: "Mumbai" }
+    ];
+
+    // Initialize DataTable
+    $('#reporttable').DataTable({
+      data: dummyData,
+      columns: [
+        { data: 'truck_id' },
+        { data: 'route' },
+        { data: 'stock_5gal' },
+        { data: 'stock_200ml' },
+        { data: 'city' }
+      ]
+    });
+  });
+</script> -->
+
+<script>
+  $(document).ready(function () {
+  // Initialize DataTable
+  const table = $('#reporttable').DataTable({
+    ajax: {
+      url: '/getsalesmanreport', // Endpoint to fetch data
+      dataSrc: ''
+    },
+    columns: [
+      { data: 'id' },
+      { data: 'name' },
+      { data: 'totalBottleDeposits' },
+      { data: 'totalCoolerDeposits' },
+      { data: 'totalCollection' },
+      { data: 'city' }
+    ]
+  });
+
+  // Handle form submission
+  $('#dateForm').on('submit', function (e) {
+    e.preventDefault();
+
+    // Get selected dates
+    const fromDate = $('#fromDate').val();
+    const toDate = $('#toDate').val();
+
+    // Reload DataTable with new parameters
+    table.ajax.url(`/getsalesmanreport?fromDate=${fromDate}&toDate=${toDate}`).load();
+
+    // Close the modal
+    $('#dateModal').modal('hide');
+  });
+});
+
+</script>
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

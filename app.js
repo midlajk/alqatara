@@ -72,6 +72,10 @@ const salesmanapi = require('./routes/salesman');
 const employeeapi = require('./routes/employees');
 const previlageapis = require('./routes/previlageclass');
 const cities = require('./routes/cities');
+const dashboard = require('./routes/dashboardatas');
+const report = require('./routes/report');
+const wallet = require('./routes/wallet');
+
 const cors = require("cors");
 
 
@@ -109,6 +113,9 @@ app.use('/', salesmanapi);
 app.use('/', employeeapi);
 app.use('/', previlageapis);
 app.use('/', cities);
+app.use('/', dashboard);
+app.use('/', report);
+app.use('/', wallet);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

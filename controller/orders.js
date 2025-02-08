@@ -1,7 +1,7 @@
 
 require('../model/database')
 const mongoose = require('mongoose');
-const Truck = mongoose.model('Truck')
+const Customer = mongoose.model('Customer')
 const Order = mongoose.model('Order')
 const CreditOrderHistory = mongoose.model('CreditOrderHistory')
 
@@ -118,16 +118,35 @@ exports.updateOrder = async (req, res) => {
 };
 
 
+
 exports.orderhistory = async (req, res) => {
+  try {
+      const id = req.params.id;
 
-  const id = req.params.id
-  const order = await Order.findById(id)
-  console.log(order)
-  res.render('order/orderhistory', { title: 'Al Qattara',route:'Orders',sub :'Order History',order:order });
+      // Find the order by ID
+      const order = await Order.findById(id);
+      if (!order) {
+          return res.status(404).json({ error: 'Order not found' });
+      }
 
+      // Find the customer based on order.customerId
+      const customer = await Customer.findOne({ id: order.customerId });
 
-  
+      // Extract priceForA5galBottle from customer if found
+      const priceForA5galBottle = customer ? customer.priceForA5galBottle : null;
 
+      // Render the view with order and priceForA5galBottle
+      res.render('order/orderhistory', { 
+          title: 'Al Qattara',
+          route: 'Orders',
+          sub: 'Order History',
+          order: order,
+          priceForA5galBottle: priceForA5galBottle
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 exports.orderhistorydata = async (req, res) => {
@@ -190,25 +209,27 @@ exports.deleteorder = async (req, res) => {
 
 exports.updateOrderStatus = async (req, res) => {
   try {
-    const {_id, id, delivered_at, assistants, ...updateData } = req.body;
-    console.log(delivered_at)
+    const {_id, id, delivered_at, assistants,priceFor5galBottle,priceFor200mlBottle, ...updateData } = req.body;
 
     // Ensure delivered_at is a proper Date object
     if (delivered_at) {
       updateData.delivered_at = new Date(delivered_at);
     }
+    updateData.priceFor5galBottles = parseFloat((priceFor5galBottle * updateData.noOf5galBottles).toFixed(2));
+    updateData.priceFor200mlBottles = parseFloat((priceFor200mlBottle * updateData.noOf200mlBottles).toFixed(2));
 
     // Ensure assistants is stored as an array
     if (assistants) {
       updateData.assistants = Array.isArray(assistants) ? assistants : [assistants];
     }
+    
 
     // Update the order in the database
     const updatedOrder = await Order.findByIdAndUpdate({ _id }, updateData, {
       new: true, // Return the updated document
       runValidators: true, // Ensure the data follows schema rules
     });
-    console.log(updatedOrder)
+   
 
     if (!updatedOrder) {
       return res.status(404).json({ success: false, message: "Order not found" });
@@ -220,28 +241,53 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(500).json({ success: false, message: "Error updating order" });
   }
 };
-
 exports.addpayments = async (req, res) => {
+  console.log('sdsds')
+  try {
+      const { orderId, paymentDate, modeOfPayment, amountpaid } = req.body;
 
-try {
-  const { orderId, paymentDate, modeOfPayment, amountpaid } = req.body;
-  console.log(req.body)
+      // Find the order by ID
+      const order = await Order.findOne({id:orderId});
+      if (!order) {
+          return res.status(404).json({ success: false, message: "Order not found" });
+      }
 
-    const payment = new CreditOrderHistory({
-      orderId:orderId,
-      createdAt:new Date(),
-      updatedAt:new Date(paymentDate),
-      modeOfPayment:modeOfPayment,
-      creditAmountPaid:amountpaid,
-      totalCreditAmountDue:0
-    });
-    await payment.save();
+      // Calculate new credit amount paid
+      const newCreditAmountPaid = parseFloat(order.creditAmountPaid) + parseFloat(amountpaid);
+      const remainingAmount = parseFloat(order.totalPrice) - newCreditAmountPaid;
+      if (remainingAmount < 0) {
+        return res.status(400).json({ 
+            success: false, 
+            message: "Payment exceeds the total amount due. Please enter a valid amount." 
+        });
+    }
+      // Save the new payment in CreditOrderHistory
+      const payment = new CreditOrderHistory({
+          orderId: orderId,
+          createdAt: new Date(),
+          updatedAt: new Date(paymentDate),
+          modeOfPayment: modeOfPayment,
+          creditAmountPaid: amountpaid,
+          totalCreditAmountDue: remainingAmount.toFixed(2) // Fixed to 2 decimals
+      });
+      await payment.save();
 
-  // Find the order and update payment details
+      // Update the order with new credit amount paid
+      const updateFields = {
+        creditAmountPaid: newCreditAmountPaid.toFixed(2)
+    };
+    
+    // If remainingAmount is zero, mark as paid
+    if (remainingAmount === 0) {
+        updateFields.isCreditCustomerPaid = true;
+    }
+    
+    // Update the order with new credit amount paid and isCreditCustomerPaid if needed
+    await Order.findOneAndUpdate({ id: orderId }, updateFields);
 
-  res.json({ success: true, message: "Payment added successfully", payment });
-} catch (error) {
-  console.error("Error adding payment:", error);
-  res.status(500).json({ success: false, message: "Server error" });
-}
-}
+      res.json({ success: true, message: "Payment added successfully", payment });
+  } catch (error) {
+      console.log("Error adding payment:", error);
+      res.status(500).json({ success: false, message: "Server error" });
+  }
+};

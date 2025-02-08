@@ -42,7 +42,10 @@ exports.gettrucks = async (req, res) => {
     exports.addtrucks = async (req, res) => {
     try {
       const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes } = req.body;
-  
+      const existingTruck = await Truck.findOne({ id: truckId });
+      if(existingTruck){
+        return res.status(500).send('Failed to add truck go back and try updating the data and give new truck id .');
+      }
       const newTruck = new Truck({
         id: truckId,
         city,
@@ -85,6 +88,7 @@ exports.gettrucks = async (req, res) => {
 
   
   exports.truckids = async (req, res) => {
+    console.log('hehe')
     try {
       const routes = await Truck.find({}, { id: 1}); // Fetch only required fields
       res.json(routes);
@@ -110,9 +114,9 @@ exports.editutilitiespage = async (req, res) => {
 };
 
 exports.updateTruck = async (req, res) => {
-  console.log('here')
   try {
-      const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes,salesmanId } = req.body;
+      const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes,salesmanId,assistants } = req.body;
+      console.log(req.body)
 
       // Find the truck by ID and update it
       const updatedTruck = await Truck.findOneAndUpdate(
@@ -123,7 +127,8 @@ exports.updateTruck = async (req, res) => {
               stockOf200mlBottles: parseInt(maxStock200ml, 10),
               routeId: assignedRoutes,
               updatedAt: new Date(),
-              salesmanId:salesmanId // Update timestamp
+              salesmanId:salesmanId,
+              assistants:assistants // Update timestamp
 
           },
           { new: true, upsert: false } // Return updated document, don't create new one

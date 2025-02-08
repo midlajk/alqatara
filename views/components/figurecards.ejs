@@ -13,16 +13,84 @@
     gap: 10px; /* Adds some space between elements */
 }
 </style>
-<div class="col-lg-6 col-5 text-right" id="cardb">
-  <!-- <button class="btn btn-sm btn-neutral toggle-btn selected" onclick="selectButton(this)">Al
-      Ain</button>
-  <button class="btn btn-sm btn-neutral toggle-btn" onclick="selectButton(this)">Abu
-      Dhabi</button> -->
-      <select class="city-js form-control" style="width: 60%;" name="city" id="city" required>
-        <option value="All" selected>All</option>
-      </select>
 
+  <!-- City Dropdown -->
+  <div class="col-lg-6 col-5 row justify-content-end align-items-center" id="cardb">
+    <!-- City Dropdown -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
+        <select class="city-js form-control" name="city" id="city" required>
+            <option value="All">All</option>
+        </select>
+    </div>
+
+    <!-- Filter Button -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 text-center text-sm-start">
+        <button class="btn  btn-primary w-100" data-bs-toggle="modal" data-bs-target="#dateModal">
+            Filter By Date
+        </button>
+    </div>
+
+    <!-- Selected Date Display -->
+    <div class="col-12 col-md-4 col-lg-3 text-center text-md-start">
+        <span id="selectedDate" class="ml-2 font-weight-bold"></span>
+        
+    </div>
 </div>
+
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="dateModal" tabindex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="dateModalLabel">Select Date Range</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="dateForm">
+                  <div class="mb-3">
+                      <label for="fromDate" class="form-label">From:</label>
+                      <input type="date" class="form-control" id="fromDate">
+                  </div>
+                  <div class="mb-3">
+                      <label for="toDate" class="form-label">To:</label>
+                      <input type="date" class="form-control" id="toDate">
+                  </div>
+                  <button type="button" class="btn btn-primary" id="applyFilterBtn">Apply</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Bootstrap CSS & JS (Include in your project if not already included) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Set default to current month
+    const currentDate = new Date();
+    const month = currentDate.toLocaleString('default', { month: 'long' });
+    const year = currentDate.getFullYear();
+    document.getElementById("selectedDate").innerText = `${month} ${year}`;
+});
+
+// function applyDateFilter() {
+//     const fromDate = document.getElementById("fromDate").value;
+//     const toDate = document.getElementById("toDate").value;
+    
+//     if (fromDate && toDate) {
+//         document.getElementById("selectedDate").innerText = `Filtered: ${fromDate} to ${toDate}`;
+//     } else {
+//         alert("Please select a valid date range.");
+//     }
+
+//     // Close the modal after applying filter
+//     const dateModal = new bootstrap.Modal(document.getElementById('dateModal'));
+//     dateModal.hide();
+// }
+
+</script>
 <!-- <script>
   function selectButton(button) {
       // Remove the 'selected' class from all buttons
@@ -49,18 +117,15 @@
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Number of Deliveries</h5>
-              <span class="h2 font-weight-bold mb-0">350</span>
+              <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                <i class="ni ni-delivery-fast"></i>
+                <i class="ni ni-delivery-fast" ></i>
               </div>
             </div>
           </div>
-          <p class="mt-3 mb-0 text-sm">
-            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-            <span class="text-nowrap">Since last month</span>
-          </p>
+        
         </div>
       </div>
     </div>
@@ -71,7 +136,7 @@
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">New users</h5>
-              <span class="h2 font-weight-bold mb-0">2,356</span>
+              <span class="h2 font-weight-bold mb-0"  id="newUsers">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
@@ -79,10 +144,7 @@
               </div>
             </div>
           </div>
-          <p class="mt-3 mb-0 text-sm">
-            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-            <span class="text-nowrap">Since last month</span>
-          </p>
+         
         </div>
       </div>
     </div>
@@ -93,7 +155,7 @@
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Deleted Users</h5>
-              <span class="h2 font-weight-bold mb-0">924</span>
+              <span class="h2 font-weight-bold mb-0" id="deletedUsers">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
@@ -101,10 +163,7 @@
               </div>
             </div>
           </div>
-          <p class="mt-3 mb-0 text-sm">
-            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-            <span class="text-nowrap">Since last month</span>
-          </p>
+         
         </div>
       </div>
     </div>
@@ -115,7 +174,7 @@
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Total Credit Sales</h5>
-              <span class="h2 font-weight-bold mb-0">49</span>
+              <span class="h2 font-weight-bold mb-0" id="creditSales">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
@@ -123,10 +182,7 @@
               </div>
             </div>
           </div>
-          <p class="mt-3 mb-0 text-sm">
-            <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-            <span class="text-nowrap">Since last month</span>
-          </p>
+    
         </div>
       </div>
     </div>
@@ -146,7 +202,7 @@
     $('.city-js').select2({
         dropdownParent: $("#cardb"),
         tags: true,
-        placeholder: "Select or enter a city",
+        placeholder: "Select a city",
         allowClear: true,
         ajax: {
             url: '/citynames',
@@ -184,9 +240,90 @@
 
     // Add search functionality
     $("#searchTruck").on("input", function () {
-      var city = $("#city").val()
+    
+      var city = $("#city").val() 
         fetchTrucks($(this).val(),city);
     });
 });
+
+</script>
+
+<script>
+  $(document).ready(function () {
+    fetchDashboardData(); // Load initial dashboard data
+
+    // Set default selected date to current month
+    setDefaultDate();
+
+    // Apply Filter Button Click Event
+    $("#applyFilterBtn").click(function () {
+    
+        fetchDashboardData(truckids);
+      // Fetch data and update the chart
+
+        $("#dateModal").modal("hide"); // Close modal after applying filter
+    });
+});
+var truckids = 'All'
+// Function to fetch dashboard data from API
+function fetchDashboardData(truckid) {
+  truckids = truckid
+    let city = $("#city").val() || "All";
+    let truck = truckids;
+    let fromDate = $("#fromDate").val();
+    let toDate = $("#toDate").val();
+
+    // If no date is selected, default to current month's start and end
+    if (!fromDate || !toDate) {
+        let { startOfMonth, endOfMonth } = getDefaultMonthDates();
+        fromDate = startOfMonth;
+        toDate = endOfMonth;
+    }
+
+    
+
+    $.ajax({
+        url: "/dashboardatas",
+        type: "GET",
+        data: { city, truck, fromDate, toDate },
+        dataType: "json",
+        success: function (data) {
+          console.log(data)
+            $("#selectedDate").text(`Filtered: ${fromDate} to ${toDate}`);
+            updateDashboardUI(data);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching dashboard data:", error);
+        }
+    });
+}
+
+// Function to update dashboard UI with new data
+function updateDashboardUI(data) {
+    $("#deliveries").text(data.deliveries || 0);
+    $("#newUsers").text(data.registeredCustomers || 0);
+    $("#deletedUsers").text(data.deletedCustomers || 0);
+    $("#creditSales").text(data.creditSales || 0);
+}
+
+// Function to set default current month start and end dates
+function getDefaultMonthDates() {
+    let currentDate = new Date();
+    let startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 2)
+        .toISOString()
+        .split("T")[0];
+    let endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth()+1 , 1)
+        .toISOString()
+        .split("T")[0];
+    return { startOfMonth, endOfMonth };
+}
+
+// Function to set default values in date inputs
+function setDefaultDate() {
+    let { startOfMonth, endOfMonth } = getDefaultMonthDates();
+    $("#fromDate").val(startOfMonth);
+    $("#toDate").val(endOfMonth);
+    $("#selectedDate").text(`${startOfMonth} to ${endOfMonth}`);
+}
 
 </script>

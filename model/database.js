@@ -178,7 +178,7 @@ const employeeSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-  id: { type: String,unique: true},
+  id: { type: Number,unique: true},
   name: { type: String, required: true },
   area: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
@@ -246,7 +246,7 @@ const salesmanSchema = new mongoose.Schema({
   });
   
   const truckSchema = new mongoose.Schema({
-    id: { type: String, required: true },
+    id: { type: String, required: true ,unique: true},
     createdAt: { type: Date, default: Date.now },
     salesmanId: { type: String},
     updatedAt: { type: Date, default: Date.now },
@@ -257,11 +257,10 @@ const salesmanSchema = new mongoose.Schema({
     remaining5galBottles: { type: Number, default: 0 },
     stockOf200mlBottles: { type: Number, default: 0 },
     stockOf5galBottles: { type: Number, default: 0 },
-    assistants: { type: [String], default: [] },
+    assistants: { type: String},
     routeId: { type: String, required: true },
     city: { type: String, required: true }
   });
-  
   const truckHistorySchema = new mongoose.Schema({
     id: { type: String, required: true },
     truckCreatedAt: { type: Date, required: true },

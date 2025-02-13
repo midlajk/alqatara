@@ -6,7 +6,7 @@ const ordersapi = require('../controller/orders');
 /* GET home page. */
 router.get('/getorders', ordersapi.getorders);
 router.post('/orders/neworder', ordersapi.neworder);
-router.get('/assignedorders', ordersapi.assignedorders);
+
 router.get('/editorder/:id', ordersapi.editorderpage);
 
 router.post('/updateorder', ordersapi.updateOrder);
@@ -15,5 +15,10 @@ router.get('/getorderhistorydata', ordersapi.orderhistorydata);
 router.post('/delete-order', ordersapi.deleteorder);
 router.post('/updateOrderStatus', ordersapi.updateOrderStatus);
 router.post('/add-payment', ordersapi.addpayments);
+
+////apuis
+router.get('/assignedorders', ordersapi.assignedorders);
+router.get('/deliveredorders', ordersapi.deliveredorders);
+router.post('/deartedeliveryorderapi', ordersapi.deartedeliveryorderapi);
 
 module.exports = router;

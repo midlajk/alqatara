@@ -85,6 +85,8 @@
                         </div>
                         <div>
                             <button type="submit" class="btn btn-success">Update Truck</button>
+                            <button type="button" id="closeStockBtn" class="btn btn-primary">Close Stock</button>
+
                         </div>
                     </form>
                 </div>
@@ -179,5 +181,33 @@
                     });
                             });
                           </script> 
+                          <script>
+                        
+    $(document).ready(function () {
+        $("#closeStockBtn").click(function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Extract truck details from the form
+            var truckData = {
+                truckId: $("#truck-id").val(),
+            };
+
+            // Send AJAX request to close stock
+            $.ajax({
+                url: "/closeTruckStock",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(truckData),
+                success: function (response) {
+                    alert("Stock closed successfully!");
+                    location.reload(); // Refresh page
+                },
+                error: function (xhr) {
+                    alert("Error closing stock: " + xhr.responseJSON.message);
+                }
+            });
+        });
+    });
+                          </script>
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

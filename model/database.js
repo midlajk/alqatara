@@ -2,6 +2,8 @@
 
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
+
 const customerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   location: { type: String },
@@ -34,7 +36,7 @@ const customerSchema = new mongoose.Schema({
   zoneId: { type: String },
   trnNumber: { type: String },
   deliveryDay: { type: String },
-  otherDetails: { type: String },
+  language: { type: String },
   id:Number,
 });
 customerSchema.pre('save', async function (next) {
@@ -180,7 +182,7 @@ const employeeSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
   id: { type: Number,unique: true},
   name: { type: String, required: true },
-  area: { type: String, required: true },
+  area: { type: String,},
   createdAt: { type: Date, default: Date.now },
   customerId: { type: String, ref: 'Customer', required: true },
   salesmanId: { type: String },
@@ -244,6 +246,16 @@ const salesmanSchema = new mongoose.Schema({
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true }
   }]}
   });
+  salesmanSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    try {
+     
+      this.password = await bcrypt.hash(this.password, 10);
+      next();
+    } catch (err) {
+      next(err);
+    }
+  });
   
   const truckSchema = new mongoose.Schema({
     id: { type: String, required: true ,unique: true},
@@ -276,10 +288,17 @@ const salesmanSchema = new mongoose.Schema({
     remaining5galBottles: { type: Number, default: 0 },
     stockOf200mlBottles: { type: Number, default: 0 },
     stockOf5galBottles: { type: Number, default: 0 },
-    assistants: { type: [String], default: [] },
+    assistants: { type: String},
     routeId: { type: String, required: true },
-    updatedBottleType: { type: String, enum: ['BOTH', '200ML', '5GAL'], required: true }
+    updatedBottleType: { type: String, enum: ['BOTH', '200ML', '5GAL'] }
   });
+
+  truckHistorySchema.pre("save", function (next) {
+    if (!this.id) {
+        this.id = uuidv4().replace(/-/g, "").slice(0, 24); // Generate a 24-character ID
+    }
+    next();
+});
   const zoneSchema = new mongoose.Schema({
     id: { type: String, },  // Zone ID (Unique)
     routeId: { type: String, required: true },  // Route
@@ -295,24 +314,25 @@ const PrevilageClassSchema = new mongoose.Schema({
     unique: true, // Ensures the class name is unique
   },
   readonly: {
-    type: [String], // Array of strings for readonly access options
-    required: true, // Marked as required to ensure permissions are provided
-    validate: {
-      validator: function (v) {
-        return v && v.length > 0; // Ensures the array is not empty
-      },
-      message: 'At least one readonly access must be selected',
-    },
-  },
+    type: [String],
+   }, // Array of strings for readonly access options
+  //   required: true, // Marked as required to ensure permissions are provided
+  //   validate: {
+  //     validator: function (v) {
+  //       return v && v.length > 0; // Ensures the array is not empty
+  //     },
+  //     message: 'At least one readonly access must be selected',
+  //   },
+  // },
   readwrite: {
     type: [String], // Array of strings for read/write access options
-    required: true, // Marked as required to ensure permissions are provided
-    validate: {
-      validator: function (v) {
-        return v && v.length > 0; // Ensures the array is not empty
-      },
-      message: 'At least one read/write access must be selected',
-    },
+    // required: true, // Marked as required to ensure permissions are provided
+    // validate: {
+    //   validator: function (v) {
+    //     return v && v.length > 0; // Ensures the array is not empty
+    //   },
+    //   message: 'At least one read/write access must be selected',
+    // },
   },
   createdAt: {
     type: Date,

@@ -3,7 +3,12 @@ require('../model/database')
 const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck')
 const Order = mongoose.model('Order')
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
+const secretKey = process.env.JWT_SECRET; // Access secret key
+ 
 const Salesman = mongoose.model('Salesman')
 
 exports.getsalesman = async (req, res) => {
@@ -21,7 +26,7 @@ exports.getsalesman = async (req, res) => {
   
       // Get filtered data and total count
       const [filtereddata, totalRecords, totalFiltered] = await Promise.all([
-        Salesman.find(query).skip(skip).limit(limit), // Fetch paginated data
+        Salesman.find(query).sort({_id:-1}).skip(skip).limit(limit), // Fetch paginated data
         Salesman.countDocuments(), // Total records count
         Salesman.countDocuments(query) // Filtered records count
       ]);
@@ -56,8 +61,8 @@ exports.getsalesman = async (req, res) => {
     
   exports.salesmanids = async (req, res) => {
     try {
-      const salesmans = await Salesman.find({}, { id: 1}); // Fetch only required fields
-      console.log(salesmans)
+      const salesmans = await Salesman.find({}, { id: 1,name:1}); // Fetch only required fields
+
       res.json(salesmans);
     } catch (err) {
       console.error(err);
@@ -66,4 +71,60 @@ exports.getsalesman = async (req, res) => {
 
     
 
+};
+
+
+
+
+/////MObile appp 
+
+
+
+exports.salesmanlogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if email & password are provided
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "Email and password are required" });
+    }
+
+    // Find the salesman by email
+    const salesman = await Salesman.findOne({ name:email });
+
+    if (!salesman) {
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
+    }
+
+    // Compare entered password with stored hashed password
+    const isMatch = await bcrypt.compare(password, salesman.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: salesman.id, email: salesman.email, name: salesman.name },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" } // Token expires in 1 day
+    );
+
+    // Send login success response
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: salesman.id,
+        name: salesman.name,
+        email: salesman.email,
+        city: salesman.city,
+      },
+    });
+
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };

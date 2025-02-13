@@ -21,80 +21,116 @@
         <div class="collapse navbar-collapse" id="sidenav-collapse-main">
           <!-- Nav items -->
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Dashboard'?'active':'' %>" href="/">
-                <i class="ni ni-shop text-primary"></i>
-                <span class="nav-link-text">Dashboard</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Utilities'?'active':'' %>" href="/utilities">
-                <i class="ni ni-delivery-fast text-primary"></i>
-                <span class="nav-link-text">Utilities</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Orders'?'active':'' %>" href="/orders">
+            <% if (readonlyAccess.includes('dashboard')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Dashboard'?'active':'' %>" href="/dashboard">
+                  <i class="ni ni-shop text-primary"></i>
+                  <span class="nav-link-text">Dashboard</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('utilities')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Utilities'?'active':'' %>" href="/utilities">
+                  <i class="ni ni-delivery-fast text-primary"></i>
+                  <span class="nav-link-text">Utilities</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('orders')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Orders'?'active':'' %>" href="/orders">
                   <i class="ni ni-bullet-list-67 text-primary"></i>
                   <span class="nav-link-text">Orders</span>
-              </a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link <%= route=='Customer'?'active':'' %>" href="/customers">
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('customers')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Customer'?'active':'' %>" href="/customers">
                   <i class="ni ni-circle-08 text-primary"></i>
-                  <span class="nav-link-text">customers</span>
-              </a>
-          </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Reports'?'active':'' %>" href="/report">
-                <i class="ni ni-chart-bar-32 text-primary"></i>
-                <span class="nav-link-text">Reports</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Wallet'?'active':'' %>" href="/wallet">
-                <i class="ni ni-credit-card text-primary"></i>
-                <span class="nav-link-text">Wallet</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='City'?'active':'' %>" href="/cities">
-                <i class="ni ni-building text-primary"></i>
-                <span class="nav-link-text">Cities</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Zones'?'active':'' %>" href="/zones">
-                <i class="ni ni-pin-3 text-primary"></i>
-                <span class="nav-link-text">Zones</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Routes'?'active':'' %>" href="/routes">
-                <i class="ni ni-square-pin text-primary"></i>
-                <span class="nav-link-text">Routes</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Salesman'?'active':'' %>" href="/salesman">
-                <i class="ni ni-single-02 text-primary"></i>
-                <span class="nav-link-text">Salesman</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Masters'?'active':'' %>" href="/masters">
-                <i class="ni ni-laptop text-primary"></i>
-                <span class="nav-link-text">Master</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <%= route=='Previlages'?'active':'' %>" href="/manageprevilages">
-                <i class="ni ni-lock-circle-open text-primary"></i>
-                <span class="nav-link-text">Privilages</span>
-              </a>
-            </li>
+                  <span class="nav-link-text">Customers</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('reports')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Reports'?'active':'' %>" href="/report">
+                  <i class="ni ni-chart-bar-32 text-primary"></i>
+                  <span class="nav-link-text">Reports</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('wallet')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Wallet'?'active':'' %>" href="/wallet">
+                  <i class="ni ni-credit-card text-primary"></i>
+                  <span class="nav-link-text">Wallet</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('cities')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Cities'?'active':'' %>" href="/cities">
+                  <i class="ni ni-building text-primary"></i>
+                  <span class="nav-link-text">Cities</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('zones')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Zones'?'active':'' %>" href="/zones">
+                  <i class="ni ni-pin-3 text-primary"></i>
+                  <span class="nav-link-text">Zones</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('routes')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Routes'?'active':'' %>" href="/routes">
+                  <i class="ni ni-square-pin text-primary"></i>
+                  <span class="nav-link-text">Routes</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('salesman')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Salesman'?'active':'' %>" href="/salesman">
+                  <i class="ni ni-single-02 text-primary"></i>
+                  <span class="nav-link-text">Salesman</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('masters')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Masters'?'active':'' %>" href="/masters">
+                  <i class="ni ni-laptop text-primary"></i>
+                  <span class="nav-link-text">Masters</span>
+                </a>
+              </li>
+            <% } %>
+        
+            <% if (readonlyAccess.includes('privileges')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Previlages'?'active':'' %>" href="/manageprevilages">
+                  <i class="ni ni-lock-circle-open text-primary"></i>
+                  <span class="nav-link-text">Privileges</span>
+                </a>
+              </li>
+            <% } %>
           </ul>
         </div>
+        
       </div>
     </div>
   </nav>

@@ -4,8 +4,7 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/customers/deletedcustomers" class="btn btn-primary ml-3" type="button" aria-label="Add New">Deleted Customers</a>
-<a href="/customers/newcustomer" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+
 </div>
 </div>
 
@@ -66,7 +65,7 @@
               processing: true,
               serverSide: true,
           ajax: {
-            url: '/getcustomers', // Backend API endpoint
+            url: '/getdeletedcustomers', // Backend API endpoint
             dataSrc: 'docs', // Key that holds the array of data in the API response
                 data: function (d) {
                   return d;

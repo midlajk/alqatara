@@ -3,7 +3,7 @@ var router = express.Router();
 const authMiddleware = require('../middleware/auth');
 
 /* GET home page. */
-router.get('/',authMiddleware, function(req, res, next) {
+router.get('/dashboard', function(req, res, next) {
   res.render('index', { title: 'Al Qattara',route:'Dashboard',sub :'Default'});
 });
 

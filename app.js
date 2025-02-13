@@ -60,6 +60,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const { sessions } = require('./model/db'); // Explicitly import sessions
+const Previlagemiddle  = require('./middleware/previlage');
+
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -101,6 +103,15 @@ app.use((req, res, next) => {
   } 
   next();
 });
+
+app.use('/login', (req, res, next) => {
+  res.locals.readonlyAccess = []; // Ensure readonlyAccess is always set
+  next();
+});
+
+// **Apply Auth Middleware to All Other Routes**
+app.use(Previlagemiddle);
+
 // Routes
 app.use('/', indexRouter);
 app.use('/', usersRouter);

@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Customer = mongoose.model('Customer')
 const Order = mongoose.model('Order')
 const CreditOrderHistory = mongoose.model('CreditOrderHistory')
+const Truck = mongoose.model('Truck')
+const Salesman = mongoose.model('Salesman')
 
 
 exports.getorders = async (req, res) => {
@@ -55,23 +57,6 @@ exports.getorders = async (req, res) => {
   };
 
 
-
-// Fetch orders for a specific salesman or truck
-exports.assignedorders= async (req, res) => {
-    try {
-        const { salesmanId, truckId } = req.query;
-        let query = {};
-
-        if (salesmanId) query.salesmanId = salesmanId;
-        if (truckId) query.truckId = truckId;
-
-        const orders = await Order.find(query);
-        res.json(orders);
-    } catch (error) {
-        console.error("Error fetching orders:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
 
 
 
@@ -209,40 +194,72 @@ exports.deleteorder = async (req, res) => {
 
 exports.updateOrderStatus = async (req, res) => {
   try {
-    const {_id, id, delivered_at, assistants,priceFor5galBottle,priceFor200mlBottle, ...updateData } = req.body;
+    const { _id, id, delivered_at, assistants, priceFor5galBottle, priceFor200mlBottle, ...updateData } = req.body;
 
     // Ensure delivered_at is a proper Date object
     if (delivered_at) {
       updateData.delivered_at = new Date(delivered_at);
     }
-    updateData.priceFor5galBottles = parseFloat((priceFor5galBottle * updateData.noOf5galBottles).toFixed(2));
-    updateData.priceFor200mlBottles = parseFloat((priceFor200mlBottle * updateData.noOf200mlBottles).toFixed(2));
+
+    // Calculate prices
+    updateData.priceFor5galBottles = parseFloat(((priceFor5galBottle || 0) * (updateData.noOf5galBottles || 0)).toFixed(2));
+    updateData.priceFor200mlBottles = parseFloat(((priceFor200mlBottle || 0) * (updateData.noOf200mlBottles || 0)).toFixed(2));
 
     // Ensure assistants is stored as an array
     if (assistants) {
       updateData.assistants = Array.isArray(assistants) ? assistants : [assistants];
     }
-    
 
     // Update the order in the database
-    const updatedOrder = await Order.findByIdAndUpdate({ _id }, updateData, {
+    const updatedOrder = await Order.findByIdAndUpdate(_id, updateData, {
       new: true, // Return the updated document
       runValidators: true, // Ensure the data follows schema rules
     });
-   
 
     if (!updatedOrder) {
       return res.status(404).json({ success: false, message: "Order not found" });
     }
 
-    res.redirect('/orderhistory/'+_id);
+    // If the order status is DELIVERED, update the truck stock
+    if (updateData.status === "DELIVERED" && updatedOrder.truckId) {
+      const truckId = updatedOrder.truckId;
+      const noOf5galBottles = parseInt(updatedOrder.noOf5galBottles) || 0;
+      const noOf200mlBottles = parseInt(updatedOrder.noOf200mlBottles) || 0;
+
+      // Step 1: Reduce stock and increase delivered count
+      await Truck.findOneAndUpdate(
+        { id: truckId },
+        {
+          $inc: {
+            remaining5galBottles: -noOf5galBottles,
+            remaining200mlBottles: -noOf200mlBottles,
+            delivered200mlBottles: +noOf200mlBottles,
+            delivered5galBottles: +noOf5galBottles
+          },
+        }
+      );
+
+      // Step 2: Ensure stock values don't go negative
+      await Truck.findOneAndUpdate(
+        { id: truckId },
+        {
+          remaining5galBottles: { $gte: 0 } ? 0 : undefined,
+          remaining200mlBottles: { $gte: 0 } ? 0 : undefined,
+        }
+      );
+    }
+
+    res.redirect("/orderhistory/" + _id);
   } catch (error) {
     console.error("Error updating order:", error);
     res.status(500).json({ success: false, message: "Error updating order" });
   }
 };
+
+
+
+
 exports.addpayments = async (req, res) => {
-  console.log('sdsds')
   try {
       const { orderId, paymentDate, modeOfPayment, amountpaid } = req.body;
 
@@ -289,5 +306,141 @@ exports.addpayments = async (req, res) => {
   } catch (error) {
       console.log("Error adding payment:", error);
       res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+//// Fetch orders for a specific salesman or truck
+exports.assignedorders = async (req, res) => {
+  try {
+      const { salesman } = req.query;
+      if (!salesman) {
+          return res.status(400).json({ message: "Salesman ID is required" });
+      }
+
+      // Find the truck assigned to this salesman
+      const truck = await Truck.findOne({ salesmanId: salesman });
+
+      // Build query: Match orders where status is "PENDING" AND either:
+      // - The order's salesmanId matches the given salesman
+      // - OR the order's truckId matches the truck._id
+      const query = {
+          $and: [
+              { status: "PENDING" }, // Only fetch pending orders
+              {
+                  $or: [
+                      { salesmanId: salesman },
+                      truck ? { truckId: truck.id } : null
+                  ]// Remove null if no truck exists
+              }
+          ]
+      };
+
+      // Fetch matching orders
+      const orders = await Order.find(query);
+
+      res.json(orders);
+  } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+exports.deliveredorders = async (req, res) => {
+  try {
+      const { salesman } = req.query;
+      if (!salesman) {
+          return res.status(400).json({ message: "Salesman ID is required" });
+      }
+
+      // Find the truck assigned to this salesman
+      const truck = await Truck.findOne({ salesmanId: salesman });
+
+      // Build query: Match orders where status is "PENDING" AND either:
+      // - The order's salesmanId matches the given salesman
+      // - OR the order's truckId matches the truck._id
+      const query = {
+          $and: [
+              { status: "DELIVERED" }, // Only fetch pending orders
+              {
+                  $or: [
+                      { salesmanId: salesman },
+                      truck ? { truckId: truck.id } : null
+                  ] // Remove null if no truck exists
+              }
+          ]
+      };
+
+      // Fetch matching orders
+      const orders = await Order.find(query);
+
+      res.json(orders);
+  } catch (error) {
+      console.error("Error fetching orders:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.deartedeliveryorderapi = async (req, res) => {
+  try {
+    const {
+      customerId,
+      salesmanId,
+      noOf5galBottles,
+      noOf200mlBottles,
+      priceFor200mlBottles,
+      creditAmountPaid,
+      modeOfPayment,
+      totalPrice,
+      status,
+      name
+    } = req.body;
+
+    if (!customerId) {
+      return res.status(400).json({ error: "Customer ID is required" });
+    }
+
+    // Find if an order exists for this customer
+    // let order = await Order.findOne({ customerId });
+
+    // if (order) {
+    //   // Update the existing order
+    //   order.noOf5galBottles = noOf5galBottles;
+    //   order.noOf200mlBottles = noOf200mlBottles;
+    //   order.priceFor200mlBottles = priceFor200mlBottles;
+    //   order.creditAmountPaid = creditAmountPaid;
+    //   order.modeOfPayment = modeOfPayment;
+    //   order.totalPrice = totalPrice;
+    //   order.status = status;
+    //   order.updatedAt = Date.now();
+
+    //   await order.save();
+    //   return res.status(200).json({ message: "Order updated successfully!", order });
+    // } else {
+      // Create a new order if none exists
+
+
+      const newOrder = new Order({
+        customerId,
+        name,
+        salesmanId,
+        noOf5galBottles,
+        noOf200mlBottles,
+        priceFor200mlBottles,
+        creditAmountPaid,
+        modeOfPayment,
+        totalPrice,
+        status: status || "PENDING",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+
+      await newOrder.save();
+      return res.status(201).json({ message: "New order created successfully!", order: newOrder });
+    
+  } catch (error) {
+    console.error("Error processing order:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

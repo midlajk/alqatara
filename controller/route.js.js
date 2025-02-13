@@ -59,7 +59,6 @@ exports.getroutes = async (req, res) => {
   exports.routeids = async (req, res) => {
     try {
       const routes = await Route.find({}, { id: 1}); // Fetch only required fields
-      console.log(routes)
       res.json(routes);
     } catch (err) {
       console.error(err);

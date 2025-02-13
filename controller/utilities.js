@@ -51,6 +51,8 @@ exports.gettrucks = async (req, res) => {
         city,
         stockOf5galBottles: parseInt(maxStock5Gallon, 10),
         stockOf200mlBottles: parseInt(maxStock200ml, 10),
+        remaining200mlBottles :parseInt(maxStock200ml, 10),
+        remaining5galBottles :parseInt(maxStock5Gallon, 10),
         routeId: assignedRoutes
       });
   
@@ -87,19 +89,21 @@ exports.gettrucks = async (req, res) => {
 };
 
   
-  exports.truckids = async (req, res) => {
-    console.log('hehe')
-    try {
-      const routes = await Truck.find({}, { id: 1}); // Fetch only required fields
-      res.json(routes);
-    } catch (err) {
+exports.truckids = async (req, res) => {
+  try {
+      const { q } = req.query; // Get search term
+
+      let query = q ? { id: { $regex: q, $options: "i" } } : {}; // Search if 'q' exists
+
+      const trucks = await Truck.find(query, { id: 1 }).limit(10); // Limit to 10 results
+
+      res.json(trucks);
+  } catch (err) {
       console.error(err);
-      res.status(500).send('Error fetching routes');
-    }
-
-    
-
+      res.status(500).send("Error fetching trucks");
+  }
 };
+
 
 exports.editutilitiespage = async (req, res) => {
 
@@ -116,26 +120,31 @@ exports.editutilitiespage = async (req, res) => {
 exports.updateTruck = async (req, res) => {
   try {
       const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes,salesmanId,assistants } = req.body;
-      console.log(req.body)
 
       // Find the truck by ID and update it
+      const truck = await Truck.findOne({ id: truckId });
+
+      if (!truck) {
+          return res.status(404).json({ success: false, message: "Truck not found!" });
+      }
+      
       const updatedTruck = await Truck.findOneAndUpdate(
           { id: truckId }, // Find by truck ID
           {
               city,
               stockOf5galBottles: parseInt(maxStock5Gallon, 10),
               stockOf200mlBottles: parseInt(maxStock200ml, 10),
+              remaining200mlBottles: parseInt(maxStock200ml, 10) - parseInt(truck.delivered200mlBottles || 0),
+              remaining5galBottles: parseInt(maxStock5Gallon, 10) - parseInt(truck.delivered5galBottles || 0)- parseInt(truck.damaged5galBottles || 0),
               routeId: assignedRoutes,
               updatedAt: new Date(),
-              salesmanId:salesmanId,
-              assistants:assistants // Update timestamp
-
+              salesmanId,
+              assistants
           },
-          { new: true, upsert: false } // Return updated document, don't create new one
+          { new: true, upsert: false } // Return updated document, don't create a new one
       );
-
       if (!updatedTruck) {
-          return res.status(404).send('Truck not found');
+          return res.status(404).send('Truck not found / Failed to update ');
       }
 
       res.redirect('/utilities'); // Redirect after successful update
@@ -143,6 +152,62 @@ exports.updateTruck = async (req, res) => {
       console.error('Error updating truck:', err);
       res.status(500).send('Failed to update truck.');
   }
+};
+
+
+exports.closeTruckStock = async (req, res) => {
+  console.log('here')
+  try {
+    const { truckId } = req.body;
+
+    // Fetch the truck details
+    const truck = await Truck.findOne({ id: truckId });
+
+    if (!truck) {
+        return res.status(404).json({ success: false, message: "Truck not found!" });
+    }
+
+    // Create truck history entry
+    const truckHistory = new TruckHistory({
+        truckCreatedAt: truck.createdAt,
+        truckUpdatedAt: truck.updatedAt,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        truckId: truck.id,
+        salesmanId: truck.salesmanId,
+        damaged5galBottles: truck.damaged5galBottles,
+        delivered200mlBottles: truck.delivered200mlBottles,
+        delivered5galBottles: truck.delivered5galBottles,
+        remaining200mlBottles: truck.remaining200mlBottles,
+        remaining5galBottles: truck.remaining5galBottles,
+        stockOf200mlBottles: truck.stockOf200mlBottles,
+        stockOf5galBottles: truck.stockOf5galBottles,
+        assistants: truck.assistants,
+        routeId: truck.routeId,
+        updatedBottleType: "BOTH" // Adjust logic as needed
+    });
+
+    // Save to TruckHistory collection
+    await truckHistory.save();
+
+    // Reset stock values while setting current stock with remaining stock
+    truck.damaged5galBottles = 0;
+    truck.delivered200mlBottles = 0;
+    truck.delivered5galBottles = 0;
+    truck.stockOf200mlBottles = truck.remaining200mlBottles;
+    truck.stockOf5galBottles = truck.remaining5galBottles;
+    truck.remaining200mlBottles = 0;
+    truck.remaining5galBottles = 0;
+
+    // Update the truck in the database
+    await truck.save();
+
+    res.json({ success: true, message: "Stock closed, history saved, and stock reset!" });
+
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error!" });
+}
 };
 
 exports.truckhistorypage = async (req, res) => {
@@ -194,5 +259,103 @@ exports.gettruckhistory = async (req, res) => {
   } catch (err) {
     console.error('Error fetching trucks:', err);
     res.status(500).json({ error: 'Failed to fetch trucks' });
+  }
+};
+
+
+///apis 
+
+exports.truckdetails = async (req, res) => {
+  
+  const { user } = req.query;
+  try {
+    const truckDetails = await Truck.findOne({ salesmanId: user });
+    if (!truckDetails) {
+      return res.status(404).json({ message: "No truck assigned to this user." });
+    }
+    return res.json(truckDetails);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+
+};
+
+
+
+// exports.updateapi = async (req, res) => {
+//   try {
+//     const { truckId, damagedBottles } = req.body;
+
+//     // Find the truck by ID
+//     const truck = await Truck.findOne({ id: truckId });
+
+//     if (!truck) {
+//       return res.status(404).json({ message: "Truck not found" }); // Use 404 for not found
+//     }
+
+//     // Update the truck
+//     const updatedTruck = await Truck.findOneAndUpdate(
+//       { id: truckId },
+//       { damaged5galBottles: damagedBottles },
+//       { new: true, upsert: false } // Return updated document, don't create a new one
+//     );
+
+//     if (!updatedTruck) {
+//       return res.status(500).json({ message: "Failed to update truck" });
+//     }
+
+//     // Success response
+//     res.json({ success: true, updatedTruck });
+
+//   } catch (err) {
+//     console.error('Error updating truck:', err);
+//     res.status(500).json({ message: "Internal server error", error: err.message });
+//   }
+// };
+
+exports.updateapi = async (req, res) => {
+  try {
+    const { truckId, damagedBottles, assistantId } = req.body;
+
+    // Find the truck by ID
+    const truck = await Truck.findOne({ id: truckId });
+
+    if (!truck) {
+      return res.status(404).json({ message: "Truck not found" }); // Use 404 for not found
+    }
+
+    // Create an update object dynamically
+    let updateData = {};
+    if (damagedBottles !== undefined) {
+      updateData.damaged5galBottles = damagedBottles;
+    }
+    if (assistantId !== undefined) {
+      updateData.assistants = assistantId;
+    }
+
+    // If no valid update data is provided, return an error
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update" });
+    }
+
+    // Update the truck
+    const updatedTruck = await Truck.findOneAndUpdate(
+      { id: truckId },
+      { $set: updateData },
+      { new: true, upsert: false } // Return updated document, don't create a new one
+    );
+
+    if (!updatedTruck) {
+      return res.status(500).json({ message: "Failed to update truck" });
+    }
+
+    // Success response
+    res.json({ success: true, updatedTruck });
+
+  } catch (err) {
+    console.error("Error updating truck:", err);
+    res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };

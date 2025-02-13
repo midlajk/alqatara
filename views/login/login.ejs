@@ -157,8 +157,9 @@
         contentType: 'application/json',
         data: JSON.stringify({ email, password }),
         success: function (response) {
+          console.log(response)
           if (response.success) {
-            window.location.href = '/'; // Redirect on successful login
+            window.location.href = '/'+response.direct; // Redirect on successful login
 
           } else {
             alert(response.message || 'Incorrect username or password.'); // Show error message

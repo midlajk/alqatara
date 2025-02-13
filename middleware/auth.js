@@ -1,24 +1,31 @@
 const mongoose = require('mongoose');
-// const User = mongoose.model('User')
-const authMiddleware = async(req, res, next) => {
-    // Check for token in request headers
-    const admin = req.session.logged;
+const PrevilageClass = mongoose.model('PrevilageClass');
 
-    // Verify token
-    if (!admin) {
-        return res.redirect('/login');
-    }else{
-    //    const user = await User.findOne({uid:req.session.token})
-    //    if(user && user.accounttype =='Admin'){
-    //     req.session.user = user
-    //     next()
-    //    }else{
-    //     return res.redirect('/login');
-    //    }
-    next()
+const authMiddleware = async (req, res, next) => {
+    // **Allow access to the login page**
+    if (req.path === '/login') {
+        return next(); // Skip authentication for login
     }
 
- 
+    if (!req.session || !req.session.logged) {
+        return res.redirect('/login'); // Redirect unauthorized users
+    }
+
+    // try {
+    //     if (req.session.user && req.session.user.previlage) {
+    //         const prev = await PrevilageClass.findOne({ className: req.session.user.previlage });
+
+    //         // Ensure readonlyAccess is always set
+    //         res.locals.readonlyAccess = prev ? prev.readonly : [];
+    //     } else {
+    //         res.locals.readonlyAccess = [];
+    //     }
+    // } catch (error) {
+    //     console.error('Error fetching privileges:', error);
+    //     res.locals.readonlyAccess = [];
+    // }
+
+    next();
 };
 
 module.exports = authMiddleware;

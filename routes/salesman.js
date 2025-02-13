@@ -9,4 +9,10 @@ router.post('/addsalesman', salesmanapiapi.newsalesman);
 router.get('/salesmanids', salesmanapiapi.salesmanids);
 
 
+
+////Mobile app 
+
+router.post('/salesmanlogin', salesmanapiapi.salesmanlogin);
+
+
 module.exports = router;

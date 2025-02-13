@@ -3,6 +3,7 @@ require('../model/database')
 const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck')
 const Order = mongoose.model('Order')
+const bcrypt = require('bcrypt');
 
 const Employee = mongoose.model('Employee')
 
@@ -20,7 +21,7 @@ exports.getemployees = async (req, res) => {
   
       // Get filtered data and total count
       const [filtereddata, totalRecords, totalFiltered] = await Promise.all([
-        Employee.find(query).skip(skip).limit(limit), // Fetch paginated data
+        Employee.find(query).sort({ _id: -1 }).skip(skip).limit(limit), // Fetch paginated data
         Employee.countDocuments(), // Total records count
         Employee.countDocuments(query) // Filtered records count
       ]);
@@ -40,14 +41,23 @@ exports.getemployees = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.newemployee = async (req, res) => {
- 
-      try {
-        const employee = new Employee(req.body);
-        await employee.save();
-        res.redirect('/masters');
+  exports.newemployee = async (req, res) => {
+    try {
+      // Hash password before saving
+      const hashedPassword = await bcrypt.hash(req.body.password, 10); // Hash with salt rounds (10)
+  
+      // Create new employee with hashed password
+      const employee = new Employee({
+        name: req.body.name,
+        password: hashedPassword, // Store hashed password
+        email: req.body.email,
+        mobileNumber: req.body.mobileNumber,
+        designation: req.body.designation
+      });
+  
+      await employee.save();
+      res.redirect('/masters');
     } catch (error) {
-        res.status(400).send({ error: error.message });
-      }
- 
+      res.status(400).send({ error: error.message });
+    }
   };

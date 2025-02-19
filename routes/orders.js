@@ -19,6 +19,7 @@ router.post('/add-payment', ordersapi.addpayments);
 ////apuis
 router.get('/assignedorders', ordersapi.assignedorders);
 router.get('/deliveredorders', ordersapi.deliveredorders);
-router.post('/deartedeliveryorderapi', ordersapi.deartedeliveryorderapi);
+router.post('/deliveryorderapi', ordersapi.deliveryorderapi);
+router.get('/creditorders', ordersapi.creditorders);
 
 module.exports = router;

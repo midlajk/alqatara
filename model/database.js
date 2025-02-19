@@ -218,8 +218,8 @@ orderSchema.pre('save', async function (next) {
       // Generate 6-digit or 10-digit UID
       id = generateUid(10); // Change to 10 for 10-digit UID
       // Check for uniqueness
-      const existingCustomer = await mongoose.model('Customer').findOne({ id });
-      if (!existingCustomer) {
+      const existingOrder = await mongoose.model('Order').findOne({ id });
+      if (!existingOrder) {
         unique = true;
       }
     }

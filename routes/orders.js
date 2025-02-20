@@ -21,5 +21,7 @@ router.get('/assignedorders', ordersapi.assignedorders);
 router.get('/deliveredorders', ordersapi.deliveredorders);
 router.post('/deliveryorderapi', ordersapi.deliveryorderapi);
 router.get('/creditorders', ordersapi.creditorders);
+router.get('/orderdetails/:id', ordersapi.orderdetails);
+router.post('/updatecreditorder/', ordersapi.updatecreditorder);
 
 module.exports = router;

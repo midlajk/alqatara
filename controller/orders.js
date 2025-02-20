@@ -534,3 +534,58 @@ exports.creditorders = async (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
+exports.orderdetails = async (req, res) => {
+  try {
+    const customer = await Order.findOne({ id: req.params.id });
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+    res.json(customer);
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+  }
+
+  exports.updatecreditorder = async (req, res) => {
+    try {
+      const { creditAmountPaid, modeOfPayment, orderid } = req.body;
+  
+      if (creditAmountPaid > 0) {
+        const order = await Order.findOne({ id: orderid});
+        console.log(orderid)
+  
+        if (!order) {
+          return res.status(404).json({ error: "Order not found" });
+        }
+  
+        // Add the new payment to the existing creditAmountPaid
+        order.creditAmountPaid = (order.creditAmountPaid || 0) + creditAmountPaid;
+  
+        // Save the updated order
+        await order.save();
+  
+        const creditOrderHistory = new CreditOrderHistory({
+          orderId: orderid,
+          modeOfPayment,
+          creditAmountPaid,
+          totalCreditAmountDue: order.totalPrice - order.creditAmountPaid,
+        });
+  
+        await creditOrderHistory.save();
+  
+        return res.status(201).json({
+          message: "Order updated successfully!",
+          order,
+        });
+      } else {
+        return res.status(400).json({ error: "Invalid payment amount" });
+      }
+    } catch (error) {
+      console.error("Error processing order:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  

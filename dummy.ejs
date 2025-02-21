@@ -69,3 +69,45 @@
 
 <%- include('./includes/end.ejs') -%>
 
+// exports.updatecustomer = async (req, res) => {
+  //   try {
+  //     const { id, noOf5galBottles, bottleSecurityDeposit, noOfCoolers, coolerSecurityDeposit, walletBalance, collectedMoney, bottleLendType, coolerLendType } = req.body;
+  
+  //     // Find the customer first
+  //     const customer = await Customer.findOne({ id:id });
+  
+  //     if (!customer) {
+  //       return res.status(404).json({ message: "Customer not found" });
+  //     }
+  
+  //     // Object to hold numeric updates (add to existing values)
+  //     const updateNumbers = {};
+  //     if (noOf5galBottles) updateNumbers.noOf5galBottles = parseInt(noOf5galBottles);
+  //     if (bottleSecurityDeposit) updateNumbers.bottleSecurityDeposit = parseFloat(bottleSecurityDeposit);
+  //     if (noOfCoolers) updateNumbers.noOfCoolers = parseInt(noOfCoolers);
+  //     if (coolerSecurityDeposit) updateNumbers.coolerSecurityDeposit = parseFloat(coolerSecurityDeposit);
+  //     if (walletBalance) updateNumbers.walletBalance = parseFloat(walletBalance);
+  //     if (collectedMoney) updateNumbers.collectedMoney = parseFloat(collectedMoney);
+  
+  //     // Object to hold string updates (replace existing values)
+  //     const updateStrings = {};
+  //     if (bottleLendType) updateStrings.bottleLendType = bottleLendType;
+  //     if (coolerLendType) updateStrings.coolerLendType = coolerLendType;
+  
+  //     // Perform the update using $inc for numbers and $set for strings
+  //     const updatedCustomer = await Customer.findOneAndUpdate(
+  //       { id },
+  //       { 
+  //         ...(Object.keys(updateNumbers).length > 0 && { $inc: updateNumbers }),
+  //         ...(Object.keys(updateStrings).length > 0 && { $set: updateStrings }),
+  //         $set: { updatedAt: new Date() } // Always update timestamp
+  //       },
+  //       { new: true }
+  //     );
+  
+  //     res.status(200).json({ message: "Customer updated successfully", updatedCustomer });
+  //   } catch (error) {
+  //     console.error("Update error:", error);
+  //     res.status(500).json({ message: "Error updating customer", error });
+  //   }
+  // }

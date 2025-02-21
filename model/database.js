@@ -113,7 +113,8 @@ const creditOrderHistorySchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   modeOfPayment: { type: String, required: true },
   creditAmountPaid: { type: Number, required: true },
-  totalCreditAmountDue: { type: Number, required: true }
+  totalCreditAmountDue: { type: Number, required: true },
+  salesmanid:{ type: String }
 });
 
 const customerAssetHistorySchema = new mongoose.Schema({
@@ -122,7 +123,7 @@ const customerAssetHistorySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   securityDeposit: { type: Number, default: 0 },
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
+  customerId: { type: String, required: true },
   salesmanId: { type: String },
   truckId: { type: String },
   lendType: { type: String, required: true }

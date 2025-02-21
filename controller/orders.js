@@ -589,3 +589,54 @@ exports.orderdetails = async (req, res) => {
     }
   };
   
+  exports.getsalesum = async (req, res) => {
+    try {
+      const { salesmanId } = req.query;
+  
+      if (!salesmanId) {
+        return res.status(400).json({ error: "Salesman ID is required" });
+      }
+  
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+  
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+  
+      const salesData = await Order.aggregate([
+        {
+          $match: {
+            salesmanId: salesmanId,
+            createdAt: { $gte: startOfDay, $lte: endOfDay },
+            modeOfPayment: { $in: ["Cash", "Card", "Wallet"] }
+          }
+        },
+        {
+          $group: {
+            _id: "$modeOfPayment",
+            totalAmount: { $sum: "$totalPrice" }
+          }
+        }
+      ]);
+  
+      // Initialize result object
+      let result = {
+        Cash: 0,
+        Card: 0,
+        Wallet: 0,
+        Total: 0 // New field for overall total
+      };
+  
+      // Populate result from aggregation
+      salesData.forEach(({ _id, totalAmount }) => {
+        result[_id] = totalAmount;
+        result.Total += totalAmount; // Sum all payments
+      });
+  console.log(result.Total)
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error getting sales sum:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  

@@ -22,6 +22,7 @@ router.post('/newcustomerapi', customerapi.newcustomerapi);
 router.get('/customerdetails/:id', customerapi.customerdetails);
 router.post('/customerupdate', customerapi.updatecustomer);
 router.get('/dailycustomers/:routeId', customerapi.dailycustomer);
+router.get('/collectionsum', customerapi.getwalletandassetcollection);
 
 
 

@@ -38,6 +38,7 @@ const customerSchema = new mongoose.Schema({
   deliveryDay: { type: String },
   language: { type: String },
   id:Number,
+  otp:Number
 });
 customerSchema.pre('save', async function (next) {
   if (!this.uid) {

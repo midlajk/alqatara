@@ -5,7 +5,9 @@ const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck')
 const DeletedCustomer  = mongoose.model('DeletedCustomer')
 const Salesman = mongoose.model('Salesman')
-
+const axios = require('axios');
+require("dotenv").config();
+const smssecret = process.env.SMS_SECRET;
 const Customer = mongoose.model('Customer')
 const CustomerAssetHistory = mongoose.model('CustomerAssetHistory')
 const Recharge = mongoose.model('Recharge')
@@ -383,3 +385,51 @@ exports.getwalletandassetcollection = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+  const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+  // OTP Expiry Time (e.g., 5 minutes)
+  const OTP_EXPIRY_TIME = 5 * 60 * 1000;
+
+exports.generateotplink = async (req, res) => {
+
+  try {
+    const { customerId,creditAmountPaid } = req.body;
+
+    if (!customerId) {
+        return res.status(400).json({ error: "id is required" });
+    }
+
+    const customer = await Customer.findOne({ id:customerId });
+    if (!customer) {
+        return res.status(404).json({ error: "Customer not found" });
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+    const otpExpiresAt = new Date(Date.now() + OTP_EXPIRY_TIME); // Set expiry time
+
+    // Update customer with OTP
+    customer.otp = otp;
+    customer.otpExpiresAt = otpExpiresAt;
+    await customer.save();
+
+    // Send OTP via SMS
+    const response = await axios.get("https://smartsmsgateway.com/api/api_http.php", {
+        params: {
+            username: "qatrawtr",
+            password: smssecret,
+            senderid: "QATTARAWATR",
+            to: customer.mobileNumber,
+            text: `Your OTP code for wallet use of AED ${creditAmountPaid} is ${otp}. It will expire in 5 minutes.`,
+            type: "text"
+        }
+    });
+
+console.log(response)
+
+    res.status(200).json({ message: "OTP sent successfully", otp }); // Remove otp from response in production
+} catch (error) {
+    console.error("Error sending OTP:", error);
+    res.status(500).json({ error: "Failed to send OTP" });
+}
+}

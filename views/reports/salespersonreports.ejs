@@ -153,10 +153,10 @@ $(document).ready(function () {
       { data: 'name' },
       { data: 'totalBottleDeposits' },
       { data: 'totalCoolerDeposits' },
-      { data: 'totalCollection' },
-      { data: 'totalCollection' },
+      { data: 'totalWalletCollection' },
+      { data: 'totalCreditCollection' },
 
-      { data: 'city' }
+      { data: 'totalCollection' }
     ]
   });
 
@@ -167,9 +167,10 @@ $(document).ready(function () {
     // Get selected dates
     const fromDate = $('#fromDate').val();
     const toDate = $('#toDate').val();
+    const download = $('#download').val();
 
     // Reload DataTable with new parameters
-    table.ajax.url(`/getsalesmanreport?fromDate=${fromDate}&toDate=${toDate}`).load();
+    table.ajax.url(`/getsalesmanreport?fromDate=${fromDate}&toDate=${toDate}&download=${download}`).load();
 
     // Close the modal
     $('#dateModal').modal('hide');

@@ -7,7 +7,8 @@ const CreditOrderHistory = mongoose.model('CreditOrderHistory')
 const Truck = mongoose.model('Truck')
 const Salesman = mongoose.model('Salesman')
 const axios = require('axios');
-
+require("dotenv").config();
+const smssecret = process.env.SMS_SECRET; // Access secret key
 
 exports.getorders = async (req, res) => {
     try {
@@ -67,17 +68,6 @@ exports.getorders = async (req, res) => {
       try {
         const order = new Order(req.body);
         await order.save();
-        const response = await axios.get('https://smartsmsgateway.com/api/api_http.php', {
-          params: {
-              username: 'qatrawtr',
-              password: 'api_password',
-              senderid: 'QATTARAWATR',
-              to:'971505226253',
-              text: 'This is from qatara backend',
-              type: 'text'
-          }
-      });
-      console.log(response)
         res.redirect('/orders');
     } catch (error) {
         res.status(400).send({ error: error.message });
@@ -254,6 +244,7 @@ exports.updateOrderStatus = async (req, res) => {
       const truckId = updatedOrder.truckId;
       const noOf5galBottles = parseInt(updatedOrder.noOf5galBottles) || 0;
       const noOf200mlBottles = parseInt(updatedOrder.noOf200mlBottles) || 0;
+      console.log(noOf200mlBottles)
 
       // Step 1: Reduce stock and increase delivered count
       await Truck.findOneAndUpdate(
@@ -276,6 +267,17 @@ exports.updateOrderStatus = async (req, res) => {
           remaining200mlBottles: { $gte: 0 } ? 0 : undefined,
         }
       );
+      const response = await axios.get('https://smartsmsgateway.com/api/api_http.php', {
+        params: {
+            username: 'qatrawtr',
+            password: smssecret,
+            senderid: 'QATTARAWATR',
+            to: '971505226253',
+            text: `Thank you for your order with Al Qattara. Your purchase of AED ${updatedOrder.totalPrice} has been confirmed and Delivered. We appreciate your trust and look forward to serving you again.`,
+            type: 'text'
+        }
+    });
+    console.log(response)
     }
 
     res.redirect("/orderhistory/" + _id);
@@ -423,6 +425,7 @@ exports.deliveryorderapi = async (req, res) => {
       totalPrice,
       status,
       name,
+      otp,
       orderid
     } = req.body;
     // Validate required fields
@@ -437,7 +440,26 @@ exports.deliveryorderapi = async (req, res) => {
     if (creditAmountPaid > 0 && !modeOfPayment) {
       return res.status(400).json({ error: "Mode of payment is required when credit amount is paid" });
     }
-
+    if (creditAmountPaid > 0 && modeOfPayment == 'Wallet') {
+      if (otp) {
+          const customer = await Customer.findOne({ id: customerId });
+  
+          if (!customer) {
+              return res.status(400).json({ error: "Customer not found" });
+          }
+          console.log(otp )
+  
+          if (customer.otp != otp) {
+              return res.status(400).json({ error: "Invalid OTP. Please try again." });
+          }
+          if (customer.otpExpiresAt < new Date()) {
+            return res.status(400).json({ error: "OTP expired. Please request a new one." });
+        }
+      } else {
+          return res.status(400).json({ error: "OTP is required" });
+      }
+  }
+  
     // Find the truck assigned to the salesman
     const truck = await Truck.findOne({ salesmanId });
     if (!truck) {
@@ -517,7 +539,19 @@ exports.deliveryorderapi = async (req, res) => {
           }
         ]
       );
-    }
+      const response = await axios.get('https://smartsmsgateway.com/api/api_http.php', {
+      params: {
+          username: 'qatrawtr',
+          password: smssecret,
+          senderid: 'QATTARAWATR',
+          to: '971505226253',
+          text: `Thank you for your order with Al Qattara. Your purchase of AED ${order.totalPrice} has been confirmed and Delivered. We appreciate your trust and look forward to serving you again.`,
+          type: 'text'
+      }
+  });
+  console.log(response)
+
+    } 
     // Handle credit order history if payment is involved
     if (creditAmountPaid > 0) {
       const totalCreditAmountDue = totalPrice - creditAmountPaid;
@@ -530,7 +564,8 @@ exports.deliveryorderapi = async (req, res) => {
 
       await creditOrderHistory.save();
     }
-
+   
+  
     return res.status(201).json({
       message: orderid ? "Order updated successfully!" : "New order created successfully!",
       order,

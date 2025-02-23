@@ -101,7 +101,6 @@
                   <th scope="col" class="sort" data-sort="completion">Mobile Number</th>
                   <th scope="col" class="sort" data-sort="completion">5 gal price</th>
 
-                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody class="list">
@@ -146,13 +145,13 @@ $(document).ready(function () {
                     return data ? `₹ ${data.toFixed(2)}` : 'N/A';
                 }
             },  // 5 Gal Price
-            { 
-                data: 'id',
-                render: function (data) {
-                    return `<a href="/edit/${data}" class="btn btn-primary btn-sm">Edit</a> 
-                            <button class="btn btn-danger btn-sm delete-btn" data-id="${data}">Delete</button>`;
-                }
-            }  // Actions
+            // { 
+            //     data: 'id',
+            //     render: function (data) {
+            //         return `<a href="/edit/${data}" class="btn btn-primary btn-sm">Edit</a> 
+            //                 <button class="btn btn-danger btn-sm delete-btn" data-id="${data}">Delete</button>`;
+            //     }
+            // }  // Actions
         ]
     });
 

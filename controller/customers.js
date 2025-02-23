@@ -9,6 +9,7 @@ const Salesman = mongoose.model('Salesman')
 const Customer = mongoose.model('Customer')
 const CustomerAssetHistory = mongoose.model('CustomerAssetHistory')
 const Recharge = mongoose.model('Recharge')
+const createError = require('http-errors');
 
 exports.getcustomer = async (req, res) => {
     try {
@@ -16,11 +17,26 @@ exports.getcustomer = async (req, res) => {
       const searchQuery = search && search.value ? search.value : ''; // Search value
       const limit = parseInt(length, 10) || 10; // Number of records per page
       const skip = parseInt(start, 10) || 0; // Offset
+      let query = {};
+
+      // Apply search filter if exists
+      if (searchQuery) {
+          query.$or = [
+              { id: { $regex: searchQuery, $options: 'i' } },
+              { city: { $regex: searchQuery, $options: 'i' } }
+          ];
+      }
+
+      // Apply city filter if session city exists and is not "All"
+      if (req.session.city && req.session.city !== 'All') {
+          query.city = { $regex: `^${req.session.city}$`, $options: 'i' }; // Case-insensitive match for exact city name
+      }
+      console.log(req.session.city)
       
       // Build query with optional search
-      const query = searchQuery
-        ? { $or: [{ id: { $regex: searchQuery, $options: 'i' } }, { city: { $regex: searchQuery, $options: 'i' } }] }
-        : {};
+      // const query = searchQuery
+      //   ? { $or: [{ id: { $regex: searchQuery, $options: 'i' } }, { city: { $regex: searchQuery, $options: 'i' } }] }
+      //   : {};
   
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
@@ -44,19 +60,18 @@ exports.getcustomer = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.newcustomer = async (req, res) => {
-      console.log('here')
- 
-      try {
-        const cutomer = new Customer(req.body);
-        await cutomer.save();
-        res.redirect('/customers');
+  exports.newcustomer = async (req, res,next) => {
+    try {
+      const customer = new Customer(req.body);
+      await customer.save();
+      res.redirect('/customers'); // Redirect to customers list on success
     } catch (error) {
-      console.log(error)
-        res.status(400).send({ error: error.message });
-      }
- 
+      // console.error("Error creating customer:", error);
+       return next(createError(400, error.message));
+      
+    }
   };
+  
 
 
   exports.customerids = async (req, res) => {

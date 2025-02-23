@@ -97,12 +97,12 @@
               <thead class="thead-light">
                 <tr>
                   <th scope="col" class="sort" data-sort="name"> Truck ID</th>
-                  <th scope="col" class="sort" data-sort="budget">Route</th>
                   <th scope="col" class="sort" data-sort="status">Stock of 5 gal bottles</th>
                   <th scope="col" class="sort">Stock of 200 ml bottles</th>
                   <th scope="col" class="sort">Delivered 5 gal bottles</th>
-                  <th scope="col" class="sort" data-sort="completion">City</th>
-                  <th scope="col"></th>
+                  <th scope="col" class="sort">Delivered 200ml bottles</th>
+                  <th scope="col" class="sort" data-sort="completion">Damaged Bottles</th>
+                  <!-- <th scope="col"></th> -->
                 </tr>
               </thead>
               <tbody class="list">
@@ -133,14 +133,14 @@ $(document).ready(function () {
         },
         columns: [
             { data: "id", title: "Truck ID" },
-            { data: "routeId", title: "Route" },
             { data: "stockOf5galBottles", title: "Stock of 5 gal bottles" },
             { data: "stockOf200mlBottles", title: "Stock of 200 ml bottles" },
             { data: "delivered5galBottles", title: "Delivered 5 gal bottles" },
-            { data: "city", title: "City" },
-            { data: null, title: "Action", render: function () {
-                return '<button class="btn btn-primary">View</button>';
-            }}
+            { data: "delivered5galBottles", title: "Delivered 200ml bottles" },
+            { data: "city", title: "Damaged Bottles" },
+            // { data: null, title: "Action", render: function () {
+            //     return '<button class="btn btn-primary">View</button>';
+            // }}
         ]
     });
 });

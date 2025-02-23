@@ -19,7 +19,8 @@
     <!-- City Dropdown -->
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
         <select class="city-js form-control" name="city" id="city" required>
-            <option value="All">All</option>
+          <option value="<%= selectedCity %>" selected><%= selectedCity %></option> 
+            
         </select>
     </div>
 
@@ -196,7 +197,6 @@ document.addEventListener("DOMContentLoaded", function () {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
   <script>
   $(document).ready(function () {
-    console.log("jQuery Ready");
 
     // Initialize Select2
     $('.city-js').select2({
@@ -235,7 +235,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // Add event listener for city selection change
     $("#city").on("change", function () {
         var search = $("#searchTruck").val()
-        fetchTrucks(search,$(this).val());
+        var selectedCity = $(this).val(); // Get selected city
+
+        $.ajax({
+        url: "/update-city",
+        type: "POST",
+        data: { city: selectedCity },
+        success: function (response) {
+        },
+        error: function (xhr, status, error) {
+            console.error("Error updating session city:", error);
+        }
+    });
+
+    fetchTrucks(search, selectedCity);
     });
 
     // Add search functionality

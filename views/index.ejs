@@ -64,9 +64,10 @@
       </div>
       <script>
         // Fetch trucks from the backend and render them
-        async function fetchTrucks(searchQuery = "",city = "All") {
+        async function fetchTrucks(searchQuery = "",) {
           try {
-         
+            const city = document.getElementById("city").value
+            console.log(city)
             const response = await fetch(`/gettrucknames?search=${searchQuery}&city=${city}`);
             const trucks = await response.json();
             const truckContainer = document.getElementById("truckContainer");

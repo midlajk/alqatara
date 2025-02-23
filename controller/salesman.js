@@ -20,9 +20,20 @@ exports.getsalesman = async (req, res) => {
       const skip = parseInt(start, 10) || 0; // Offset
       
       // Build query with optional search
-      const query = searchQuery
-        ? { $or: [{ id: { $regex: searchQuery, $options: 'i' } }, { city: { $regex: searchQuery, $options: 'i' } }] }
-        : {};
+      let query = {};
+
+      // Apply search filter if exists
+      if (searchQuery) {
+          query.$or = [
+              { id: { $regex: searchQuery, $options: 'i' } },
+              { city: { $regex: searchQuery, $options: 'i' } }
+          ];
+      }
+
+      // Apply city filter if session city exists and is not "All"
+      if (req.session.city && req.session.city !== 'All') {
+          query.city = { $regex: `^${req.session.city}$`, $options: 'i' }; // Case-insensitive match for exact city name
+      }
   
       // Get filtered data and total count
       const [filtereddata, totalRecords, totalFiltered] = await Promise.all([
@@ -61,19 +72,22 @@ exports.getsalesman = async (req, res) => {
     
   exports.salesmanids = async (req, res) => {
     try {
-      const salesmans = await Salesman.find({}, { id: 1,name:1}); // Fetch only required fields
-
+      const cityFilter = req.session.city; // Get city from session
+  
+      let query = {};
+      if (cityFilter && cityFilter.toLowerCase() !== "all") {
+        query = { city: cityFilter }; // Filter only salesmen from the same city
+      }
+  
+      const salesmans = await Salesman.find(query, { id: 1, name: 1 }); // Fetch only required fields
       res.json(salesmans);
+      
     } catch (err) {
-      console.error(err);
-      res.status(500).send('Error fetching routes');
+      console.error("Error fetching salesmen:", err);
+      res.status(500).send("Error fetching salesmen");
     }
-
-    
-
-};
-
-
+  };
+  
 
 
 /////MObile appp 

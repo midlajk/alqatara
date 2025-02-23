@@ -97,13 +97,16 @@
                   <th scope="col" class="sort" data-sort="name"> ID</th>
                   <th scope="col" class="sort" data-sort="budget">Name</th>
                   <th scope="col" class="sort" data-sort="status">Recent Delivery</th>
-                  <th scope="col" class="sort">Contact</th>
-                  <th scope="col" class="sort" data-sort="completion">Bottles</th>
+                  <th scope="col" class="sort">5Gal orders</th>
+                  <th scope="col" class="sort" data-sort="completion">200 ml orders</th>
+                  <th scope="col" class="sort" data-sort="completion">Total Order</th>
+
                   <th scope="col" class="sort" data-sort="completion">Security Deposit</th>
+                  <th scope="col" class="sort" data-sort="completion">Wallet recharge</th>
+                  <th scope="col" class="sort" data-sort="completion">Pending Payment</th>
 
-                  <th scope="col" class="sort" data-sort="completion">Location</th>
 
-                  <th scope="col"></th>
+                  <!-- <th scope="col"></th> -->
                 </tr>
               </thead>
               <tbody class="list">
@@ -141,9 +144,13 @@ $(document).ready(function () {
             { data: "noOf5galBottles" },
             { data: "bottleSecurityDeposit" },
             { data: "location" },
-            { data: null, render: function () {
-                return '<button class="btn btn-primary">View</button>';
-            }}
+            { data: "location" },
+
+            { data: "location" },
+
+            // { data: null, render: function () {
+            //     return '<button class="btn btn-primary">View</button>';
+            // }}
         ]
     });
 });

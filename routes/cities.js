@@ -8,6 +8,7 @@ router.get('/getcities', cityapi.getcities);
 router.post('/addcity', cityapi.newcity);
 router.get('/citynames', cityapi.citynames);
 router.post('/delete-city', cityapi.deletecities);
+router.post('/update-city', cityapi.updatecity);
 
 
 module.exports = router;

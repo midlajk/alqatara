@@ -35,7 +35,6 @@
                 <th scope="col" class="sort" data-sort="completion">Address</th>
                 <th scope="col" class="sort" data-sort="completion">Status</th>
                 <th scope="col" class="sort" data-sort="completion">Caption</th>
-                <th scope="col"></th>
               </tr>
             </thead>
             <tbody class="list">
@@ -149,38 +148,13 @@
       return 'N/A';
     }
   },
-        {
-          data: null,
-          title: 'Actions',
-          render: function(data, type, row) {
-            return `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">Delete</button>`;
-          }
-        }
+        
 ]
 
 });
 
   // Handle Delete Button Click
-  $('#customertable').on('click', '.delete-btn', function () {
-      var customerId = $(this).data('id');
 
-      if (!confirm('Are you sure you want to delete this customer?')) {
-        return;
-      }
-
-      // Send DELETE request
-      $.ajax({
-        url: '/deletecustomer/' + customerId,
-        type: 'DELETE',
-        success: function(response) {
-          alert('Customer deleted successfully!');
-          datatable.ajax.reload(null, false); // Reload table without resetting pagination
-        },
-        error: function(xhr, status, error) {
-          alert('Error deleting customer: ' + xhr.responseText);
-        }
-      });
-    });
       });
     </script>
 

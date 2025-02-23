@@ -83,7 +83,8 @@
         {
           data: '_id',
           render: function (data) {
-            return `<button class="btn btn-sm btn-warning" onclick="editRecharge('${data}')">Edit</button>
+            // <button class="btn btn-sm btn-warning" onclick="editRecharge('${data}')">Edit</button>
+            return `
                     <button class="btn btn-sm btn-danger" onclick="deleteRecharge('${data}')">Delete</button>`;
           }
         }

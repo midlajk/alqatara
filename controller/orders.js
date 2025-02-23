@@ -6,6 +6,7 @@ const Order = mongoose.model('Order')
 const CreditOrderHistory = mongoose.model('CreditOrderHistory')
 const Truck = mongoose.model('Truck')
 const Salesman = mongoose.model('Salesman')
+const axios = require('axios');
 
 
 exports.getorders = async (req, res) => {
@@ -14,11 +15,29 @@ exports.getorders = async (req, res) => {
       const searchQuery = search && search.value ? search.value : ''; // Search value
       const limit = parseInt(length, 10) || 10; // Number of records per page
       const skip = parseInt(start, 10) || 0; // Offset
+      const cityFilter = req.session.city; // Get city from session
+
+      let truckFilter = {};
       
+      // If city is specified, fetch only trucks in that city
+      if (cityFilter && cityFilter.toLowerCase() !== "all") {
+        const trucksInCity = await Truck.find({ city: cityFilter }).select("id");
+        const truckIds = trucksInCity.map(truck => truck.id);
+  
+        // Ensure orders are filtered by these truck IDs
+        truckFilter = { truckId: { $in: truckIds } };
+      }
       // Build query with optional search
-      const query = searchQuery
-        ? { $or: [{ id: { $regex: searchQuery, $options: 'i' } }, { city: { $regex: searchQuery, $options: 'i' } }] }
-        : {};
+      const query = {
+        ...truckFilter, 
+        ...(searchQuery ? { 
+          $or: [
+            { id: { $regex: searchQuery, $options: "i" } }, 
+            { truckId: { $regex: searchQuery, $options: "i" } } 
+          ]
+        } : {})
+      };
+  
   
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
@@ -48,9 +67,19 @@ exports.getorders = async (req, res) => {
       try {
         const order = new Order(req.body);
         await order.save();
+        const response = await axios.get('https://smartsmsgateway.com/api/api_http.php', {
+          params: {
+              username: 'qatrawtr',
+              password: 'api_password',
+              senderid: 'QATTARAWATR',
+              to:'971505226253',
+              text: 'This is from qatara backend',
+              type: 'text'
+          }
+      });
+      console.log(response)
         res.redirect('/orders');
     } catch (error) {
-      console.log(error)
         res.status(400).send({ error: error.message });
       }
  
@@ -396,7 +425,6 @@ exports.deliveryorderapi = async (req, res) => {
       name,
       orderid
     } = req.body;
-     console.log(req.body)
     // Validate required fields
     if (!customerId || !salesmanId) {
       return res.status(400).json({ error: "Customer ID and Salesman ID are required" });
@@ -459,12 +487,42 @@ exports.deliveryorderapi = async (req, res) => {
 
       await order.save();
     }
-
+    if (order.status === "DELIVERED" && order.truckId) {
+      const truckId = order.truckId;
+      const noOf5galBottles = parseInt(order.noOf5galBottles) || 0;
+      const noOf200mlBottles = parseInt(order.noOf200mlBottles) || 0;
+    
+      // Step 1: Reduce stock and increase delivered count
+      await Truck.findOneAndUpdate(
+        { id: truckId },
+        {
+          $inc: {
+            remaining5galBottles: -noOf5galBottles,
+            remaining200mlBottles: -noOf200mlBottles,
+            delivered200mlBottles: noOf200mlBottles,
+            delivered5galBottles: noOf5galBottles
+          }
+        }
+      );
+    
+      // Step 2: Ensure stock values don't go negative
+      await Truck.findOneAndUpdate(
+        { id: truckId },
+        [
+          {
+            $set: {
+              remaining5galBottles: { $cond: [{ $lt: ["$remaining5galBottles", 0] }, 0, "$remaining5galBottles"] },
+              remaining200mlBottles: { $cond: [{ $lt: ["$remaining200mlBottles", 0] }, 0, "$remaining200mlBottles"] }
+            }
+          }
+        ]
+      );
+    }
     // Handle credit order history if payment is involved
     if (creditAmountPaid > 0) {
       const totalCreditAmountDue = totalPrice - creditAmountPaid;
       const creditOrderHistory = new CreditOrderHistory({
-        orderId: order._id,
+        orderId: order.id,
         modeOfPayment,
         creditAmountPaid,
         totalCreditAmountDue,

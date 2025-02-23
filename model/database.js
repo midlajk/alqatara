@@ -181,7 +181,7 @@ const employeeSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-  id: { type: Number,unique: true},
+  id: { type: String,unique: true},
   name: { type: String, required: true },
   area: { type: String,},
   createdAt: { type: Date, default: Date.now },
@@ -275,7 +275,7 @@ const salesmanSchema = new mongoose.Schema({
     city: { type: String, required: true }
   });
   const truckHistorySchema = new mongoose.Schema({
-    id: { type: String, required: true },
+    id: { type: String, },
     truckCreatedAt: { type: Date, required: true },
     truckUpdatedAt: { type: Date, required: true },
     createdAt: { type: Date, default: Date.now },
@@ -293,10 +293,9 @@ const salesmanSchema = new mongoose.Schema({
     routeId: { type: String, required: true },
     updatedBottleType: { type: String, enum: ['BOTH', '200ML', '5GAL'] }
   });
-
   truckHistorySchema.pre("save", function (next) {
-    if (!this.id) {
-        this.id = uuidv4().replace(/-/g, "").slice(0, 24); // Generate a 24-character ID
+    if (this.isNew && !this.id) {
+        this.id = uuidv4().replace(/-/g, "").slice(0, 24);
     }
     next();
 });

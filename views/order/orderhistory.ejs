@@ -98,17 +98,7 @@
                     <input type="text" class="form-control" id="totalPrice" name="totalPrice" value="0">
                   </div>
                 </div>
-                <div class="col-12 col-md-3">
-                  <div class="form-group">
-                    <label for="modeOfPayment">Mode of Payment</label>
-                    <select class="form-control" id="modeOfPayment" name="modeOfPayment">
-                      <option value="Cash" <%= order.modeOfPayment === 'Cash' ? 'selected' : '' %>>Cash</option>
-                      <option value="Wallet" <%= order.modeOfPayment === 'Wallet' ? 'selected' : '' %>>Wallet</option>
-                      <option value="Online" <%= order.modeOfPayment === 'Online' ? 'selected' : '' %>>Online</option>
-                      <option value="Other" <%= order.modeOfPayment === 'Other' ? 'selected' : '' %>>Other</option>
-                  </select>
-                                  </div>
-                </div>
+     
                 <div class="col-12 col-md-3">
                   <div class="form-group">
                     <label for="assistants">Assistant<!-- s (Comma-separated) --></label>
@@ -118,13 +108,7 @@
                   </div>
                 </div>
       
-                <!-- Credit Amount Paid -->
-                <div class="col-12 col-md-3">
-                  <div class="form-group">
-                    <label for="creditAmountPaid">Amount Paid</label>
-                    <input type="number" class="form-control" id="creditAmountPaid" name="creditAmountPaid" value="<%= order.creditAmountPaid %>">
-                  </div>
-                </div>
+           
               </div>
               <input type="hidden" name="_id" id="_id" value="<%= order._id%>">
       

@@ -4,7 +4,7 @@ const authMiddleware = require('../middleware/auth');
 
 /* GET home page. */
 router.get('/dashboard', function(req, res, next) {
-  res.render('index', { title: 'Al Qattara',route:'Dashboard',sub :'Default'});
+  res.render('index', { title: 'Al Qattara',route:'Dashboard',sub :'Default' ,selectedCity: req.session.city || 'All' });
 });
 
 router.get('/utilities',authMiddleware, function(req, res, next) {
@@ -81,10 +81,10 @@ router.get('/addnewsalesman',authMiddleware, function(req, res, next) {
 
 router.get('/cities',authMiddleware, function(req, res, next) {
   console.log('here')
-  res.render('city/cities', { title: 'Al Qattara',route:'City',sub :'Manage City' });
+  res.render('city/cities', { title: 'Al Qattara',route:'Cities',sub :'Manage City' });
 });
 router.get('/city/addnewcity',authMiddleware, function(req, res, next) {
-  res.render('city/newcity', { title: 'Al Qattara',route:'City',sub :'New City' });
+  res.render('city/newcity', { title: 'Al Qattara',route:'Cities',sub :'New City' });
 });
 
 module.exports = router;

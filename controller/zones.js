@@ -3,60 +3,84 @@ require('../model/database')
 const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck')
 const Zone = mongoose.model('Zone')
+const Route = mongoose.model('Route')
+const createError = require('http-errors');
 
 const Customer = mongoose.model('Customer')
-
 exports.getzones = async (req, res) => {
-    console.log('Processing DataTables request...');
-    try {
+  try {
       const { start, length, draw, search } = req.query; // Extract DataTables parameters
-      const searchQuery = search && search.value ? search.value : ''; // Search value
+      const searchQuery = search?.value || ''; // Search value
       const limit = parseInt(length, 10) || 10; // Number of records per page
       const skip = parseInt(start, 10) || 0; // Offset
-      
-      // Build query with optional search
-      const query = searchQuery
-        ? { $or: [{ id: { $regex: searchQuery, $options: 'i' } }, { city: { $regex: searchQuery, $options: 'i' } }] }
-        : {};
-  
+
+      let routeFilter = {}; // Default: No city filter
+
+      // If session.city exists and is NOT "All", filter routes by city
+      if (req.session.city && req.session.city !== "All") {
+          const cityRoutes = await Route.find({ city: req.session.city }, { id: 1 }); // Fetch route IDs
+          const routeIds = cityRoutes.map(route => route.id); // Extract route IDs
+          routeFilter = { routeId: { $in: routeIds } }; // Filter zones by these routes
+      }
+
+      // Build search query
+      const searchFilter = searchQuery
+          ? { $or: [{ id: { $regex: searchQuery, $options: 'i' } }, { routeId: { $regex: searchQuery, $options: 'i' } }] }
+          : {};
+
+      // Combine filters
+      const query = { ...routeFilter, ...searchFilter };
+
       // Get filtered data and total count
-      const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-        Zone.find(query).skip(skip).limit(limit), // Fetch paginated data
-        Zone.countDocuments(), // Total records count
-        Zone.countDocuments(query) // Filtered records count
+      const [filteredZones, totalRecords, totalFiltered] = await Promise.all([
+          Zone.find(query).sort({ _id: -1 }).skip(skip).limit(limit), // Fetch paginated data
+          Zone.countDocuments(), // Total records count
+          Zone.countDocuments(query) // Filtered records count
       ]);
-  
+
       // Respond with DataTables-compatible JSON
       res.json({
-        draw: parseInt(draw, 10) || 1, // Pass draw counter
-        recordsTotal: totalRecords, // Total records in database
-        recordsFiltered: totalFiltered, // Total records after filtering
-        docs: filteredTrucks // Data for the current page
+          draw: parseInt(draw, 10) || 1, // Pass draw counter
+          recordsTotal: totalRecords, // Total records in database
+          recordsFiltered: totalFiltered, // Total records after filtering
+          docs: filteredZones // Data for the current page
       });
-    } catch (err) {
-      console.error('Error fetching trucks:', err);
-      res.status(500).json({ error: 'Failed to fetch trucks' });
-    }
-  };
-  
+  } catch (err) {
+      console.error('Error fetching zones:', err);
+      res.status(500).json({ error: 'Failed to fetch zones' });
+  }
+};
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.newzones = async (req, res) => {
-      console.log(req.body)
- 
-      try {
-        const cutomer = new Zone(req.body);
-        await cutomer.save();
-        res.redirect('/zones');
+  exports.newzones = async (req, res, next) => { 
+    try {
+        const { id, routeId } = req.body;
+
+        // Check if the Zone ID already exists
+        const existingZone = await Zone.findOne({ id });
+        if (existingZone) {
+            return next(createError(400, 'Zone ID already exists. Please use a unique ID.'));
+        }
+
+        // Create and save the new zone
+        const newZone = new Zone({
+            id,
+            routeId,
+            creationDate: new Date(),
+            updatedAt: new Date(),
+        });
+
+        await newZone.save();
+        res.redirect('/zones'); // Redirect to zones page
+
     } catch (error) {
-      console.log(error.message)
-        res.status(400).send({ error: error.message });
-      }
- 
-  };
+        console.error("Error creating zone:", error);
+        res.status(500).json({ error: "Failed to create zone. Please try again." });
+    }
+};
+
 
   exports.zoneids = async (req, res) => {
-    console.log('here')
     try {
       const routes = await Zone.find({}, { id: 1}); // Fetch only required fields
       res.json(routes);

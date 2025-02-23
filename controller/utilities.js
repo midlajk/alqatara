@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck');
 const TruckHistory = mongoose.model('TruckHistory')
 
+const createError = require('http-errors');
 
 exports.gettrucks = async (req, res) => {
     try {
@@ -13,10 +14,20 @@ exports.gettrucks = async (req, res) => {
       const skip = parseInt(start, 10) || 0; // Offset
       
       // Build query with optional search
-      const query = searchQuery
-        ? { $or: [{ id: { $regex: searchQuery, $options: 'i' } }, { city: { $regex: searchQuery, $options: 'i' } }] }
-        : {};
-  
+      let query = {};
+
+      // Apply search filter if exists
+      if (searchQuery) {
+          query.$or = [
+              { id: { $regex: searchQuery, $options: 'i' } },
+              { city: { $regex: searchQuery, $options: 'i' } }
+          ];
+      }
+
+      // Apply city filter if session city exists and is not "All"
+      if (req.session.city && req.session.city !== 'All') {
+          query.city = { $regex: `^${req.session.city}$`, $options: 'i' }; // Case-insensitive match for exact city name
+      }
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
         Truck.find(query).sort({ _id: -1 }).skip(skip).limit(limit), // Fetch paginated data
@@ -39,12 +50,12 @@ exports.gettrucks = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.addtrucks = async (req, res) => {
+    exports.addtrucks = async (req, res,next) => {
     try {
       const { truckId, city, maxStock5Gallon, maxStock200ml, assignedRoutes } = req.body;
       const existingTruck = await Truck.findOne({ id: truckId });
-      if(existingTruck){
-        return res.status(500).send('Failed to add truck go back and try updating the data and give new truck id .');
+      if(existingTruck || !truckId){
+        return next(createError(400, 'Truck ID already exists. Please update the existing truck or choose a new ID.'));
       }
       const newTruck = new Truck({
         id: truckId,
@@ -68,8 +79,6 @@ exports.gettrucks = async (req, res) => {
   exports.gettruckname = async (req, res) => {
     const searchQuery = req.query.search || "";
     const selectedCity = req.query.city || ""; // Get city filter from query
-    console.log(searchQuery,selectedCity)
-
     try {
         let query = {
             id: { $regex: searchQuery, $options: "i" },
@@ -109,7 +118,6 @@ exports.editutilitiespage = async (req, res) => {
 
   const id = req.params.id
   const truck = await Truck.findById(id)
-  console.log(truck)
   res.render('utilities/updatetruck',  { title: 'Al Qattara',route:'Utilities',sub :'Update Truck',truck:truck });
 
 
@@ -127,7 +135,23 @@ exports.updateTruck = async (req, res) => {
       if (!truck) {
           return res.status(404).json({ success: false, message: "Truck not found!" });
       }
-      
+      await Truck.updateMany(
+        {
+            $or: [
+                { salesmanId: salesmanId },
+                { assistants: assistants }
+            ],
+            id: { $ne: truckId } // Exclude the current truck
+        },
+        [
+            {
+                $set: {
+                    salesmanId: { $cond: [{ $eq: ["$salesmanId", salesmanId] }, "", "$salesmanId"] },
+                    assistants: { $cond: [{ $eq: ["$assistants", assistants] }, "", "$assistants"] }
+                }
+            }
+        ]
+    );
       const updatedTruck = await Truck.findOneAndUpdate(
           { id: truckId }, // Find by truck ID
           {
@@ -135,7 +159,7 @@ exports.updateTruck = async (req, res) => {
               stockOf5galBottles: parseInt(maxStock5Gallon, 10),
               stockOf200mlBottles: parseInt(maxStock200ml, 10),
               remaining200mlBottles: parseInt(maxStock200ml, 10) - parseInt(truck.delivered200mlBottles || 0),
-              remaining5galBottles: parseInt(maxStock5Gallon, 10) - parseInt(truck.delivered5galBottles || 0)- parseInt(truck.damaged5galBottles || 0),
+              remaining5galBottles: parseInt(maxStock5Gallon, 10) - parseInt(truck.delivered5galBottles || 0),
               routeId: assignedRoutes,
               updatedAt: new Date(),
               salesmanId,
@@ -156,7 +180,6 @@ exports.updateTruck = async (req, res) => {
 
 
 exports.closeTruckStock = async (req, res) => {
-  console.log('here')
   try {
     const { truckId } = req.body;
 
@@ -191,11 +214,12 @@ exports.closeTruckStock = async (req, res) => {
     await truckHistory.save();
 
     // Reset stock values while setting current stock with remaining stock
+    
+    truck.stockOf200mlBottles = truck.remaining200mlBottles;
+    truck.stockOf5galBottles = truck.remaining5galBottles-truck.damaged5galBottles;
     truck.damaged5galBottles = 0;
     truck.delivered200mlBottles = 0;
     truck.delivered5galBottles = 0;
-    truck.stockOf200mlBottles = truck.remaining200mlBottles;
-    truck.stockOf5galBottles = truck.remaining5galBottles;
     truck.remaining200mlBottles = 0;
     truck.remaining5galBottles = 0;
 

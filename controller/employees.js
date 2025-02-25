@@ -58,6 +58,7 @@ exports.getemployees = async (req, res) => {
       await employee.save();
       res.redirect('/masters');
     } catch (error) {
-      res.status(400).send({ error: error.message });
+              return next(createError(400, error));
+      
     }
   };

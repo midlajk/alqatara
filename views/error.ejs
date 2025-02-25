@@ -1,8 +1,11 @@
 
 <%- include('./includes/head.ejs') -%>
-<%- include('./includes/navigation.ejs',{route:'error',sub:'error'}) -%>
 
-<%- include('./includes/header.ejs',{route:'error',sub:'error'}) -%>
+<% if (user) { %>
+  <%- include('./includes/navigation.ejs', { route: 'error', sub: 'error', city: 'error' }) -%>
+  <% } %>
+
+<%- include('./includes/header.ejs',{route:'error',sub:'error',city:'error'}) -%>
 
 </div>
 </div>

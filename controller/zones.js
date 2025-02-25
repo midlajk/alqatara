@@ -74,23 +74,31 @@ exports.getzones = async (req, res) => {
         res.redirect('/zones'); // Redirect to zones page
 
     } catch (error) {
-        console.error("Error creating zone:", error);
-        res.status(500).json({ error: "Failed to create zone. Please try again." });
+        return next(createError(400, error));
     }
 };
 
+exports.zoneids = async (req, res) => {
+  try {
+    const { truckid } = req.query; // Get truckid from the request query
 
-  exports.zoneids = async (req, res) => {
-    try {
-      const routes = await Zone.find({}, { id: 1}); // Fetch only required fields
-      res.json(routes);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Error fetching routes');
+    let filter = {}; // Default filter
+
+    if (truckid) {
+      const truck = await Truck.findOne({ id: truckid }); // Find truck by id
+
+      if (truck && truck.routeId) {
+        // filter.route = truck.routeId; // Apply filter only if routeId exists
+      } 
     }
 
-    
+    const zones = await Zone.find(filter, { id: 1 }); // Fetch zones based on filter
 
+    res.json(zones);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error fetching zones');
+  }
 };
 
 

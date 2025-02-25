@@ -8,6 +8,7 @@ const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 const ExcelJS = require("exceljs");
+const createError = require('http-errors');
 
 exports.customerreport = async (req, res) => {
     res.render('reports/customerreport', { title: 'Al Qattara' ,route:'Reports',sub :'Customer Report'});
@@ -143,7 +144,7 @@ exports.getsalesmanreport = async (req, res) => {
             },
             {
               $group: {
-                _id: "$assetType",
+                _id: null,
                 totalSecurityDeposit: { $sum: "$securityDeposit" }
               }
             }
@@ -210,11 +211,6 @@ exports.getsalesmanreport = async (req, res) => {
               { $arrayElemAt: ["$securityDeposits.totalSecurityDeposit", 0] }, 0
             ]
           },
-          totalCoolerDeposits: {
-            $ifNull: [
-              { $arrayElemAt: ["$securityDeposits.totalSecurityDeposit", 1] }, 0
-            ]
-          },
           totalWalletCollection: { 
             $ifNull: [{ $arrayElemAt: ["$walletCollection.totalWalletCollection", 0] }, 0] 
           },
@@ -228,7 +224,6 @@ exports.getsalesmanreport = async (req, res) => {
           totalCollection: {
             $add: [
               "$totalBottleDeposits",
-              "$totalCoolerDeposits",
               "$totalWalletCollection",
               "$totalCreditCollection"
             ]

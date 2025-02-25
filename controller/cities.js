@@ -80,8 +80,8 @@ exports.getcities = async (req, res) => {
         res.redirect('/cities'); // Redirect to cities page
 
     } catch (error) {
-        console.error("Error creating city:", error);
-        res.status(500).json({ error: "Failed to create city. Please try again." });
+              return next(createError(400, error));
+      
     }
 };
 

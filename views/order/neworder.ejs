@@ -48,7 +48,7 @@
                             <label for="zone"
                                 class="col-md-2 col-form-label form-control-label">Zone</label>
                             <div class="col-md-10">
-                                <select class="zone-js form-control" id="zone" name="area" required></select>
+                                <select class="zone-js form-control" id="zone" name="area" ></select>
 
                                 <!-- <input class="form-control" name="area" type="text" placeholder="Select or enter the zone" id="zone" required> -->
                             </div>
@@ -93,26 +93,7 @@
     
     <!-- Include Select2 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-    <script>
-        $(document).ready(function () {
-          // Initialize Select2 for the element with the correct ID or class
-          $('.items-js').select2({
-            dropdownParent: $("#cardb"),
-  ajax: {
-    url: '/routeids', // Backend endpoint
-    dataType: 'json',
-    delay: 250, // Debounce for performance
-    processResults: function (data) {
-      return {
-        results: data.map(function (item) {
-          return { id: item.id, text: item.id }; // Customize text display
-        }),
-      };
-    },
-  
-  },
-});
-        });
+ 
       </script>   
       <script>
         $(document).ready(function () {
@@ -123,6 +104,12 @@
     url: '/zoneids', // Backend endpoint
     dataType: 'json',
     delay: 250, // Debounce for performance
+    data: function (params) {
+        return {
+          q: params.term, // Search term from Select2 input
+          truckid: $('#truckId').val() // Get the route ID from an input/select field
+        };
+      },
     processResults: function (data) {
       return {
         results: data.map(function (item) {

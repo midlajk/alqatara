@@ -64,8 +64,8 @@ exports.getsalesman = async (req, res) => {
         await salesman.save();
         res.redirect('/salesman');
     } catch (error) {
-        res.status(400).send({ error: error.message });
-      }
+      return next(createError(400, error));
+    }
  
   };
 

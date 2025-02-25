@@ -23,6 +23,6 @@ router.post('/deliveryorderapi', ordersapi.deliveryorderapi);
 router.get('/creditorders', ordersapi.creditorders);
 router.get('/orderdetails/:id', ordersapi.orderdetails);
 router.post('/updatecreditorder/', ordersapi.updatecreditorder);
-router.get('/getsalesum/', ordersapi.getsalesum);
+router.get('/getsalesum', ordersapi.getsalesum);
 
 module.exports = router;

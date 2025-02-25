@@ -28,8 +28,7 @@
                     <th scope="col" class="sort">SalesMan ID</th>
                     <th scope="col" class="sort" data-sort="completion">Created at</th>
                     <th scope="col" class="sort">Updated On</th>
-                    <th scope="col" class="sort" data-sort="completion">Actions</th>
-                    <th scope="col"></th>
+                  
                   </tr>
                 </thead>
                 <tbody class="list">
@@ -80,14 +79,14 @@
             return new Date(data).toLocaleString();
           }
         },
-        {
-          data: '_id',
-          render: function (data) {
-            // <button class="btn btn-sm btn-warning" onclick="editRecharge('${data}')">Edit</button>
-            return `
-                    <button class="btn btn-sm btn-danger" onclick="deleteRecharge('${data}')">Delete</button>`;
-          }
-        }
+        // {
+        //   data: '_id',
+        //   render: function (data) {
+        //     // <button class="btn btn-sm btn-warning" onclick="editRecharge('${data}')">Edit</button>
+        //     return `
+        //             <button class="btn btn-sm btn-danger" onclick="deleteRecharge('${data}')">Delete</button>`;
+        //   }
+        // }
       ]
     });
   });

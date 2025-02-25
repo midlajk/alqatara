@@ -64,7 +64,7 @@
                   <div class="form-group">
                     <label for="delivered_at">Delivery Date</label>
                     
-                    <input type="date" class="form-control" id="delivered_at" name="delivered_at" required value="<%= order.delivered_at ? order.delivered_at.toISOString().split('T')[0] : '' %>">
+                    <input type="date" class="form-control" id="delivered_at" name="delivered_at" value="<%= order.delivered_at ? order.delivered_at.toISOString().split('T')[0] : '' %>">
                   </div>
                 </div>
                 
@@ -73,17 +73,17 @@
                 <div class="col-12 col-md-3">
                   <div class="form-group">
                     <label for="modeOfPayment">Number of 5 gal</label>
-                    <input type="text" class="form-control" id="noOf5galBottles" required name="noOf5galBottles" value="<%= order.noOf5galBottles || '' %>">
+                    <input type="text" class="form-control" id="noOf5galBottles"  name="noOf5galBottles" value="<%= order.noOf5galBottles || '' %>">
                   </div>
                 </div>   <div class="col-12 col-md-3">
                   <div class="form-group">
                     <label for="modeOfPayment">Number of 200ml</label>
-                    <input type="text" class="form-control" id="noOf200mlBottles" required name="noOf200mlBottles" value="<%= order.noOf200mlBottles || '' %>">
+                    <input type="text" class="form-control" id="noOf200mlBottles"  name="noOf200mlBottles" value="<%= order.noOf200mlBottles || '' %>">
                   </div>
                 </div>   <div class="col-12 col-md-3">
                   <div class="form-group">
                     <label for="modeOfPayment">Price of 5 gal</label>
-                    <input type="text" class="form-control" id="priceFor5galBottles" required name="priceFor5galBottle" value="<%= priceForA5galBottle || 0 %>">
+                    <input type="text" class="form-control" id="priceFor5galBottles"  name="priceFor5galBottle" value="<%= priceForA5galBottle || 0 %>">
                   </div>
                 </div>
                    <div class="col-12 col-md-3">

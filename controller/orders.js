@@ -9,6 +9,7 @@ const Salesman = mongoose.model('Salesman')
 const axios = require('axios');
 require("dotenv").config();
 const smssecret = process.env.SMS_SECRET; // Access secret key
+const createError = require('http-errors');
 
 exports.getorders = async (req, res) => {
     try {
@@ -70,7 +71,8 @@ exports.getorders = async (req, res) => {
         await order.save();
         res.redirect('/orders');
     } catch (error) {
-        res.status(400).send({ error: error.message });
+            return next(createError(400, error));
+    
       }
  
   };
@@ -219,6 +221,7 @@ exports.updateOrderStatus = async (req, res) => {
     if (delivered_at) {
       updateData.delivered_at = new Date(delivered_at);
     }
+    updateData.updatedAt = new Date();
 
     // Calculate prices
     updateData.priceFor5galBottles = parseFloat(((priceFor5galBottle || 0) * (updateData.noOf5galBottles || 0)).toFixed(2));
@@ -244,7 +247,6 @@ exports.updateOrderStatus = async (req, res) => {
       const truckId = updatedOrder.truckId;
       const noOf5galBottles = parseInt(updatedOrder.noOf5galBottles) || 0;
       const noOf200mlBottles = parseInt(updatedOrder.noOf200mlBottles) || 0;
-      console.log(noOf200mlBottles)
 
       // Step 1: Reduce stock and increase delivered count
       await Truck.findOneAndUpdate(
@@ -447,7 +449,6 @@ exports.deliveryorderapi = async (req, res) => {
           if (!customer) {
               return res.status(400).json({ error: "Customer not found" });
           }
-          console.log(otp )
   
           if (customer.otp != otp) {
               return res.status(400).json({ error: "Invalid OTP. Please try again." });
@@ -549,12 +550,12 @@ exports.deliveryorderapi = async (req, res) => {
           type: 'text'
       }
   });
-  console.log(response)
+
 
     } 
     // Handle credit order history if payment is involved
     if (creditAmountPaid > 0) {
-      const totalCreditAmountDue = totalPrice - creditAmountPaid;
+      const totalCreditAmountDue = Math.max(0, totalPrice - creditAmountPaid); // Prevent negative values
       const creditOrderHistory = new CreditOrderHistory({
         orderId: order.id,
         modeOfPayment,
@@ -563,6 +564,11 @@ exports.deliveryorderapi = async (req, res) => {
       });
 
       await creditOrderHistory.save();
+
+      if(totalCreditAmountDue === 0){
+        order.isCreditCustomerPaid = true
+        await order.save();
+      }
     }
    
   

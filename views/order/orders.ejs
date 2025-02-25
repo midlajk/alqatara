@@ -36,7 +36,7 @@
                   <!-- <th scope="col" class="sort" data-sort="completion">Price 5-gal</th> -->
                   <th scope="col" class="sort" data-sort="completion">Total Price</th>
                   <th scope="col" class="sort" data-sort="completion">Credit Status</th>
-                  <th scope="col" class="sort" data-sort="completion">Pay by</th>
+                  <!-- <th scope="col" class="sort" data-sort="completion">Pay by</th> -->
                   <th scope="col" class="sort" data-sort="completion">Updated At</th>
 
                   <th scope="col"></th>
@@ -115,13 +115,13 @@
               return data ? 'Paid' : 'Unpaid'; // Render credit status
             }
           },
-           {
-            data: 'modeOfPayment',
-            title: 'Pay b',
-            render: function (data) {
-              return data || 'N/A'; // Display mode of payment or N/A
-            }
-          },
+          //  {
+          //   data: 'modeOfPayment',
+          //   title: 'Pay b',
+          //   render: function (data) {
+          //     return data || 'N/A'; // Display mode of payment or N/A
+          //   }
+          // },
           {
             data: 'updatedAt',
             title: 'Updated At',

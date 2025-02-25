@@ -3,6 +3,7 @@ require('../model/database')
 const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck')
 const Order = mongoose.model('Order')
+const createError = require('http-errors');
 
 const PrevilageClass = mongoose.model('PrevilageClass')
 
@@ -47,7 +48,8 @@ exports.getclass = async (req, res) => {
         await previlageClass.save();
         res.redirect('/manageprevilages');
     } catch (error) {
-        res.status(400).send({ error: error.message });
+               return next(createError(400, error));
+       
       }
  
   };

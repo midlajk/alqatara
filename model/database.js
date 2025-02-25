@@ -188,7 +188,7 @@ const orderSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   customerId: { type: String, ref: 'Customer', required: true },
   salesmanId: { type: String },
-  truckId: { type: String },
+  truckId: { type: String , required: true },
   updatedAt: { type: Date, default: Date.now },
   status: { type: String, default: 'PENDING' },
   noOf200mlBottles: { type: Number, default: 0 },

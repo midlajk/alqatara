@@ -2,7 +2,12 @@ const mongoose = require('mongoose');
 const PrevilageClass = mongoose.model('PrevilageClass');
 
 const authMiddleware = async (req, res, next) => {
+    console.log('SDSD')
+
     // **Allow access to the login page**
+    const customKey = req.headers['x-custom-key'] || req.query.customKey;
+    console.log('SDSD')
+
     if (req.path === '/login') {
         return next(); // Skip authentication for login
     }
@@ -10,20 +15,21 @@ const authMiddleware = async (req, res, next) => {
     if (!req.session || !req.session.logged) {
         return res.redirect('/login'); // Redirect unauthorized users
     }
+    if (req.session.user && req.session.user.previlage) {
 
-    // try {
-    //     if (req.session.user && req.session.user.previlage) {
-    //         const prev = await PrevilageClass.findOne({ className: req.session.user.previlage });
+        const prev = await PrevilageClass.findOne({ className: req.session.user.previlage });
 
-    //         // Ensure readonlyAccess is always set
-    //         res.locals.readonlyAccess = prev ? prev.readonly : [];
-    //     } else {
-    //         res.locals.readonlyAccess = [];
-    //     }
-    // } catch (error) {
-    //     console.error('Error fetching privileges:', error);
-    //     res.locals.readonlyAccess = [];
-    // }
+        // Combine readonly and readwrite permissions
+        const allowedRoutes = [...prev.readonly, ...prev.readwrite];  
+        console.log(allowedRoutes)
+
+        if (!prev||!allowedRoutes.includes(customKey)) {
+            return res.redirect('/login'); // Redirect if no privilege found
+
+        }
+    }
+    console.log('SDSD')
+
 
     next();
 };

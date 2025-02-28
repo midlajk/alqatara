@@ -11,7 +11,7 @@ const customerSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   haveCooler: { type: Boolean, default: false },
   isCredit: { type: Boolean, default: false },
-  lastOrderedAt: { type: Date },
+  lastOrderedAt: { type: Date, default: Date.now },
   mobileNumber: { type: String, required: true },
   updatedAt: { type: Date, default: Date.now },
   apartmentNumber: { type: String },
@@ -147,7 +147,7 @@ const deletedCustomerSchema = new mongoose.Schema({
   priceForA5galBottle: { type: Number },
   city: { type: String },
   apartmentNumber: { type: String },
-  routeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Route' },
+  routeId: { type: String, },
   address: { type: String },
   contractDate: { type: Date },
   representativeId: { type: String },
@@ -316,15 +316,8 @@ const PrevilageClassSchema = new mongoose.Schema({
   },
   readonly: {
     type: [String],
-   }, // Array of strings for readonly access options
-  //   required: true, // Marked as required to ensure permissions are provided
-  //   validate: {
-  //     validator: function (v) {
-  //       return v && v.length > 0; // Ensures the array is not empty
-  //     },
-  //     message: 'At least one readonly access must be selected',
-  //   },
-  // },
+   }, 
+  
   readwrite: {
     type: [String], // Array of strings for read/write access options
     // required: true, // Marked as required to ensure permissions are provided

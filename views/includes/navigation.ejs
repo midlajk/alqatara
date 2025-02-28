@@ -23,7 +23,7 @@
           <ul class="navbar-nav">
             <% if (readonlyAccess.includes('dashboard')) { %>
               <li class="nav-item">
-                <a class="nav-link <%= route=='Dashboard'?'active':'' %>" href="/dashboard">
+                <a class="nav-link <%= route=='Dashboard'?'active':'' %>" href="/dashboard?customKey=dashboard">
                   <i class="ni ni-shop text-primary"></i>
                   <span class="nav-link-text">Dashboard</span>
                 </a>

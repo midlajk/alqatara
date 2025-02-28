@@ -91,28 +91,45 @@
         }
       },
       columns: [
-        { data: 'id', title: 'Route ID' }, // Unique Route ID
-        { data: 'city', title: 'City' }, // City for the route
-        { 
-          data: 'createdAt', 
-          title: 'Creation Date', 
-          render: DataTable.render.date() // Format creation date
-        },
-        { 
-          data: 'updatedAt', 
-          title: 'Updated At', 
-          render: DataTable.render.date() // Format update date
-        },
-        { 
-          data: null, 
-          title: 'Actions', 
-          render: function (data, type, row) {
-            return `
-              <button class="btn btn-danger btn-sm delete" data-id="${row._id}">Delete</button>
-            `;
-          }
+    { 
+        data: 'id', 
+        title: 'Route ID', 
+        render: function(data) {
+            return data ? data : 'N/A';
         }
-      ]
+    },
+    { 
+        data: 'city', 
+        title: 'City', 
+        render: function(data) {
+            return data ? data : 'N/A';
+        }
+    },
+    { 
+        data: 'createdAt', 
+        title: 'Creation Date', 
+        render: function(data) {
+            return data ? DataTable.render.date()(data) : 'N/A';
+        }
+    },
+    { 
+        data: 'updatedAt', 
+        title: 'Updated At', 
+        render: function(data) {
+            return data ? DataTable.render.date()(data) : 'N/A';
+        }
+    },
+    { 
+        data: null, 
+        title: 'Actions', 
+        render: function (data, type, row) {
+            return `
+              <button class="btn btn-danger btn-sm delete" data-id="${row._id || ''}">Delete</button>
+            `;
+        }
+    }
+]
+
     });
 
     // Attach click event handler for the Delete button

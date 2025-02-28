@@ -68,20 +68,45 @@
             }
           },
           columns: [
-            { data: 'id', title: 'Zone ID' },
-            { data: 'routeId', title: 'Route ID' },
-            { data: 'creationDate', title: 'Creation Date' },
-            { data: 'updatedAt', title: 'Updated At' },
-            { 
-              data: null,
-              title: 'Actions',
-              render: function(data, type, row) {
-                return `
-                  <button class="btn btn-danger delete-zone" data-id="${row._id}">Delete</button>
-                `;
-              }
-            }
-          ]
+    { 
+        data: 'id', 
+        title: 'Zone ID', 
+        render: function(data) {
+            return data ? data : 'N/A';
+        } 
+    },
+    { 
+        data: 'routeId', 
+        title: 'Route ID', 
+        render: function(data) {
+            return data ? data : 'N/A';
+        } 
+    },
+    { 
+        data: 'creationDate', 
+        title: 'Creation Date', 
+        render: function(data) {
+            return data ? data : 'N/A';
+        } 
+    },
+    { 
+        data: 'updatedAt', 
+        title: 'Updated At', 
+        render: function(data) {
+            return data ? data : 'N/A';
+        } 
+    },
+    { 
+        data: null,
+        title: 'Actions',
+        render: function(data, type, row) {
+            return `
+                <button class="btn btn-danger delete-zone" data-id="${row._id || ''}">Delete</button>
+            `;
+        }
+    }
+]
+
         });
         
         // Attach click event handler for deleting a zone

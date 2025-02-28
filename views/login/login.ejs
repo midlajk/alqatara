@@ -159,7 +159,7 @@
         success: function (response) {
           console.log(response)
           if (response.success) {
-            window.location.href = '/'+response.direct; // Redirect on successful login
+            window.location.href = '/'+response.direct+'?customKey='+response.direct; // Redirect on successful login
 
           } else {
             alert(response.message || 'Incorrect username or password.'); // Show error message

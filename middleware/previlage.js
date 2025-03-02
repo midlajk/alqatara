@@ -6,9 +6,9 @@ const Previlagemiddle = async (req, res, next) => {
  
         if (req.session.user && req.session.user.previlage) {
             const prev = await PrevilageClass.findOne({ className: req.session.user.previlage });
-
+            const allowedRoutes = [...prev.readonly, ...prev.readwrite];  
             // Ensure readonlyAccess is always set
-            res.locals.readonlyAccess = prev ? prev.readonly : [];
+            res.locals.readonlyAccess = allowedRoutes.length>0 ? allowedRoutes : [];
         } else {
             res.locals.readonlyAccess = [];
         }

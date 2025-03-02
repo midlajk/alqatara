@@ -67,7 +67,7 @@
         async function fetchTrucks(searchQuery = "",) {
           try {
             const city = document.getElementById("city").value
-            const response = await fetch(`/gettrucknames?search=${searchQuery}&city=${city}`);
+            const response = await fetch(`/gettrucknames?search=${searchQuery}&city=${city}&customKey=utilities`);
             const trucks = await response.json();
             const truckContainer = document.getElementById("truckContainer");
             truckContainer.innerHTML = ""; // Clear previous data
@@ -201,6 +201,8 @@ var SalesChart = (function() {
       url: '/sales-data',
       type: 'GET',
       data: { fromDate: fromDate, toDate: toDate, truckId: truckId },
+      headers: { "x-custom-key": "dashboard" }, // Pass the custom key here
+
       dataType: 'json',
       success: function(response) {
         updateChart(response.labels, response.data);
@@ -274,7 +276,7 @@ var SalesChart = (function() {
 <script>
 async function fetchOrderData(startDate, endDate, truckId = '', area = '') {
     try {
-        const response = await fetch(`/getOrdersCount?startDate=${startDate}&endDate=${endDate}&truckId=${truckId}&area=${area}`);
+        const response = await fetch(`/getOrdersCount?startDate=${startDate}&endDate=${endDate}&truckId=${truckId}&area=${area}&customKey=dashboard`);
         const data = await response.json();
 
         // Process data for Chart.js

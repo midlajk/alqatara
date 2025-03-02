@@ -68,7 +68,7 @@ exports.gettrucks = async (req, res) => {
       });
   
       await newTruck.save();
-      res.redirect('/utilities');
+      res.redirect('/utilities?customKey=utilities');
     } catch (err) {
       console.error('Error adding truck:', err);
       res.status(500).send('Failed to add truck.');
@@ -171,7 +171,7 @@ exports.updateTruck = async (req, res) => {
           return res.status(404).send('Truck not found / Failed to update ');
       }
 
-      res.redirect('/utilities'); // Redirect after successful update
+      res.redirect('/utilities?customKey=utilities'); // Redirect after successful update
   } catch (err) {
       console.error('Error updating truck:', err);
       res.status(500).send('Failed to update truck.');

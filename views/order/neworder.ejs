@@ -131,6 +131,12 @@
     url: '/truckids', // Backend endpoint
     dataType: 'json',
     delay: 250, // Debounce for performance
+    data: function (params) {
+      return {
+        search: params.term, // Select2 search term
+        customKey: 'utilities' // Custom query parameter
+      };
+    },
     processResults: function (data) {
       return {
         results: data.map(function (item) {

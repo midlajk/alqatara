@@ -41,12 +41,12 @@ exports.getclass = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.addprevilageclass = async (req, res) => {
+    exports.addprevilageclass = async (req, res,next) => {
  
       try {
         const previlageClass = new PrevilageClass(req.body);
         await previlageClass.save();
-        res.redirect('/manageprevilages');
+        res.redirect('/manageprevilages?customKey=privileges');
     } catch (error) {
                return next(createError(400, error));
        

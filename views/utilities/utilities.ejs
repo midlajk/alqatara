@@ -4,7 +4,7 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/utilities/addtruck" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+<a href="/utilities/addtruck?customKey=utilities" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
 </div>
 </div>
 </div>
@@ -80,7 +80,6 @@
 
 <script>
   $(document).ready(function () {
-    console.log('hehe')
     
     // Initialize DataTable
    var datatable = $('#truckTable').DataTable({
@@ -90,6 +89,8 @@
       ajax: {
         url: '/gettrucks', // Backend API endpoint
         dataSrc: 'docs', // Key that holds the array of data in the API response
+        headers: { "x-custom-key": "utilities" }, // Example: Sending key in headers
+
             data: function (d) {
               return d;
   
@@ -125,13 +126,13 @@
     });
     $('#truckTable tbody').on('click', '.edit-zone', function () {
         var truckId = $(this).data('id');
-        window.location.href = '/editutilities/' + truckId;
+        window.location.href = '/editutilities/' + truckId+'?customKey=utilities';
     });
 
     // Handle History button click
     $('#truckTable tbody').on('click', '.history-zone', function () {
         var truckId = $(this).data('id');
-        window.location.href = '/truckhistory/' + truckId;
+        window.location.href = '/truckhistory/' + truckId+'?customKey=utilities';
     });
   });
 </script>

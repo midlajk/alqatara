@@ -116,7 +116,7 @@
     data: function (params) {
         return {
           q: params.term, // Search term from Select2 input
-          routeid: $('.truck-js').val() // Get the route ID from an input/select field
+          truckid: $('.truck-js').val() // Get the route ID from an input/select field
         };
       },
     processResults: function (data) {
@@ -140,6 +140,12 @@
     url: '/truckids', // Backend endpoint
     dataType: 'json',
     delay: 250, // Debounce for performance
+    data: function (params) {
+      return {
+        search: params.term, // Select2 search term
+        customKey: 'utilities' // Custom query parameter
+      };
+    },
     processResults: function (data) {
       return {
         results: data.map(function (item) {

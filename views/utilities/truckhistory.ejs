@@ -87,6 +87,8 @@
           serverSide: true,
       ajax: {
         url: '/gettruchhistory', // Backend API endpoint
+        headers: { "x-custom-key": "utilities" }, // Example: Sending key in headers
+
         dataSrc: 'docs', // Key that holds the array of data in the API response
             data: function (d) {
               d.id = '<%= id %>'; // Dynamically pass id parameter to the server

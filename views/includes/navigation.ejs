@@ -32,7 +32,7 @@
         
             <% if (readonlyAccess.includes('utilities')) { %>
               <li class="nav-item">
-                <a class="nav-link <%= route=='Utilities'?'active':'' %>" href="/utilities">
+                <a class="nav-link <%= route=='Utilities'?'active':'' %>" href="/utilities?customKey=utilities">
                   <i class="ni ni-delivery-fast text-primary"></i>
                   <span class="nav-link-text">Utilities</span>
                 </a>
@@ -122,7 +122,7 @@
         
             <% if (readonlyAccess.includes('privileges')) { %>
               <li class="nav-item">
-                <a class="nav-link <%= route=='Previlages'?'active':'' %>" href="/manageprevilages">
+                <a class="nav-link <%= route=='Previlages'?'active':'' %>" href="/manageprevilages?customKey=privileges">
                   <i class="ni ni-lock-circle-open text-primary"></i>
                   <span class="nav-link-text">Privileges</span>
                 </a>

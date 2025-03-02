@@ -299,6 +299,8 @@ function fetchDashboardData(truckid) {
         url: "/dashboardatas",
         type: "GET",
         data: { city, truck, fromDate, toDate },
+        headers: { "x-custom-key": "dashboard" }, // Pass the custom key here
+
         dataType: "json",
         success: function (data) {
           console.log(data)

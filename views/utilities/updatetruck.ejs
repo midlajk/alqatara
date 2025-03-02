@@ -22,6 +22,7 @@
                         <div class="form-group row">
                             <label for="truck-id" class="col-md-2 col-form-label form-control-label">Truck ID</label>
                             <div class="col-md-10">
+                              <input type="hidden" name="customKey" id="customKey" value="utilities">
 
                                 
                                 <input class="form-control" disabled type="text" placeholder="Enter Truck ID" value="<%=truck.id%>" id="truck-id" name="truckId" required>
@@ -190,6 +191,7 @@
             // Extract truck details from the form
             var truckData = {
                 truckId: $("#truck-id").val(),
+                customKey:'utilities'
             };
 
             // Send AJAX request to close stock
@@ -203,7 +205,8 @@
                     location.reload(); // Refresh page
                 },
                 error: function (xhr) {
-                    alert("Error closing stock: " + xhr.responseJSON.message);
+                  console.log('sds',xhr)
+                    alert("Error closing stock: Permission Denied");
                 }
             });
         });

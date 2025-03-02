@@ -39,9 +39,9 @@ router.post('/login', async (req, res) => {
 
       if(user.designation){
         const prev = await PrevilageClass.findOne({className:req.session.user.previlage})
-          if(prev.readonly.length > 0){
+          if(prev.readonly.length > 0||prev.readwrite.length){
 
-          return res.status(200).json({ success: true, message: 'Login successful', user: req.session.user,direct:prev.readonly[0] });
+          return res.status(200).json({ success: true, message: 'Login successful', user: req.session.user,direct:prev.readonly[0]||prev.readwrite[0] });
           
         }
       }

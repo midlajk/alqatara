@@ -2,19 +2,22 @@ var express = require('express');
 var router = express.Router();
 const customerapi = require('../controller/customers');
 // const authMiddleware = require('../middleware/authcheck.js');
-
+const setCustomHeader = require('../middleware/customkeyadd');
+const apiprev = require('../middleware/apiprevilage');
+const WritePrivilage = require('../middleware/previlagewrite');
+const authMiddleware = require('../middleware/auth');
 /* GET home page. */
-router.get('/getcustomers', customerapi.getcustomer);
-router.post('/addCustomer', customerapi.newcustomer);
+router.get('/getcustomers',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getcustomer);
+router.post('/addCustomer',setCustomHeader('customers'),WritePrivilage, customerapi.newcustomer);
 
-router.get('/customersee', customerapi.customerids);
+router.get('/customersee',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.customerids);
 
 
 
-router.delete('/deletecustomer/:id', customerapi.deletecustomer);
+router.delete('/deletecustomer/:id',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.deletecustomer);
 
-router.get('/customers/deletedcustomers', customerapi.deletecustomersscreen);
-router.get('/getdeletedcustomers', customerapi.getdeletedcustomers);
+router.get('/customers/deletedcustomers',setCustomHeader('customers'),authMiddleware, customerapi.deletecustomersscreen);
+router.get('/getdeletedcustomers',setCustomHeader('customers'), customerapi.getdeletedcustomers);
 
 
 //mobile api 

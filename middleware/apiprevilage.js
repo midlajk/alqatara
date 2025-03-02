@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const PrevilageClass = mongoose.model('PrevilageClass');
 
 exports.Getapiprev = async (req, res, next) => {
-    const customKey = req.headers['x-custom-key'] || req.query.customKey;
+    const customKey = req.query.customKey || req.body.customKey;
     // **Allow access to the login page**
 
     // **Check if user is logged in**
@@ -34,7 +34,7 @@ exports.Getapiprev = async (req, res, next) => {
     next();
 };
 exports.Postapiprev = async (req, res, next) => {
-    const customKey = req.headers['x-custom-key'] || req.body.customKey;
+    const customKey = req.query.customKey || req.body.customKey;
 
     // **Check if user is logged in**
     if (!req.session || !req.session.logged) {

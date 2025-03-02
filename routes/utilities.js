@@ -5,20 +5,28 @@ const utilitiesApis = require('../controller/utilities');
 const apiprev = require('../middleware/apiprevilage');
 const WritePrivilage = require('../middleware/previlagewrite');
 const authMiddleware = require('../middleware/auth');
+// function setCustomHeader(customValue) {
+//     return function (req, res, next) {
+//         req.query.customKey = customValue;
+//         req.body.customKey = customValue;
+//         next();
+//     };
+// }
+const setCustomHeader = require('../middleware/customkeyadd');
 
 /* GET home page. */
-router.get('/gettrucks',apiprev.Getapiprev, utilitiesApis.gettrucks);
-router.post('/addtrucks',WritePrivilage, utilitiesApis.addtrucks);
-router.get('/gettrucknames',apiprev.Getapiprev, utilitiesApis.gettruckname);
-router.get('/truckids',apiprev.Getapiprev, utilitiesApis.truckids);
-router.get('/editutilities/:id',authMiddleware, utilitiesApis.editutilitiespage);
-router.post('/updateTruck',WritePrivilage, utilitiesApis.updateTruck);
-router.post('/closeTruckStock',apiprev.Postapiprev, utilitiesApis.closeTruckStock);
+router.get('/gettrucks', setCustomHeader('utilities'), apiprev.Getapiprev, utilitiesApis.gettrucks);
+router.post('/addtrucks', setCustomHeader('utilities'),WritePrivilage, utilitiesApis.addtrucks);
+router.get('/gettrucknames', setCustomHeader('utilities'),apiprev.Getapiprev, utilitiesApis.gettruckname);
+router.get('/truckids', setCustomHeader('utilities'),apiprev.Getapiprev, utilitiesApis.truckids);
+router.get('/editutilities/:id', setCustomHeader('utilities'),authMiddleware, utilitiesApis.editutilitiespage);
+router.post('/updateTruck', setCustomHeader('utilities'),WritePrivilage, utilitiesApis.updateTruck);
+router.post('/closeTruckStock', setCustomHeader('utilities'),apiprev.Postapiprev, utilitiesApis.closeTruckStock);
 
 
 
-router.get('/truckhistory/:id',authMiddleware, utilitiesApis.truckhistorypage);
-router.get('/gettruchhistory', utilitiesApis.gettruckhistory);
+router.get('/truckhistory/:id', setCustomHeader('utilities'),authMiddleware, utilitiesApis.truckhistorypage);
+router.get('/gettruchhistory', setCustomHeader('utilities'),apiprev.Getapiprev, utilitiesApis.gettruckhistory);
 
 
 ///apis 

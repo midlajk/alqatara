@@ -21,7 +21,7 @@ exports.getclass = async (req, res) => {
   
       // Get filtered data and total count
       const [filtereddata, totalRecords, totalFiltered] = await Promise.all([
-        PrevilageClass.find(query).skip(skip).limit(limit), // Fetch paginated data
+        PrevilageClass.find(query).sort({_id:-1}).skip(skip).limit(limit), // Fetch paginated data
         PrevilageClass.countDocuments(), // Total records count
         PrevilageClass.countDocuments(query) // Filtered records count
       ]);

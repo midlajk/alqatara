@@ -2,12 +2,16 @@ var express = require('express');
 var router = express.Router();
 const zonesapi = require('../controller/zones');
 // const authMiddleware = require('../middleware/authcheck.js');
+const setCustomHeader = require('../middleware/customkeyadd');
 
+const apiprev = require('../middleware/apiprevilage');
+const WritePrivilage = require('../middleware/previlagewrite');
+const authMiddleware = require('../middleware/auth');
 /* GET home page. */
-router.get('/getzones', zonesapi.getzones);
-router.post('/addzones', zonesapi.newzones);
+router.get('/getzones',setCustomHeader('zones'),apiprev.Getapiprev, zonesapi.getzones);
+router.post('/addzones',setCustomHeader('zones'),WritePrivilage, zonesapi.newzones);
 
-router.get('/zoneids', zonesapi.zoneids);
-router.post('/delete-zone', zonesapi.deletezones);
+router.get('/zoneids',setCustomHeader('zones'),apiprev.Getapiprev, zonesapi.zoneids);
+router.post('/delete-zone',setCustomHeader('zones'),apiprev.Postapiprev, zonesapi.deletezones);
 
 module.exports = router;

@@ -17,7 +17,7 @@ router.get('/customersee',setCustomHeader('customers'),apiprev.Getapiprev, custo
 router.delete('/deletecustomer/:id',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.deletecustomer);
 
 router.get('/customers/deletedcustomers',setCustomHeader('customers'),authMiddleware, customerapi.deletecustomersscreen);
-router.get('/getdeletedcustomers',setCustomHeader('customers'), customerapi.getdeletedcustomers);
+router.get('/getdeletedcustomers',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getdeletedcustomers);
 
 
 //mobile api 

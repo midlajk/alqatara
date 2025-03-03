@@ -78,8 +78,8 @@ exports.getroutes = async (req, res) => {
       res.redirect('/routes'); // Redirect to routes page
   
     } catch (error) {
-      console.error("Error creating route:", error);
-      res.status(500).json({ error: "Failed to create route. Please try again." });
+            return next(createError(400, error));
+    
     }
   };
   

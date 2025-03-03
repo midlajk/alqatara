@@ -320,13 +320,7 @@ const PrevilageClassSchema = new mongoose.Schema({
   
   readwrite: {
     type: [String], // Array of strings for read/write access options
-    // required: true, // Marked as required to ensure permissions are provided
-    // validate: {
-    //   validator: function (v) {
-    //     return v && v.length > 0; // Ensures the array is not empty
-    //   },
-    //   message: 'At least one read/write access must be selected',
-    // },
+  
   },
   createdAt: {
     type: Date,

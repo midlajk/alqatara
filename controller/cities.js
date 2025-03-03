@@ -32,7 +32,7 @@ exports.getcities = async (req, res) => {
       }
       // Get filtered data and total count
       const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-        CitySchema.find(query).skip(skip).limit(limit), // Fetch paginated data
+        CitySchema.find(query).sort({_id:-1}).skip(skip).limit(limit), // Fetch paginated data
         CitySchema.countDocuments(), // Total records count
         CitySchema.countDocuments(query) // Filtered records count
       ]);

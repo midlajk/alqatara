@@ -3,7 +3,7 @@ const PrevilageClass = mongoose.model('PrevilageClass');
 const createError = require('http-errors');
 
 const Previlagewritemiddle = async (req, res, next) => {
-    const customKey = req.headers['x-custom-key'] || req.body.customKey;
+    const customKey = req.query.customKey || req.body.customKey;
     // **Allow access to the login page**
 
     // **Check if user is logged in**

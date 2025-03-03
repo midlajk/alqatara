@@ -4,7 +4,7 @@ const PrevilageClass = mongoose.model('PrevilageClass');
 const authMiddleware = async (req, res, next) => {
 
     // **Allow access to the login page**
-    const customKey = req.headers['x-custom-key'] || req.query.customKey;
+    const customKey = req.query.customKey || req.body.customKey;
 
     if (req.path === '/login') {
         return next(); // Skip authentication for login

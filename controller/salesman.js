@@ -72,6 +72,7 @@ exports.getsalesman = async (req, res) => {
 
     
   exports.salesmanids = async (req, res) => {
+    console.log('sds')
     try {
       const cityFilter = req.session.city; // Get city from session
   

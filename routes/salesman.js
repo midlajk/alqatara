@@ -10,13 +10,14 @@ const authMiddleware = require('../middleware/auth');
 /* GET home page. */
 router.get('/getsalesman',setCustomHeader('salesman'),apiprev.Getapiprev, salesmanapiapi.getsalesman);
 router.post('/addsalesman',setCustomHeader('salesman'),WritePrivilage, salesmanapiapi.newsalesman);
-router.get('/salesmanids',setCustomHeader('salesman'),apiprev.Getapiprev, salesmanapiapi.salesmanids);
+router.get('/salesmanids', salesmanapiapi.salesmanids);
 
 
 
 ////Mobile app 
 
 router.post('/salesmanlogin', salesmanapiapi.salesmanlogin);
+// router.get('/apisalesmanids', salesmanapiapi.salesmanids);
 
 
 module.exports = router;

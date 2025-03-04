@@ -11,7 +11,9 @@ const authMiddleware = require('../middleware/auth');
 router.get('/getzones',setCustomHeader('zones'),apiprev.Getapiprev, zonesapi.getzones);
 router.post('/addzones',setCustomHeader('zones'),WritePrivilage, zonesapi.newzones);
 
-router.get('/zoneids',setCustomHeader('zones'),apiprev.Getapiprev, zonesapi.zoneids);
 router.post('/delete-zone',setCustomHeader('zones'),apiprev.Postapiprev, zonesapi.deletezones);
+//mobile apis
+
+router.get('/zoneids', zonesapi.zoneids);
 
 module.exports = router;

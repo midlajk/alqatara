@@ -10,7 +10,6 @@ const authMiddleware = require('../middleware/auth');
 router.get('/getcustomers',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getcustomer);
 router.post('/addCustomer',setCustomHeader('customers'),WritePrivilage, customerapi.newcustomer);
 
-router.get('/customersee',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.customerids);
 
 
 
@@ -21,6 +20,7 @@ router.get('/getdeletedcustomers',setCustomHeader('customers'),apiprev.Getapipre
 
 
 //mobile api 
+router.get('/customersee', customerapi.customerids);
 router.post('/newcustomerapi', customerapi.newcustomerapi);
 router.get('/customerdetails/:id', customerapi.customerdetails);
 router.post('/customerupdate', customerapi.updatecustomer);

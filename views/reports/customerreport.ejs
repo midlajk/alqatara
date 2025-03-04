@@ -153,6 +153,27 @@ $(document).ready(function () {
             // }}
         ]
     });
+    $('#dateForm').on('submit', function (e) {
+    e.preventDefault();
+
+    // Get selected dates
+    const fromDate = $('#fromDate').val();
+    const toDate = $('#toDate').val();
+    const download = $('#download').val();
+
+    // Reload DataTable with new parameters
+    if(download =='Yes'){
+      
+              window.location.href = `/getcutomerreporttxl?fromDate=${fromDate}&toDate=${toDate}&download=${download}`;
+
+    }else{
+                table.ajax.url(`/getcutomerreport?fromDate=${fromDate}&toDate=${toDate}&download=${download}`).load();
+
+    }
+
+    // Close the modal
+    $('#dateModal').modal('hide');
+  });
 });
 
 </script>

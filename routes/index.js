@@ -80,11 +80,11 @@ router.get('/addnewsalesman', setCustomHeader('salesman'),authMiddleware, functi
   res.render('salesman/newsalesman', { title: 'Al Qattara' ,route:'Salesman',sub :'Register Salesman'});
 });
 
-router.get('/cities', setCustomHeader('cities'),authMiddleware, function(req, res, next) {
-  res.render('city/cities', { title: 'Al Qattara',route:'Cities',sub :'Manage City' });
-});
-router.get('/city/addnewcity', setCustomHeader('cities'),authMiddleware, function(req, res, next) {
-  res.render('city/newcity', { title: 'Al Qattara',route:'Cities',sub :'New City' });
-});
+// router.get('/cities', setCustomHeader('cities'),authMiddleware, function(req, res, next) {
+//   res.render('city/cities', { title: 'Al Qattara',route:'Cities',sub :'Manage City' });
+// });
+// router.get('/city/addnewcity', setCustomHeader('cities'),authMiddleware, function(req, res, next) {
+//   res.render('city/newcity', { title: 'Al Qattara',route:'Cities',sub :'New City' });
+// });
 
 module.exports = router;

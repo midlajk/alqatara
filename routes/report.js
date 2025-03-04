@@ -22,4 +22,10 @@ router.get('/getruckreport',setCustomHeader('reports'),apiprev.Getapiprev, repor
 
 router.get('/getcreditreport',setCustomHeader('reports'),apiprev.Getapiprev, reportclass.getcreditreport);
 
+///download  
+router.get('/getsalesmanreportxl',setCustomHeader('reports'),authMiddleware, reportclass.getsalesmanreport);
+router.get('/getruckreportexcel',setCustomHeader('reports'),authMiddleware, reportclass.gettruckreport);
+router.get('/getcutomerreporttxl',setCustomHeader('reports'),authMiddleware, reportclass.getcustomerreport);
+
+
 module.exports = router;

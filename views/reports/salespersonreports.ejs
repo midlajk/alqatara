@@ -168,7 +168,14 @@ $(document).ready(function () {
     const download = $('#download').val();
 
     // Reload DataTable with new parameters
-    table.ajax.url(`/getsalesmanreport?fromDate=${fromDate}&toDate=${toDate}&download=${download}`).load();
+    if(download =='Yes'){
+      
+              window.location.href = `/getsalesmanreportxl?fromDate=${fromDate}&toDate=${toDate}&download=${download}`;
+
+    }else{
+                table.ajax.url(`/getsalesmanreport?fromDate=${fromDate}&toDate=${toDate}&download=${download}`).load();
+
+    }
 
     // Close the modal
     $('#dateModal').modal('hide');

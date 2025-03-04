@@ -242,25 +242,26 @@ exports.getsalesmanreport = async (req, res) => {
     const result = await Salesman.aggregate(aggregationPipeline);
 
     
-  //   if (download == "Yes") {
-  //     // Convert JSON data to worksheet
-  //     const worksheet = XLSX.utils.json_to_sheet(result);
+    if (download == "Yes") {
+      console.log(download)
+      // Convert JSON data to worksheet
+      const worksheet = XLSX.utils.json_to_sheet(result);
 
-  //     // Create a new workbook and append the worksheet
-  //     const workbook = XLSX.utils.book_new();
-  //     XLSX.utils.book_append_sheet(workbook, worksheet, "Salesman Report");
+      // Create a new workbook and append the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Salesman Report");
 
-  //     // Write to buffer
-  //     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+      // Write to buffer
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
 
-  //     // Set response headers
-  //     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-  //     res.setHeader("Content-Disposition", "attachment; filename=salesman_report.xlsx");
+      // Set response headers
+      res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      res.setHeader("Content-Disposition", "attachment; filename=salesman_report.xlsx");
 
-  //     // Send file as response
-  //     return res.send(excelBuffer);
-  //   }
-  //  else{
+      // Send file as response
+      return res.send(excelBuffer);
+    }
+ 
       res.json(result);
     
     
@@ -370,9 +371,9 @@ exports.getcustomerreport = async (req, res) => {
     // Extract pagination parameters from DataTables request
     let start = parseInt(req.query.start) || 0; // Skip records
     let length = parseInt(req.query.length) || 10; // Limit records per page
+    const { fromDate, toDate,download } = req.query;
 
     // Extract date range from query parameters
-    const { fromDate, toDate } = req.query;
     let startDate, endDate;
 
     if (fromDate && toDate) {
@@ -482,7 +483,26 @@ exports.getcustomerreport = async (req, res) => {
 
     // 3️⃣ Get total records count (without filters)
     const totalRecords = await Customer.countDocuments();
+ 
+    if (download == "Yes") {
+      // Convert JSON data to worksheet
+      const worksheet = XLSX.utils.json_to_sheet(reportData);
 
+      // Create a new workbook and append the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Customer Report");
+
+      // Write to buffer
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+
+      // Set response headers
+      res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      res.setHeader("Content-Disposition", "attachment; filename=salesman_report.xlsx");
+
+      // Send file as response
+      return res.send(excelBuffer);
+    }
+ 
     res.json({
       draw: req.query.draw ? parseInt(req.query.draw) : 1,
       recordsTotal: totalRecords, // Total customers in DB
@@ -502,7 +522,7 @@ exports.getcustomerreport = async (req, res) => {
 exports.gettruckreport = async (req, res) => {
   try {
     // Extract date range from query parameters
-    const { fromDate, toDate } = req.query;
+    const { fromDate, toDate,download } = req.query;
     let startDate, endDate;
 
     if (fromDate && toDate) {
@@ -560,7 +580,25 @@ exports.gettruckreport = async (req, res) => {
         },
       },
     ]);
- 
+   
+    if (download == "Yes") {
+      // Convert JSON data to worksheet
+      const worksheet = XLSX.utils.json_to_sheet(reportData);
+
+      // Create a new workbook and append the worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Truck Report");
+
+      // Write to buffer
+      const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+
+      // Set response headers
+      res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      res.setHeader("Content-Disposition", "attachment; filename=salesman_report.xlsx");
+
+      // Send file as response
+      return res.send(excelBuffer);
+    }
     res.json({ data: reportData });
   } catch (error) {
     console.error("Error fetching truck report:", error);

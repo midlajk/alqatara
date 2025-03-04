@@ -72,7 +72,6 @@ exports.getsalesman = async (req, res) => {
 
     
   exports.salesmanids = async (req, res) => {
-    console.log('sds')
     try {
       const cityFilter = req.session.city; // Get city from session
   
@@ -125,6 +124,47 @@ exports.salesmanlogin = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1d" } // Token expires in 1 day
     );
+    salesman.tok = token; // Assuming you have a 'token' field in the Salesman schema
+    await salesman.save();
+    // Send login success response
+    res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: salesman.id,
+        name: salesman.name,
+        email: salesman.email,
+        city: salesman.city,
+        token:salesman.tok
+      },
+    });
+
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+
+exports.salesmanlogintoken = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Check if email & password are provided
+    if (!token) {
+      return res.status(400).json({ success: false, message: "Email and password are required" });
+    }
+
+    // Find the salesman by email
+    const salesman = await Salesman.findOne({ tok:token });
+
+    if (!salesman) {
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
+    }
+
+    // Compare entered password with stored hashed password
+    // Generate JWT token
 
     // Send login success response
     res.json({
@@ -136,6 +176,7 @@ exports.salesmanlogin = async (req, res) => {
         name: salesman.name,
         email: salesman.email,
         city: salesman.city,
+        token:salesman.tok
       },
     });
 

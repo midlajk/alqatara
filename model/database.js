@@ -237,6 +237,7 @@ const salesmanSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   city: { type: String, required: true },
+  tok:String,
   collectedBottleSecurityDeposits: { type: [{
     date: { type: Date, required: true },
     amount: { type: Number, required: true },

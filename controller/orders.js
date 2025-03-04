@@ -650,7 +650,7 @@ exports.orderdetails = async (req, res) => {
 
   exports.updatecreditorder = async (req, res) => {
     try {
-      const { creditAmountPaid, modeOfPayment, orderid } = req.body;
+      const { creditAmountPaid, modeOfPayment, orderid,salesmanId } = req.body;
   
       if (creditAmountPaid > 0) {
         const order = await Order.findOne({ id: orderid});
@@ -671,6 +671,7 @@ exports.orderdetails = async (req, res) => {
           modeOfPayment,
           creditAmountPaid,
           totalCreditAmountDue: order.totalPrice - order.creditAmountPaid,
+          salesmanid:salesmanId
         });
   
         await creditOrderHistory.save();
@@ -701,11 +702,12 @@ exports.orderdetails = async (req, res) => {
   
       const endOfDay = new Date();
       endOfDay.setHours(23, 59, 59, 999);
-  
-      const salesData = await Order.aggregate([
+      const salesDat = await CreditOrderHistory.find({salesmanid:salesmanId})
+      console.log(salesDat)
+      const salesData = await CreditOrderHistory.aggregate([
         {
           $match: {
-            salesmanId: salesmanId,
+            salesmanid: salesmanId,
             createdAt: { $gte: startOfDay, $lte: endOfDay },
             modeOfPayment: { $in: ["Cash", "Card", "Wallet"] }
           }
@@ -713,11 +715,11 @@ exports.orderdetails = async (req, res) => {
         {
           $group: {
             _id: "$modeOfPayment",
-            totalAmount: { $sum: "$totalPrice" }
+            totalAmount: { $sum: "$creditAmountPaid" }
           }
         }
       ]);
-  
+  console.log(salesData)
       // Initialize result object
       let result = {
         Cash: 0,
@@ -731,7 +733,6 @@ exports.orderdetails = async (req, res) => {
         result[_id] = totalAmount;
         result.Total += totalAmount; // Sum all payments
       });
-  console.log(result.Total)
       res.status(200).json(result);
     } catch (error) {
       console.error("Error getting sales sum:", error);

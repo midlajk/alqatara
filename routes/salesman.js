@@ -17,6 +17,8 @@ router.get('/salesmanids', salesmanapiapi.salesmanids);
 ////Mobile app 
 
 router.post('/salesmanlogin', salesmanapiapi.salesmanlogin);
+router.post('/salesmanlogintoken', salesmanapiapi.salesmanlogintoken);
+
 // router.get('/apisalesmanids', salesmanapiapi.salesmanids);
 
 

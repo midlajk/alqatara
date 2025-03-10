@@ -63,19 +63,35 @@ exports.getorders = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-    exports.neworder = async (req, res) => {
-       
- 
-      try {
-        const order = new Order(req.body);
-        await order.save();
-        res.redirect('/orders');
-    } catch (error) {
-            return next(createError(400, error));
-    
+  exports.neworder = async (req, res, next) => {
+    try {
+      // Update the customer's lastOrderedAt field to the current date and time
+      const customerUpdate = await Customer.findOneAndUpdate(
+        { id: req.body.customerId }, // Filter to find the customer by ID
+        { $set: { lastOrderedAt: new Date() } }, // Update operation
+        {
+          new: true, // Return the updated document
+          runValidators: true, // Ensure the update follows schema rules
+        }
+      );
+  
+      // Check if the customer was found and updated
+      if (!customerUpdate) {
+        return next(createError(404, 'Customer not found'));
       }
- 
+  
+      // Create and save the new order
+      const order = new Order(req.body);
+      await order.save();
+  
+      // Redirect to the orders page after successful creation
+      res.redirect('/orders');
+    } catch (error) {
+      // Handle any errors that occur during the process
+      return next(createError(400, error.message));
+    }
   };
+  
 
 
 
@@ -262,13 +278,13 @@ exports.updateOrderStatus = async (req, res) => {
       );
 
       // Step 2: Ensure stock values don't go negative
-      await Truck.findOneAndUpdate(
-        { id: truckId },
-        {
-          remaining5galBottles: { $gte: 0 } ? 0 : undefined,
-          remaining200mlBottles: { $gte: 0 } ? 0 : undefined,
-        }
-      );
+      // await Truck.findOneAndUpdate(
+      //   { id: truckId },
+      //   {
+      //     remaining5galBottles: { $gte: 0 } ? 0 : undefined,
+      //     remaining200mlBottles: { $gte: 0 } ? 0 : undefined,
+      //   }
+      // );
       const response = await axios.get('https://smartsmsgateway.com/api/api_http.php', {
         params: {
             username: 'qatrawtr',
@@ -509,6 +525,17 @@ exports.deliveryorderapi = async (req, res) => {
       });
 
       await order.save();
+      const customerUpdate = await Customer.findOneAndUpdate(
+        { id: customerId }, // Filter to find the customer by ID
+        { $set: { lastOrderedAt: new Date() } }, // Update operation
+        {
+          new: true, // Return the updated document
+          runValidators: true, // Ensure the update follows schema rules
+        }
+      );
+  
+      // Check if the customer was found and updated
+    
     }
     if (order.status === "DELIVERED" && order.truckId) {
       const truckId = order.truckId;

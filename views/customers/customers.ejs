@@ -34,8 +34,8 @@
                 <th scope="col" class="sort">Wallet Balance</th>
                 <th scope="col" class="sort" data-sort="completion">City</th>
                 <th scope="col" class="sort" data-sort="completion">Address</th>
-                <th scope="col" class="sort" data-sort="completion">Status</th>
-                <th scope="col" class="sort" data-sort="completion">Caption</th>
+                <!-- <th scope="col" class="sort" data-sort="completion">Status</th>
+                <th scope="col" class="sort" data-sort="completion">Caption</th> -->
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -105,7 +105,7 @@
   },
   { 
     data: 'lastOrderedAt', 
-    title: 'Recent Delivery', 
+    title: 'Recent Order', 
     render: function(data) {
       return data ? new Date(data).toLocaleDateString() : 'N/A';
     }
@@ -131,25 +131,25 @@
       return data ? data : 'N/A';
     }
   },
-  { 
-    data: 'verified', 
-    title: 'Status', 
-    render: function(data) {
-      return (data !== null && data !== undefined) ? (data ? 'Verified' : 'Not Verified') : 'N/A';
-    }
-  },
-  {
-    data: null, 
-    title: 'Caption',
-    render: function(data, type, row) {
-      if (row.otherDetails && row.otherDetails.trim() !== '') {
-        return row.otherDetails;
-      } else if (row.city && row.city.trim() !== '') {
-        return row.city;
-      }
-      return 'N/A';
-    }
-  },
+  // { 
+  //   data: 'verified', 
+  //   title: 'Status', 
+  //   render: function(data) {
+  //     return (data !== null && data !== undefined) ? (data ? 'Verified' : 'Not Verified') : 'N/A';
+  //   }
+  // },
+  // {
+  //   data: null, 
+  //   title: 'Caption',
+  //   render: function(data, type, row) {
+  //     if (row.otherDetails && row.otherDetails.trim() !== '') {
+  //       return row.otherDetails;
+  //     } else if (row.city && row.city.trim() !== '') {
+  //       return row.city;
+  //     }
+  //     return 'N/A';
+  //   }
+  // },
         {
           data: null,
           title: 'Actions',

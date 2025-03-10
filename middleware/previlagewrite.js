@@ -15,7 +15,6 @@ const Previlagewritemiddle = async (req, res, next) => {
         try {
             // Fetch the privilege class based on user's assigned privilege
             const prev = await PrevilageClass.findOne({ className: req.session.user.previlage });
-            console.log(prev)
 
             if (!prev) {
             return next(createError(400, 'No previlage.'));

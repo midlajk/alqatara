@@ -11,7 +11,7 @@ const customerSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   haveCooler: { type: Boolean, default: false },
   isCredit: { type: Boolean, default: false },
-  lastOrderedAt: { type: Date, default: Date.now },
+  lastOrderedAt: { type: Date},
   mobileNumber: { type: String, required: true },
   updatedAt: { type: Date, default: Date.now },
   apartmentNumber: { type: String },
@@ -105,7 +105,7 @@ const routeSchema = new mongoose.Schema({
   city: { type: String, required: true },
   mobileNumber: { type: String },
   supervisorMobileNumber: { type: String } ,
-  id:Number,
+  id:String,
 });
 
 const creditOrderHistorySchema = new mongoose.Schema({
@@ -275,7 +275,7 @@ const salesmanSchema = new mongoose.Schema({
     assistants: { type: String},
     routeId: { type: String, required: true },
     city: { type: String, required: true }
-  });
+  }, { timestamps: true });
   const truckHistorySchema = new mongoose.Schema({
     id: { type: String, },
     truckCreatedAt: { type: Date, required: true },

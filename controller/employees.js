@@ -63,3 +63,36 @@ exports.getemployees = async (req, res) => {
       
     }
   };
+
+
+  exports.editemployee = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, password, email, mobileNumber, designation } = req.body;
+  
+      // Find the employee by ID
+      const employee = await Employee.findById(id);
+      if (!employee) {
+        return res.status(404).send('Employee not found');
+      }
+  
+      // Update fields
+      employee.name = name;
+      employee.email = email;
+      employee.mobileNumber = mobileNumber;
+      employee.designation = designation;
+  
+      // Hash the new password if provided
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        employee.password = hashedPassword;
+      }
+  
+      // Save the updated employee
+      await employee.save();
+  
+      res.redirect('/masters');
+    } catch (error) {
+      next(error);
+    }
+  }

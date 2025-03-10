@@ -70,8 +70,8 @@ exports.gettrucks = async (req, res) => {
       await newTruck.save();
       res.redirect('/utilities?customKey=utilities');
     } catch (err) {
-      console.error('Error adding truck:', err);
-      res.status(500).send('Failed to add truck.');
+      return next(createError(400, err));
+
     }
   };
 
@@ -93,7 +93,9 @@ exports.gettrucks = async (req, res) => {
         res.json(trucks);
     } catch (error) {
         console.error("Error fetching trucks:", error);
-        res.status(500).json({ error: "Failed to fetch trucks" });
+        res.status(500).send("Error fetching trucks");
+
+
     }
 };
 

@@ -29,6 +29,8 @@
                   <th scope="col" class="sort" data-sort="budget">Email Address</th>
                   <th scope="col" class="sort" data-sort="status">Date of joining</th>
                   <th scope="col" class="sort">Job Title</th>
+                  <th scope="col" class="sort"></th>
+
                   <!-- <th scope="col" class="sort" data-sort="completion">Action</th>
                   <th scope="col"></th> -->
                 </tr>
@@ -104,8 +106,18 @@
     }
   }, // Registered On
   { data: 'designation', title: 'Contact' },
+  { data: null, render: function(data, type, row) {
+            return `
+              <button class="btn btn-primary edit-zone" data-id="${row._id}">Edit</button>
+            `;
+          }
+        }
 ]
 });
+$('#mastertable tbody').on('click', '.edit-zone', function () {
+        var orderId = $(this).data('id');
+        window.location.href = '/editmaster/' + orderId;
+    });
       });
     </script>
     <%- include('../includes/footer.ejs') -%>

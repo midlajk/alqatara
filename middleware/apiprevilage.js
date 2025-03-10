@@ -4,7 +4,6 @@ const PrevilageClass = mongoose.model('PrevilageClass');
 exports.Getapiprev = async (req, res, next) => {
     const customKey = req.query.customKey || req.body.customKey;
     // **Allow access to the login page**
-console.log('sdsdsd')
     // **Check if user is logged in**
     if (!req.session || !req.session.logged) {
         return res.status(403).send('Access Denied'); // Or redirect to login

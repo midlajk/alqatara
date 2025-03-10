@@ -1,0 +1,95 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Employee Registration</h3>
+                </div>
+                <!-- Card body -->
+                <div class="card-body" id="cardb">
+                    <form class="needs-validation" action="/updateemployee/<%= employee._id %>" method="POST" novalidate>
+                        <div class="form-group row">
+                            <label for="name" class="col-md-2 col-form-label form-control-label">Full Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="name" id="name" value="<%= employee.name %>" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="password" class="col-md-2 col-form-label form-control-label">Password</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="password" name="password" id="password" placeholder="Enter new password if changing">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="email" class="col-md-2 col-form-label form-control-label">Email Address</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="email" name="email" id="email" value="<%= employee.email %>" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="mobileNumber" class="col-md-2 col-form-label form-control-label">Contact Number</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="mobileNumber" id="mobileNumber" value="<%= employee.mobileNumber %>" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="designation" class="col-md-2 col-form-label form-control-label">Designation</label>
+                            <div class="col-md-10">
+                                <select class="designation-js form-control" name="designation" id="designation" required>
+                                    <!-- Options will be populated by Select2 -->
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-success">Update</button>
+                            <a href="/masters" class="btn btn-danger">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Include Select2 CSS -->
+    
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+    <script>
+      $(document).ready(function () {
+        // Initialize Select2 for the element with the correct ID or class
+        $('.designation-js').select2({
+          dropdownParent: $("#cardb"),
+ajax: {
+  url: '/classnames', // Backend endpoint
+  dataType: 'json',
+  delay: 250, // Debounce for performance
+  processResults: function (data) {
+    return {
+      results: data.map(function (item) {
+        return { id: item.className, text: item.className }; // Customize text display
+      }),
+    };
+  },
+
+},
+});
+      });
+    </script>   
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

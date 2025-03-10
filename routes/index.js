@@ -68,6 +68,10 @@ router.get('/addnewemployee', setCustomHeader('masters'),authMiddleware, functio
   res.render('master/newemployee', { title: 'Al Qattara' ,route:'Masters',sub :'Register Employee'});
 });
 
+
+
+
+
 router.get('/wallet', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {
   res.render('wallet/wallet', { title: 'Al Qattara' ,route:'Wallet',sub :'Manage Wallet'});
 });

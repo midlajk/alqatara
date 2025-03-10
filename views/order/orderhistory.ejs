@@ -113,13 +113,17 @@
               <input type="hidden" name="_id" id="_id" value="<%= order._id%>">
       
               <!-- Submit Button (Centered) -->
+              <% if(order.status != 'DELIVERED') {%>
+
               <div>
                 <button type="submit" class="btn btn-success">Update Order</button>
               
               </div>
+              <% }%>
+
             </form>
           </div>
-        </div>
+\        </div>
       </div>
       
       <!-- Optional: Ensure responsiveness adjusts properly -->

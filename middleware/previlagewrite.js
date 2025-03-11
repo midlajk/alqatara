@@ -17,7 +17,7 @@ const Previlagewritemiddle = async (req, res, next) => {
             const prev = await PrevilageClass.findOne({ className: req.session.user.previlage });
 
             if (!prev) {
-            return next(createError(400, 'No previlage.'));
+            return next(createError(400, 'No previlage USER.'));
             }
 
             // Combine readonly and readwrite permissions

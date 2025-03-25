@@ -3,118 +3,207 @@
 <%- include('./includes/navigation.ejs') -%>
 
 <%- include('./includes/header.ejs') -%>
+
+
+
 <%- include('./components/figurecards.ejs') -%>
 
 </div>
 </div>
 </div>
 <div class="container-fluid mt--6">
-  <div class="row">
-      <div class="col-xl-3">
-          <div class="card">
-              <div class="card-header bg-transparent">
-                  <div class="row align-items-center">
-                      <div class="col">
-                          <h6 class="text-uppercase text-muted ls-1 mb-1">Truck <span id="selectedtruck"></span></h6>
-                          <!-- <h5 class="h3 text-white mb-0">Sales value</h5> -->
-                      </div>
-                  </div>
-              </div>
-              <style>
-                .card-body {
-  font-family: Arial, sans-serif;
-}
+<div class="row mb-2">
+  <div class="col-12">
 
-#searchTruck {
-  margin-bottom: 10px;
-}
+  <div class="filter-container">
+    <div class="row">
 
-#truckContainer > div:hover {
-  background-color: #f0f0f0;
-}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
+  <style>
+      .chart-container {
+          width: 450px;
+          margin: auto;
+          padding: 20px;
+       
+      }
+  </style>
+  <div class="col-xl-4">
+      <div class="filter-container">
+        <div class="chart-container">
+            <canvas id="monitorChart"></canvas>
+        </div>
+    </div>
+    
+ </div>
+ <script>
+  var ctx = document.getElementById('monitorChart').getContext('2d');
 
-              </style>
-              <!-- <div class="card-body" style="height: 50vh;">
-                <div style="width: 100%;height: 70px;border-radius: 5px;box-shadow: 2px 1px 5px;margin-bottom: 5px;padding: 10px;">
-
-                    <label for="">Truck Id</label> <br>
-                    <label for="">Sales Person</label>
-
-                </div>
-                <div style="width: 100%;height: 70px;border-radius: 5px;box-shadow: 2px 1px 5px;margin-bottom: 5px;padding: 10px;">
-
-                    <label for="">Truck Id</label> <br>
-                    <label for="">Sales Person</label>
-                </div>
-              </div> -->
-              <div class="card-body" style="height: 50vh; overflow-y: auto;">
-                <div style="margin-bottom: 10px;">
-                  <input
-                    type="text"
-                    id="searchTruck"
-                    placeholder="Search Truck ID"
-                    style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"
-                  />
-                </div>
-                <div id="truckContainer">
-                  <!-- Truck cards will be dynamically appended here -->
-                </div>
-              </div>
-          </div>
-      </div>
-      <script>
-        // Fetch trucks from the backend and render them
-        async function fetchTrucks(searchQuery = "",) {
-          try {
-            const city = document.getElementById("city").value
-            const response = await fetch(`/gettrucknames?search=${searchQuery}&city=${city}&customKey=utilities`);
-            const trucks = await response.json();
-            const truckContainer = document.getElementById("truckContainer");
-            truckContainer.innerHTML = ""; // Clear previous data
-      
-            trucks.forEach((truck) => {
-              const truckDiv = document.createElement("div");
-              truckDiv.style.cssText =
-                "width: 100%; height: 70px; border-radius: 5px; box-shadow: 2px 1px 5px; margin-bottom: 5px; padding: 10px; cursor: pointer;";
-               
-              truckDiv.onclick = () => {
-                document.getElementById('selectedtruck').innerText = ' - '+ truck.id;
-                fetchDashboardData(truck.id)};
-      
-              truckDiv.innerHTML = `
-                <label>Truck ID: ${truck.id}</label> <br>
-                <label>Sales Person ID: ${truck.salesmanId || "N/A"}</label>
-              `;
-              truckContainer.appendChild(truckDiv);
-            });
-          } catch (error) {
-            console.error("Error fetching trucks:", error);
+  var monitorChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+          labels: ['CPU Usage', 'Memory', 'Disk Space', 'Network', 'Temperature'],
+          datasets: [{
+              data: [20, 30, 15, 25, 10], // Values for each element
+              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#8E44AD'],
+              hoverBackgroundColor: ['#FF4765', '#2A92D9', '#E7B53F', '#3E9C40', '#732D91'],
+              borderWidth: 2,
+              borderColor: '#fff',
+              hoverOffset: 12 // Smooth hover effect
+          }]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: 'bottom',
+                  labels: {
+                      font: {
+                          size: 14
+                      },
+                      color: '#333'
+                  }
+              }
           }
+      }
+  });
+</script>
+ <div class="col-xl-4">
+  <div class="filter-container">
+    <div class="chart-container">
+        <canvas id="monitorChartb"></canvas>
+    </div>
+</div>
+
+</div>
+<div class="col-xl-4">
+  <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
-      
-        // Call this function when the page loads
-        document.addEventListener("DOMContentLoaded", () => fetchTrucks());
-      
-        // Add search functionality
-        // document.getElementById("searchTruck").addEventListener("input", (event) => {
-        //   const searchQuery = event.target.value;
-        //   fetchTrucks(searchQuery);
-        // });
-      
-        // // Example function for handling truck dashboard display
-        // function showDashboard(truckId) {
-        //   alert(`Showing dashboard for Truck ID: ${truckId}`);
-        //   // Add logic to redirect or display the truck dashboard
-        // }
-        // document.addEventListener("DOMContentLoaded", () => fetchTrucks());
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #1f4e75;
+            color: white;
+        }
+        td {
+            background: #f8f9fa;
+        }
+        .editable {
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .editable:hover {
+            background: #e3f2fd;
+        }
+  </style>
+  <div class="filter-container">
+    <h4 class="mb-3">Performance Summary</h4>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th class="editable" data-column="1">Jan</th>
+                <th class="editable" data-column="2">Feb</th>
+                <th class="editable" data-column="3">Mar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Revenue</td><td class="editable" data-row="1">XXXXX</td><td class="editable" data-row="2">XXXXX</td><td class="editable" data-row="3">XXXXX</td></tr>
+            <tr><td>Bottles Sold</td><td class="editable" data-row="4">XXXXX</td><td class="editable" data-row="5">XXXXX</td><td class="editable" data-row="6">XXXXX</td></tr>
+            <tr><td>Customers Created</td><td class="editable" data-row="7">XXXXX</td><td class="editable" data-row="8">XXXXX</td><td class="editable" data-row="9">XXXXX</td></tr>
+            <tr><td>Customers Deleted</td><td class="editable" data-row="10">XXXXX</td><td class="editable" data-row="11">XXXXX</td><td class="editable" data-row="12">XXXXX</td></tr>
+            <tr><td>Bottles Out</td><td class="editable" data-row="13">XXXXX</td><td class="editable" data-row="14">XXXXX</td><td class="editable" data-row="15">XXXXX</td></tr>
+            <tr><td>Dispenser Out</td><td class="editable" data-row="16">XXXXX</td><td class="editable" data-row="17">XXXXX</td><td class="editable" data-row="18">XXXXX</td></tr>
+            <tr><td>Add Customers</td><td class="editable" data-row="19">XXXXX</td><td class="editable" data-row="20">XXXXX</td><td class="editable" data-row="21">XXXXX</td></tr>
+        </tbody>
+    </table>
+</div>
 
-// Update truck list when city selection changes
+</div>
+    <script>
+      var ctx = document.getElementById('monitorChartb').getContext('2d');
+  
+      var monitorChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ['CPU Usage', 'Memory', 'Disk Space', 'Network', 'Temperature'],
+              datasets: [{
+                  data: [20, 30, 15, 25, 10], // Values for each element
+                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#8E44AD'],
+                  hoverBackgroundColor: ['#FF4765', '#2A92D9', '#E7B53F', '#3E9C40', '#732D91'],
+                  borderWidth: 2,
+                  borderColor: '#fff',
+                  hoverOffset: 12 // Smooth hover effect
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'bottom',
+                      labels: {
+                          font: {
+                              size: 14
+                          },
+                          color: '#333'
+                      }
+                  }
+              }
+          }
+      });
+  </script>
+</div>
+</div>
+</div>
+</div>
+
+  <div class="row">
+    <!-- ...1 -->
+
+   
+<!-- </div>
+      </div> -->
 
 
+    <div class="col-xl-7">
+      <div class="filter-container">
 
-      </script>
+        <div class="table-responsive">
+          <table id="reporttable" class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col" class="sort" data-sort="name">ID</th>
+                <th scope="col" class="sort" data-sort="budget">Name</th>
+                <th scope="col" class="sort" data-sort="status"> Security Deposit</th>
+                <th scope="col" class="sort" data-sort="completion">Wallet Recharge</th>
+                <th scope="col" class="sort" data-sort="completion">Delivery Collection</th>
+                <th scope="col">Total Collection</th>
+              </tr>
+            </thead>
+            <tbody class="list">
+              <tr>
+
+              </tr>
+            </tbody>
+          </table>
+    </div>
+
+
+        </div>
+        </div>
+
+          <!-- ...1 -->
+
       <div class="col-xl-5">
-          <div class="card bg-default">
+        <div class="filter-container">
+
+          <div class="card bg-default mt-1">
               <div class="card-header bg-transparent">
                   <div class="row align-items-center">
                       <div class="col">
@@ -152,25 +241,14 @@
                   </div>
               </div>
           </div>
-      </div>
-      <div class="col-xl-4">
-          <div class="card">
-              <div class="card-header bg-transparent">
-                  <div class="row align-items-center">
-                      <div class="col">
-                          <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                          <h5 class="h3 mb-0">Total orders</h5>
-                      </div>
-                  </div>
-              </div>
-              <div class="card-body">
-                  <!-- Chart -->
-                  <div class="chart">
-                      <canvas id="chart-bar" class="chart-canvas"></canvas>
-                  </div>
-              </div>
           </div>
       </div>
+
+          <!-- ...2 -->
+
+
+                <!-- ...2 -->
+
   </div>
   <script src="/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
 <script src="/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
@@ -363,5 +441,54 @@ fetchOrderData('2024-01-01', '2025-02-01'); // Pass date range dynamically
 </script>
 <script src="/assets/vendor/chart.js/dist/Chart.min.js"></script>
 <script src="/assets/vendor/chart.js/dist/Chart.extension.js"></script>  
+<script>
+  $(document).ready(function () {
+  // Initialize DataTable
+  const table = $('#reporttable').DataTable({
+    ajax: {
+      url: '/getsalesmanreport', // Endpoint to fetch data
+      dataSrc: ''
+    },
+    columns: [
+      { data: 'id' },
+      { 
+                data: 'name', 
+                title: 'Salesman Name',
+                render: function (data, type, row) {
+                    return `<a href="individualsalesmanreport/${row.id}" class="salesman-link" data-id="${row.id}">${data}</a>`;
+                }
+            },       { data: 'totalBottleDeposits' },
+      { data: 'totalWalletCollection' },
+      { data: 'totalCreditCollection' },
+
+      { data: 'totalCollection' }
+    ]
+  });
+
+  // Handle form submission
+  $('#dateForm').on('submit', function (e) {
+    e.preventDefault();
+
+    // Get selected dates
+    const fromDate = $('#fromDate').val();
+    const toDate = $('#toDate').val();
+    const download = $('#download').val();
+
+    // Reload DataTable with new parameters
+    if(download =='Yes'){
+      
+              window.location.href = `/getsalesmanreportxl?fromDate=${fromDate}&toDate=${toDate}&download=${download}`;
+
+    }else{
+                table.ajax.url(`/getsalesmanreport?fromDate=${fromDate}&toDate=${toDate}&download=${download}`).load();
+
+    }
+
+    // Close the modal
+    $('#dateModal').modal('hide');
+  });
+});
+
+</script>
 
 <%- include('./includes/end.ejs') -%>

@@ -1,0 +1,198 @@
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+<style>
+  /* Scoped styles for custom-nav-tabs */
+  .custom-nav-tabs {
+    display: flex;
+    gap: 10px;
+    /* Add space between tabs for clear distinction */
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .tab-button {
+              padding: 10px 15px;
+              border: 1px solid #ccc;
+              cursor: pointer;
+              background: #e7e7e7;
+              font-weight: bold;
+              margin-right: 5px;
+              transition: 0.3s;
+            }
+          
+            .tab-button.active {
+              background: #4d8da9;
+              color: #ffffff;
+            }
+  .filter-container {
+              margin-top: 10px;
+              padding: 15px;
+              border-radius: 8px;
+              background-color: #fff;
+          }
+          .filter-btn {
+              background-color: black;
+              color: white;
+              padding: 8px 16px;
+              border: none;
+              border-radius: 5px;
+              font-size: 14px;
+          }
+          .date-filter {
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              margin-top: 10px;
+          }
+          .date-input {
+              flex: 1;
+              padding: 8px;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+              display: flex;
+              align-items: center;
+              background: white;
+          }
+          .date-input input {
+              border: none;
+              outline: none;
+              flex: 1;
+          }
+          .date-input svg {
+              width: 20px;
+              height: 20px;
+              margin-left: 8px;
+          }
+          .download-link {
+              color: black;
+              text-decoration: none;
+              font-size: 14px;
+          }
+          @media (max-width: 600px) {
+              .date-filter {
+                  flex-direction: column;
+              }
+          }
+</style>
+
+<a href="/updateinventory" class="btn btn-primary ml-3" type="button" aria-label="Update Inventory">Update Inventory</a>
+<a href="/addnewproduct" class="btn btn-danger ml-3" type="button" aria-label="Add New Item">Add New Item</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col-12">
+      <div class="filter-container">
+          <div class="date-filter">
+              <label class="date-input">
+                  <span>From</span>
+                  <input type="date" id="fromDate">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
+              </label>
+              <label class="date-input">
+                  <span>To</span>
+                  <input type="date" id="toDate">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
+              </label>
+          </div>
+          <button class="filter-btn float-right" id="applyFilterBtn">Filter By</button>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div>
+          <a class="tab-button active" href="/inventorymanagement" data-table="inventoryTable">Store Inventory</a>
+          <a class="tab-button" href="/utilities" data-table="salesTable">Trucks Details</a>
+        </div>
+        <br>
+     
+        <div class="table-responsive">
+          <table id="inventoryTable" class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col" class="sort" data-sort="name">ProductId</th>
+                <th scope="col" class="sort" data-sort="name">Item</th>
+                <th scope="col" class="sort" data-sort="description">Item Description</th>
+                <th scope="col" class="sort" data-sort="type">Type</th>
+                <th scope="col" class="sort" data-sort="currentStock">Current Stock</th>
+                <th scope="col" class="sort" data-sort="damagedQuantity">Damaged Quantity</th>
+                <th scope="col" class="sort" data-sort="damagedQuantity">Discarded Qauntity</th>
+
+                <th scope="col" class="sort" data-sort="issued">Issued Out</th>
+                <th scope="col" class="sort" data-sort="received">Received In</th>
+                <th scope="col" class="sort" data-sort="oldItem">Damaged Item</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody class="list">
+              <!-- Dynamic data will be inserted here -->
+     
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Load jQuery first -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // Initialize DataTable
+    var datatable = $('#inventoryTable').DataTable({
+      responsive: true,
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: '/getinventory', // Update this endpoint to your actual API
+        data: function (d) {
+          d.fromDate = $('#fromDate').val();
+          d.toDate = $('#toDate').val();
+          return d;
+        }
+      },
+      columns: [
+      { data: 'productid', render: data => data || 'N/A' },
+
+        { data: 'name', render: data => data || 'N/A' },
+        { data: 'description', render: data => data || 'N/A' },
+        { data: 'type', render: data => data || 'N/A' },
+        { data: 'currentStock', render: data => data || 'N/A' },
+        { data: 'damagedStock', render: data => data || 'N/A' },
+        { data: 'discardedStock', render: data => data || 'N/A' },
+
+        { data: 'issued', render: data => data || 'N/A' },
+        { data: 'received', render: data => data || 'N/A' },
+        { data: 'damagedQuantity', render: data => data || 'N/A' },
+        { data: null, orderable: false, searchable: false, render: function(data, type, row) {
+          return `<a class="btn btn-primary edit-item" href="/stockhistory/${row.productid}" data-id="${row._id}">View</a>`;
+        }}
+      ]
+    });
+
+    // Apply filters
+    $('#applyFilterBtn').click(function() {
+      datatable.ajax.reload();
+    });
+
+    // Handle edit button click
+    $('#inventoryTable tbody').on('click', '.edit-item', function () {
+      var itemId = $(this).data('id');
+      window.location.href = '/edititem/' + itemId;
+    });
+  });
+</script>
+
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

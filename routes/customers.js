@@ -18,6 +18,13 @@ router.delete('/deletecustomer/:id',setCustomHeader('customers'),apiprev.Getapip
 router.get('/customers/deletedcustomers',setCustomHeader('customers'),authMiddleware, customerapi.deletecustomersscreen);
 router.get('/getdeletedcustomers',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getdeletedcustomers);
 
+//////////Views
+
+
+router.get('/creditpayment/:id', setCustomHeader('customers'),authMiddleware, function(req, res, next) {
+    res.render('customers/creditpayment', { title: 'Al Qattara',route:'Customer',sub :'Credit Payment' });
+  });
+  
 
 //mobile api 
 router.get('/customersee', customerapi.customerids);
@@ -27,6 +34,7 @@ router.post('/customerupdate', customerapi.updatecustomer);
 router.get('/dailycustomers/:routeId', customerapi.dailycustomer);
 router.get('/collectionsum', customerapi.getwalletandassetcollection);
 router.post('/generateotplink', customerapi.generateotplink);
+
 
 
 

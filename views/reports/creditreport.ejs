@@ -15,7 +15,13 @@
     list-style: none;
   }
 
-
+  .filter-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+  }
 
   .custom-nav-tabs .nav-link {
     text-align: center;
@@ -56,6 +62,87 @@
 </div>
 <div class="container-fluid mt--6">
     <div class="row">
+      <div class="col-12 mb-2">
+        <div class="filter-box">
+          <h5 class="mb-3">Filter By</h5>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">From</label>
+              <input type="date" class="form-control">
+          </div>
+
+          <!-- To Date -->
+          <div class="col-md-3">
+              <label class="form-label">To</label>
+              <input type="date" class="form-control">
+          </div>
+              <!-- Customer ID -->
+              <div class="col-md-3">
+                <label class="form-label">Customer ID</label>
+                <select class="form-control">
+                    <option selected>Select a Salesman</option>
+                    <option value="1">Salesman 1</option>
+                    <option value="2">Salesman 2</option>
+                    <option value="3">Salesman 3</option>
+                </select>
+            </div>
+
+  
+              <!-- Salesman ID -->
+              <div class="col-md-3">
+                  <label class="form-label">Customer Name</label>
+                  <select class="form-control">
+                      <option selected>Select a Salesman</option>
+                      <option value="1">Salesman 1</option>
+                      <option value="2">Salesman 2</option>
+                      <option value="3">Salesman 3</option>
+                  </select>
+              </div>
+  
+              <!-- Truck ID -->
+              <div class="col-md-3">
+                  <label class="form-label">Zone</label>
+                  <select class="form-control">
+                      <option selected>Select a Truck</option>
+                      <option value="101">Truck 101</option>
+                      <option value="102">Truck 102</option>
+                      <option value="103">Truck 103</option>
+                  </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Over 30 Days</label>
+                <select class="form-control">
+                    <option selected>Select a Mode of Payment</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Online">Online Transfer</option>
+                </select>
+            </div>
+              <!-- Mode of Payment -->
+              <div class="col-md-3">
+                  <label class="form-label">Customer Type</label>
+                  <select class="form-control">
+                      <option selected>Select a Mode of Payment</option>
+                      <option value="Cash">Cash</option>
+                      <option value="Credit">Credit</option>
+                      <option value="Online">Online Transfer</option>
+                  </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Credit Recieved</label>
+                <h2>
+
+                </h2>
+            </div>
+  
+              <!-- Order Status -->
+         
+              <!-- From Date -->
+
+          </div>
+      </div>
+  
+      </div>
       <div class="col">
         <div class="card">
           <style>
@@ -88,6 +175,8 @@
             <a class="tab-button" href="/customerreport" data-table="customerTable">Customer Report</a>
             <a class="tab-button active" href="/creditreport" data-table="creditTable">Credit Report</a>
             <a class="tab-button" href="/truckreport" data-table="truckTable">Truck Report</a>
+            <a class="tab-button" href="/commissionreport" data-table="truckTable">Commission Report</a>
+
           </div>
           <br>
           <div class="table-responsive">
@@ -96,10 +185,13 @@
                 <tr>
                   <th scope="col" class="sort" data-sort="name">Customer Id</th>
                   <th scope="col" class="sort" data-sort="budget">Customer Name</th>
-                  <th scope="col" class="sort" data-sort="status">Last delivery Date</th>
+                  <th scope="col" class="sort" data-sort="status">Total Amount Due</th>
+                  <th scope="col" class="sort" data-sort="completion">Total Paid</th>
+                  <th scope="col" class="sort" data-sort="completion">Balance Amount</th>
                   <th scope="col" class="sort">Route</th>
-                  <th scope="col" class="sort" data-sort="completion">Mobile Number</th>
-                  <th scope="col" class="sort" data-sort="completion">5 gal price</th>
+                  <th scope="col" class="sort">Zone</th>
+                  <th scope="col" class="sort">Salesman</th>
+                  <th scope="col" class="sort">Pending From</th>
 
                 </tr>
               </thead>
@@ -144,7 +236,26 @@ $(document).ready(function () {
                 render: function (data) {
                     return data ? `₹ ${data.toFixed(2)}` : 'N/A';
                 }
-            },  // 5 Gal Price
+            }, 
+            { 
+    data: null,  // Route
+    render: function () {
+        return '0'; // Display zero explicitly
+    }
+},           { 
+    data: null,  // Route
+    render: function () {
+        return '121'; // Display zero explicitly
+    }
+},  // Route
+{ 
+    data: null,  // Route
+    render: function () {
+        return '0'; // Display zero explicitly
+    }
+},      // Route
+
+             // 5 Gal Price
             // { 
             //     data: 'id',
             //     render: function (data) {

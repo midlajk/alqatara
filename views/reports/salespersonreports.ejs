@@ -14,7 +14,13 @@
     margin: 0;
     list-style: none;
   }
-
+  .filter-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+  }
 
 
   .custom-nav-tabs .nav-link {
@@ -48,7 +54,7 @@
     border-color: #61A3C0;
   }
 </style>
-<%- include('../components/datefilter.ejs') -%>
+<!-- <%- include('../components/datefilter.ejs') -%> -->
 </div>
 </div>
 </div>
@@ -56,6 +62,72 @@
 </div>
 <div class="container-fluid mt--6">
     <div class="row">
+      <div class="col-12 mb-2">
+        <div class="filter-box">
+          <h5 class="mb-3">Filter By</h5>
+          <div class="row g-3">
+              <!-- Customer ID -->
+              <div class="col-md-3">
+                <label class="form-label">Salesman ID</label>
+                <select class="form-control">
+                    <option selected>Select a Salesman</option>
+                    <option value="1">Salesman 1</option>
+                    <option value="2">Salesman 2</option>
+                    <option value="3">Salesman 3</option>
+                </select>
+            </div>
+
+  
+              <!-- Salesman ID -->
+              <div class="col-md-3">
+                  <label class="form-label">Salesman Name</label>
+                  <select class="form-control">
+                      <option selected>Select a Salesman</option>
+                      <option value="1">Salesman 1</option>
+                      <option value="2">Salesman 2</option>
+                      <option value="3">Salesman 3</option>
+                  </select>
+              </div>
+  
+              <!-- Truck ID -->
+              <div class="col-md-3">
+                  <label class="form-label">Zone</label>
+                  <select class="form-control">
+                      <option selected>Select a Truck</option>
+                      <option value="101">Truck 101</option>
+                      <option value="102">Truck 102</option>
+                      <option value="103">Truck 103</option>
+                  </select>
+              </div>
+  
+              <!-- Mode of Payment -->
+              <div class="col-md-3">
+                  <label class="form-label">Customer Type</label>
+                  <select class="form-control">
+                      <option selected>Select a Mode of Payment</option>
+                      <option value="Cash">Cash</option>
+                      <option value="Credit">Credit</option>
+                      <option value="Online">Online Transfer</option>
+                  </select>
+              </div>
+  
+              <!-- Order Status -->
+         
+              <!-- From Date -->
+              <div class="col-md-3">
+                  <label class="form-label">From</label>
+                  <input type="date" class="form-control">
+              </div>
+  
+              <!-- To Date -->
+              <div class="col-md-3">
+                  <label class="form-label">To</label>
+                  <input type="date" class="form-control">
+              </div>
+          </div>
+      </div>
+  
+      </div>
       <div class="col">
         <div class="card">
           <style>
@@ -88,6 +160,8 @@
             <a class="tab-button" href="/customerreport" data-table="customerTable">Customer Report</a>
             <a class="tab-button" href="/creditreport" data-table="creditTable">Credit Report</a>
             <a class="tab-button" href="/truckreport" data-table="truckTable">Truck Report</a>
+            <a class="tab-button" href="/commissionreport" data-table="truckTable">Commission Report</a>
+
           </div>
           <br>
           <div class="table-responsive">
@@ -149,7 +223,13 @@ $(document).ready(function () {
     },
     columns: [
       { data: 'id' },
-      { data: 'name' },
+      { 
+                data: 'name', 
+                title: 'Salesman Name',
+                render: function (data, type, row) {
+                    return `<a href="individualsalesmanreport/${row.id}" class="salesman-link" data-id="${row.id}">${data}</a>`;
+                }
+            }, 
       { data: 'totalBottleDeposits' },
       { data: 'totalWalletCollection' },
       { data: 'totalCreditCollection' },

@@ -14,7 +14,119 @@
 </div>
 </div>
 <div class="container-fluid mt--6">
+  <style>
+    .filter-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+    }
+</style>
+
+
   <div class="row">
+    <div class="col-12">
+
+    <div class="filter-box">
+    <h5 class="mb-3">Filter By</h5>
+    <div class="row g-3">
+        <!-- ID -->
+        <div class="col-md-3">
+            <label class="form-label">I.D</label>
+            <input type="text" class="form-control" placeholder="Search ID Here">
+        </div>
+        
+        <!-- Name -->
+        <div class="col-md-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" placeholder="Search Name Here">
+        </div>
+
+        <!-- Order Status -->
+        <div class="col-md-3">
+            <label class="form-label">Status</label>
+            <select class="form-control">
+                <option selected>Select Order status</option>
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+
+        <!-- Customer Type -->
+        <div class="col-md-3">
+            <label class="form-label">Type</label>
+            <select class="form-control">
+                <option selected>Select customer type</option>
+                <option value="Regular">Regular</option>
+                <option value="New">New</option>
+            </select>
+        </div>
+
+        <!-- Delivery Day -->
+        <div class="col-md-3">
+            <label class="form-label">Delivery Day</label>
+            <select class="form-control">
+                <option selected>Select a day</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+            </select>
+        </div>
+
+        <!-- Bottle LendType -->
+        <div class="col-md-3">
+            <label class="form-label">Bottle LendType</label>
+            <select class="form-control">
+                <option selected>Select Bottle LendType</option>
+                <option value="Loan">Loan</option>
+                <option value="Purchase">Purchase</option>
+            </select>
+        </div>
+
+        <!-- Cooler LendType -->
+        <div class="col-md-3">
+            <label class="form-label">Cooler LendType</label>
+            <select class="form-control">
+                <option selected>Select Cooler LendType</option>
+                <option value="Rental">Rental</option>
+                <option value="Owned">Owned</option>
+            </select>
+        </div>
+
+        <!-- Route -->
+        <div class="col-md-3">
+            <label class="form-label">Route</label>
+            <select id="routeSelect" class="form-control">
+                <option selected>Select Route</option>
+                <option value="4278">4278</option>
+                <option value="5283">5283</option>
+                <option value="6390">6390</option>
+            </select>
+        </div>
+
+        <!-- Zone -->
+        <div class="col-md-3">
+            <label class="form-label">Zone</label>
+            <select id="zoneSelect" class="form-control">
+                <option selected>Select Zone</option>
+            </select>
+        </div>
+
+        <!-- Date -->
+        <div class="col-md-3">
+            <label class="form-label">To</label>
+            <input type="date" class="form-control">
+        </div>
+    </div>
+</div>
+  
+
+    </div>
+    
     <div class="col">
       <div class="card">
         <!-- Card header -->
@@ -81,6 +193,11 @@
     render: function(data) {
       return data ? data : 'N/A';
     }
+    // render: function (data, type, row) {
+    //   return `<a href="creditpayment/${row.id}" class="salesman-link" data-id="${row.id}">${data}</a>`;
+
+    //   // return data ? data : 'N/A';
+    // }
   },
   { 
     data: 'id', 

@@ -12,6 +12,9 @@ const authMiddleware = require('../middleware/auth');
 //         next();
 //     };
 // }
+require('../model/database')
+const mongoose = require('mongoose');
+const Truck = mongoose.model('Truck');
 const setCustomHeader = require('../middleware/customkeyadd');
 
 /* GET home page. */
@@ -27,6 +30,14 @@ router.post('/closeTruckStock', setCustomHeader('utilities'),apiprev.Postapiprev
 
 router.get('/truckhistory/:id', setCustomHeader('utilities'),authMiddleware, utilitiesApis.truckhistorypage);
 router.get('/gettruchhistory', setCustomHeader('utilities'),apiprev.Getapiprev, utilitiesApis.gettruckhistory);
+//views //////
+
+router.get('/updatetruckstock/:id', setCustomHeader('utilities'),authMiddleware, async function(req, res, next) {
+    const id = req.params.id
+    const truck = await Truck.findById(id)
+    res.render('utilities/updatestock',{ title: 'Al Qattara',route:'Utilities',sub :'Update Truck Stock',truck:truck });
+  });
+
 
 
 ///apis 

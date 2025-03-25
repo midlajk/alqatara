@@ -4,6 +4,8 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
+<a href="/addwalletrecharge" class="btn btn-danger ml-3" type="button" aria-label="Add New">Wallet Recharge</a>
+
 </div>
 </div>
 </div>
@@ -23,9 +25,14 @@
                 <thead class="thead-light">
                   <tr>
                     <th scope="col" class="sort" data-sort="name">Customer ID</th>
-                    <th scope="col" class="sort" data-sort="budget">Customer Name</th>
+                    <!-- <th scope="col" class="sort" data-sort="budget">Customer Name</th> -->
                     <th scope="col" class="sort" data-sort="status">Amount</th>
                     <th scope="col" class="sort">SalesMan ID</th>
+                    <th scope="col" class="sort">Paid coupon</th>
+                    <th scope="col" class="sort">Free Coupon</th>
+                    <th scope="col" class="sort">Claimed paid Coupon</th>
+                    <th scope="col" class="sort">Claimed Free Coupon</th>
+
                     <th scope="col" class="sort" data-sort="completion">Created at</th>
                     <th scope="col" class="sort">Updated On</th>
                   
@@ -64,9 +71,13 @@
       },
       columns: [
         { data: 'customerId' },
-        { data: 'customer.name' },
+        // { data: 'customer.name' },
         { data: 'amount' },
         { data: 'salesmanId' },
+        { data: 'paidcoupons' },
+        { data: 'freecoupons' },
+        { data: 'paidcoupons' },
+        { data: 'freecoupons' },
         { 
           data: 'createdAt',
           render: function (data) {

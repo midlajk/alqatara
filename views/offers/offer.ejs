@@ -1,0 +1,97 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+<a href="/newoffer" class="btn btn-danger ml-3" type="button" aria-label="Add New">New Wallet Offer</a>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+
+          <style>
+            .tab-button {
+              padding: 10px 15px;
+              border: 1px solid #ccc;
+              cursor: pointer;
+              background: #e7e7e7;
+              font-weight: bold;
+              margin-right: 5px;
+              transition: 0.3s;
+            }
+          
+            .tab-button.active {
+              background: #4d8da9;
+              color: #ffffff;
+            }
+          
+            .report-table {
+              display: none;
+            }
+          
+            .report-table.active {
+              display: block;
+            }
+          </style>
+          
+          <div>
+            <a class="tab-button active" href="/offers" data-table="salesmanTable">Wallet Offers</a>
+            <a class="tab-button" href="/salesmancommission" data-table="customerTable">Salesman Commission</a>
+          
+
+          </div>
+            <!-- Card header -->
+            <div class="card-header border-0">
+              <h3 class="mb-0">Wallet Status Check</h3>
+            </div>
+            <!-- Light table -->
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush" id="rechargeTable">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">OfferID</th>
+                    <!-- <th scope="col" class="sort" data-sort="budget">Customer Name</th> -->
+                    <th scope="col" class="sort" data-sort="status">Amount</th>
+                    <th scope="col" class="sort">Coupons</th>
+                    <th scope="col" class="sort">Free Coupons</th>
+                    
+
+                    <th scope="col" class="sort" data-sort="completion">Created at</th>
+                  
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <tr>
+                    
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- Card footer -->
+ 
+          </div>
+      </div>
+    </div>
+    <!-- Footer -->
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+
+</script>
+
+    <%- include('../includes/footer.ejs') -%>
+
+    <%- include('../includes/end.ejs') -%>

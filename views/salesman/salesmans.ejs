@@ -93,8 +93,14 @@
                 },// Data source is the root of the response array
           },
           columns: [
-  { data: 'name', title: 'Salesman Name' }, // Customer Name
-  { data: 'id', title: 'Salesman ID' }, // Customer ID (assuming 'uid' is the customer ID)
+          { 
+                data: 'name', 
+                title: 'Salesman Name',
+                render: function (data, type, row) {
+                    return `<a href="individualsalesmanreport/${row.id}" class="salesman-link" data-id="${row.id}">${data}</a>`;
+                }
+            }, 
+              { data: 'id', title: 'Salesman ID' }, // Customer ID (assuming 'uid' is the customer ID)
   { data: 'city', title: 'City' }, // Contact (assuming 'mobileNumber' is the primary contact)
   { 
     data: 'createdAt', 

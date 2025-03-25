@@ -9,10 +9,10 @@ router.get('/dashboard', setCustomHeader('dashboard'),authMiddleware, function(r
 });
 
 router.get('/utilities', setCustomHeader('utilities'),authMiddleware, function(req, res, next) {
-  res.render('utilities/utilities', { title: 'Al Qattara' ,route:'Utilities',sub :'Manage Utilities'});
+  res.render('utilities/utilities', { title: 'Al Qattara' ,route:'Utilities',sub :'Manage Trucks'});
 });
 router.get('/utilities/addtruck', setCustomHeader('utilities'),authMiddleware, function(req, res, next) {
-  res.render('utilities/addtruck', { title: 'Al Qattara',route:'Utilities',sub :'New Utilities' });
+  res.render('utilities/addtruck', { title: 'Al Qattara',route:'Utilities',sub :'New truck' });
 });
 
 router.get('/orders', setCustomHeader('orders'),authMiddleware, function(req, res, next) {

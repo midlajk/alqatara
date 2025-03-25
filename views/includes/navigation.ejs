@@ -32,7 +32,7 @@
         
             <% if (readonlyAccess.includes('utilities')) { %>
               <li class="nav-item">
-                <a class="nav-link <%= route=='Utilities'?'active':'' %>" href="/utilities?customKey=utilities">
+                <a class="nav-link <%= route=='Utilities'?'active':'' %>" href="/inventorymanagement?customKey=utilities">
                   <i class="ni ni-delivery-fast text-primary"></i>
                   <span class="nav-link-text">Utilities</span>
                 </a>
@@ -56,7 +56,14 @@
                 </a>
               </li>
             <% } %>
-        
+            <% if (readonlyAccess.includes('customers')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Cashier'?'active':'' %>" href="/cashier">
+                  <i class="fa-solid fa-sack-dollar text-primary" ></i>
+                                    <span class="nav-link-text">Cashier</span>
+                </a>
+              </li>
+            <% } %>
             <% if (readonlyAccess.includes('reports')) { %>
               <li class="nav-item">
                 <a class="nav-link <%= route=='Reports'?'active':'' %>" href="/report">
@@ -71,6 +78,14 @@
                 <a class="nav-link <%= route=='Wallet'?'active':'' %>" href="/wallet">
                   <i class="ni ni-credit-card text-primary"></i>
                   <span class="nav-link-text">Wallet</span>
+                </a>
+              </li>
+            <% } %>
+            <% if (readonlyAccess.includes('wallet')) { %>
+              <li class="nav-item">
+                <a class="nav-link <%= route=='Offers'?'active':'' %>" href="/offers">
+                  <i class="fa-solid fa-ticket text-primary"></i>
+                                    <span class="nav-link-text">Offer/commission</span>
                 </a>
               </li>
             <% } %>
@@ -129,6 +144,30 @@
               </li>
             <% } %>
           </ul>
+        </div>
+         <style>
+          .navbar-inner {
+  display: flex;
+  flex-direction: column;
+
+}
+.btn-group button {
+  flex: 1; /* Equal width for city buttons */
+  height: 50px;
+}
+
+         </style>
+        <div class="p-1">
+          <p class="text-muted small">Select City</p>
+          <div class="btn-group w-100">
+            <button class="btn btn-sm btn-dark ">ALL</button>
+            <button class="btn btn-sm btn-primary">Al-ain</button>
+            <button class="btn btn-sm btn-dark">Abu Dhabi</button>
+          </div>
+      
+          <button class="btn btn-block btn-dark mt-3">
+            <i class="ni ni-user-run"></i> Log out
+          </button>
         </div>
         
       </div>

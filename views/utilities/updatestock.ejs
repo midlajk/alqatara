@@ -1,0 +1,176 @@
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Manage Truck Stock</h3>
+                </div>
+                <!-- Card body -->
+         
+
+
+
+                <div class="card-body" id="cardb">
+                    <form id="updatestock">
+                        <div class="form-group row">
+                            <label for="truck-id" class="col-md-2 col-form-label form-control-label">Truck ID</label>
+                            <div class="col-md-10">
+                              <input type="hidden" name="customKey" id="customKey" value="utilities">
+
+                                
+                                <input class="form-control" disabled type="text" placeholder="Enter Truck ID" value="<%=truck.id%>" id="truck-id" name="truckId" required>
+                                <input class="form-control" type="hidden" placeholder="Enter Truck ID" value="<%=truck.id%>" id="truck-id" name="truckId" required>
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="truck-id" class="col-md-2 col-form-label form-control-label">Item</label>
+                          <div class="col-md-10">
+                            <input type="hidden" name="customKey" id="customKey" value="utilities">
+
+                              
+                              <input class="form-control"  type="text" placeholder="Item" id="item" name="item" required>
+
+                          </div>
+                      </div>
+                        <div class="form-group row">
+                            <label for="city" class="col-md-2 col-form-label form-control-label">Type</label>
+                            <div class="col-md-10">
+                                <select class=" form-control" id="city" name="city" required>
+                                  <option value="New">New</option>
+                                  <option value="Old">Old</option>
+                                  <option value="Damaged">Damaged</option>
+
+                                </select>
+
+                                <!-- <input class="form-control" type="text" placeholder="Select or enter the city"  required> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Quantity Loaded</label>
+                          <div class="col-md-10">
+                              <input class="form-control" type="number"  placeholder="Quantity loaded" id="max-stock-5gallon" name="maxStock5Gallon">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Quantity returned</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="number"  placeholder="Quantity returned" id="max-stock-5gallon" name="maxStock5Gallon">
+                        </div>
+                    </div>
+                     
+                        <div>
+                            <button type="submit" class="btn btn-success">Add Item</button>
+
+                        </div>
+                    </form>
+                </div>
+
+
+                <div class="card-body" id="cardb">
+                  <table class="table table-flush">
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Loaded</th>
+                        <th>Returned</th>
+                        <th>Old Return</th>
+                        <th>Damaged Return</th>
+                        <th>Balance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- New rows will be appended here -->
+                    </tbody>
+                  </table>
+                   <div class="mt-2">
+                    <button type="submit" class="btn btn-danger">Close Stock</button>
+
+                </div>
+                  </div>
+                 
+            </div>
+            <!-- Footer -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+            <!-- Include Select2 CSS -->
+            
+            <!-- Include Select2 JS -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+            <script>
+              $(document).ready(function () {
+                $("#updatestock").submit(function (event) {
+                  event.preventDefault(); // Prevent form submission
+            
+                  // Get input values
+                  let item = $("input[name='item']").val().trim();
+                  let loaded = parseInt($("input[name='maxStock5Gallon']").eq(0).val()) || 0;
+                  let returned = parseInt($("input[name='maxStock5Gallon']").eq(1).val()) || 0;
+                  let type = $("#city").val();
+            
+                  // Find if the item already exists in the table
+                  let existingRow = $(".table tbody tr").filter(function () {
+                    return $(this).find("td:first").text() === item;
+                  });
+            
+                  if (existingRow.length > 0) {
+                    // If item exists, update the row
+                    let prevLoaded = parseInt(existingRow.find("td:eq(1)").text()) || 0;
+                    let prevReturned = parseInt(existingRow.find("td:eq(2)").text()) || 0;
+                    let prevOldReturn = parseInt(existingRow.find("td:eq(3)").text()) || 0;
+                    let prevDamagedReturn = parseInt(existingRow.find("td:eq(4)").text()) || 0;
+                    let prevBalance = parseInt(existingRow.find("td:eq(5)").text()) || 0;
+            
+                    // Update values
+                    let newLoaded = prevLoaded + loaded;
+                    let newReturned = prevReturned + returned;
+                    let newOldReturn = type === "Old" ? prevOldReturn + returned : prevOldReturn;
+                    let newDamagedReturn = type === "Damaged" ? prevDamagedReturn + returned : prevDamagedReturn;
+                    let newBalance = prevBalance + loaded - returned;
+            
+                    // Update row with new values
+                    existingRow.find("td:eq(1)").text(newLoaded);
+                    existingRow.find("td:eq(2)").text(newReturned);
+                    existingRow.find("td:eq(3)").text(newOldReturn);
+                    existingRow.find("td:eq(4)").text(newDamagedReturn);
+                    existingRow.find("td:eq(5)").text(newBalance);
+                  } else {
+                    // If item doesn't exist, add a new row
+                    let oldReturn = type === "Old" ? returned : 0;
+                    let damagedReturn = type === "Damaged" ? returned : 0;
+                    let balance = loaded - returned;
+            
+                    $(".table tbody").append(`
+                      <tr>
+                        <td>${item}</td>
+                        <td>${loaded}</td>
+                        <td>${returned}</td>
+                        <td>${oldReturn}</td>
+                        <td>${damagedReturn}</td>
+                        <td>${balance}</td>
+                      </tr>
+                    `);
+                  }
+            
+                  // Clear the input fields after adding
+                  $("input[name='item']").val('');
+                  $("input[name='maxStock5Gallon']").val('');
+                });
+              });
+            </script>
+            
+            
+               
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

@@ -11,8 +11,15 @@ router.get('/customerreport',setCustomHeader('reports'),authMiddleware, reportcl
 router.get('/creditreport',setCustomHeader('reports'),authMiddleware, reportclass.creditreport);
 router.get('/truckreport',setCustomHeader('reports'),authMiddleware, reportclass.truckreport);
 
+router.get('/individualsalesmanreport/:id', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {
+    console.log(req.params)
+    res.render('reports/individualsalesmanreport', { title: 'Al Qattara' ,route:'Reports',sub :'Salesman Report of '+req.params.id});
+  });
 
 
+router.get('/commissionreport', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {
+  res.render('reports/commission', { title: 'Al Qattara' ,route:'Reports',sub :'Commission Report'});
+});
 ////////////api call 
 router.get('/getsalesmanreport',setCustomHeader('reports'),apiprev.Getapiprev, reportclass.getsalesmanreport);
 

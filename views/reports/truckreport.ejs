@@ -16,6 +16,13 @@
   }
 
 
+  .filter-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+  }
 
   .custom-nav-tabs .nav-link {
     text-align: center;
@@ -58,6 +65,44 @@
 </div>
 <div class="container-fluid mt--6">
     <div class="row">
+      <div class="col-12 mb-2">
+        <div class="filter-box">
+          <h5 class="mb-3">Filter By</h5>
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">From</label>
+              <input type="date" class="form-control">
+          </div>
+
+          <!-- To Date -->
+          <div class="col-md-3">
+              <label class="form-label">To</label>
+              <input type="date" class="form-control">
+          </div>
+              <!-- Customer ID -->
+              <div class="col-md-3">
+                <label class="form-label">Salesman ID</label>
+                <select class="form-control">
+                    <option selected>Select a Salesman</option>
+                    <option value="1">Salesman 1</option>
+                    <option value="2">Salesman 2</option>
+                    <option value="3">Salesman 3</option>
+                </select>
+            </div>
+
+  
+              <!-- Salesman ID -->
+             
+     
+  
+              <!-- Order Status -->
+         
+              <!-- From Date -->
+
+          </div>
+      </div>
+  
+      </div>
       <div class="col">
         <div class="card">
           <style>
@@ -90,6 +135,8 @@
             <a class="tab-button" href="/customerreport" data-table="customerTable">Customer Report</a>
             <a class="tab-button" href="/creditreport" data-table="creditTable">Credit Report</a>
             <a class="tab-button active" href="/truckreport" data-table="truckTable">Truck Report</a>
+            <a class="tab-button" href="/commissionreport" data-table="truckTable">Commission Report</a>
+
           </div>
           <br>
           <div class="table-responsive">
@@ -102,6 +149,10 @@
                   <th scope="col" class="sort">Delivered 5 gal bottles</th>
                   <th scope="col" class="sort">Delivered 200ml bottles</th>
                   <th scope="col" class="sort" data-sort="completion">Damaged Bottles</th>
+                  <th scope="col" class="sort" data-sort="completion">Visited Customers</th>
+                  <th scope="col" class="sort" data-sort="completion">Not Visted</th>
+                  <th scope="col" class="sort" data-sort="completion">Message Send</th>
+
                   <!-- <th scope="col"></th> -->
                 </tr>
               </thead>
@@ -138,6 +189,22 @@ $(document).ready(function () {
             { data: "delivered5galBottles", title: "Delivered 5 gal bottles" },
             { data: "delivered5galBottles", title: "Delivered 200ml bottles" },
             { data: "damagedbottles", title: "Damaged Bottles" },
+            { 
+    data: null,  // Route
+    render: function () {
+        return '0'; // Display zero explicitly
+    }
+},{ 
+    data: null,  // Route
+    render: function () {
+        return '0'; // Display zero explicitly
+    }
+},{ 
+    data: null,  // Route
+    render: function () {
+        return '0'; // Display zero explicitly
+    }
+}
             // { data: null, title: "Action", render: function () {
             //     return '<button class="btn btn-primary">View</button>';
             // }}

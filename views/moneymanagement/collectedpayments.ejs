@@ -1,0 +1,271 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+<style>  
+.filter-container {
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+}
+.filter-btn {
+    background-color: black;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+.date-filter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.date-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    background: white;
+}
+.date-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+}
+.date-input svg {
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+}
+.download-link {
+    color: black;
+    text-decoration: none;
+    font-size: 14px;
+}
+@media (max-width: 600px) {
+    .date-filter {
+        flex-direction: column;
+    }
+}
+
+
+</style>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+  <div class="row"> 
+    <div class="col-12">
+        <div class="filter-container">
+            <div class="date-filter">
+                <label class="date-input">
+                    <span>From</span>
+                    <input type="date" id="toDate">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
+                </label>
+                <label class="date-input">
+                    <span>To</span>
+                    <input type="date" id="fromDate">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
+                </label>
+            </div>
+            <button class="filter-btn float-right" id="applyFilterBtn">Filter By</button>
+          
+          </div>
+          </div>
+    <div class="col-xl-3 col-md-6">
+      <div class="card card-stats">
+        <!-- Card body -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+                <h5 class="card-title text-uppercase text-muted mb-0">Total Payment Collected</h5>
+                <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+            </div>
+            <div class="col-auto">
+              <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                <i class="ni ni-delivery-fast" ></i>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-7 col-md-6"></div>
+    <div class="col-xl-2 col-md-6">
+
+      <a class="btn" >Download Report</a>
+      <!-- <a  class="btn" href="#">Credit Report</a> -->
+
+    </div>
+
+  </div>
+    <div class="row">
+      <div class="col">
+        <div class="card">
+            <!-- Card header -->
+            <div class="card-header border-0">
+              <h3 class="mb-0">Payment Collected</h3>
+            </div>
+            <!-- Light table -->
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush" id="rechargeTable">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">Salesman ID</th>
+                    <th scope="col" class="sort">Cash Sale</th>
+                    <th scope="col" class="sort">Wallet Sale</th>
+                    <th scope="col" class="sort">Security Deposit</th>
+                    <th scope="col" class="sort" data-sort="completion">Credit Received</th>
+                    <th scope="col" class="sort">Wallet Recharge</th>
+                    <th scope="col" class="sort" data-sort="status">Total Collected</th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <tr>
+                    <td>SM001</td>
+                    <td>$500</td>
+                    <td>$300</td>
+                    <td>$100</td>
+                    <td>$50</td>
+                    <td>$50</td>
+                    <td>$30</td>
+                  </tr>
+                  <tr>
+                    <td>SM002</td>
+                    <td>$750</td>
+                    <td>$500</td>
+                    <td>$150</td>
+                    <td>$60</td>
+                    <td>$40</td>
+                    <td>$50</td>
+                  </tr>
+                  <tr>
+                    <td>SM003</td>
+                    <td>$900</td>
+                    <td>$600</td>
+                    <td>$200</td>
+                    <td>$70</td>
+                    <td>$30</td>
+                    <td>$80</td>
+                  </tr>
+                  <tr>
+                    <td>SM004</td>
+                    <td>$650</td>
+                    <td>$400</td>
+                    <td>$120</td>
+                    <td>$40</td>
+                    <td>$50</td>
+                    <td>$60</td>
+                  </tr>
+                  <tr>
+                    <td>SM005</td>
+                    <td>$1,100</td>
+                    <td>$800</td>
+                    <td>$250</td>
+                    <td>$90</td>
+                    <td>$100</td>
+                    <td>$120</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+            </div>
+            <!-- Card footer -->
+ 
+          </div>
+      </div>
+    </div>
+    <!-- Footer -->
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+  // $(document).ready(function () {
+  //   $('#rechargeTable').DataTable({
+  //     processing: true,
+  //     serverSide: true,
+  //     ajax: {
+  //       url: '/getrecharges',
+  //       type: 'GET',
+  //       dataSrc: 'data'
+  //     },
+  //     columns: [
+  //       { data: 'customerId' },
+  //       // { data: 'customer.name' },
+  //       { data: 'amount' },
+  //       { data: 'salesmanId' },
+  //       { data: 'paidcoupons' },
+  //       { data: 'freecoupons' },
+
+  //       { 
+  //         data: 'createdAt',
+  //         render: function (data) {
+  //           return new Date(data).toLocaleString();
+  //         }
+  //       },
+  //       { 
+  //         data: 'updatedAt',
+  //         render: function (data) {
+  //           return new Date(data).toLocaleString();
+  //         }
+  //       },
+  //       { 
+  //   data: null, 
+  //   orderable: false, // Prevent sorting on this column
+  //   searchable: false, // Prevent search filter on buttons
+  //   render: function(data, type, row) {
+  //     return `
+  //       <button class="btn btn-secondary viewsaleszone-zone" data-id="${row._id}">Collect Money</button>
+  //     `;
+  //   }
+  // },
+  //       // {
+  //       //   data: '_id',
+  //       //   render: function (data) {
+  //       //     // <button class="btn btn-sm btn-warning" onclick="editRecharge('${data}')">Edit</button>
+  //       //     return `
+  //       //             <button class="btn btn-sm btn-danger" onclick="deleteRecharge('${data}')">Delete</button>`;
+  //       //   }
+  //       // }
+  //     ]
+  //   });
+  // });
+
+  // function editRecharge(id) {
+  //   alert('Edit Recharge ID: ' + id);
+  //   // Implement edit logic here
+  // }
+
+  // function deleteRecharge(id) {
+  //   if (confirm('Are you sure you want to delete this recharge?')) {
+  //     fetch(`/recharges/${id}`, { method: 'DELETE' })
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         alert('Recharge deleted successfully');
+  //         $('#rechargeTable').DataTable().ajax.reload();
+  //       })
+  //       .catch(error => console.error('Error:', error));
+  //   }
+  // }
+</script>
+
+    <%- include('../includes/footer.ejs') -%>
+
+    <%- include('../includes/end.ejs') -%>

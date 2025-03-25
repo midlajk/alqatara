@@ -22,6 +22,9 @@ const cities = require('./routes/cities');
 const dashboard = require('./routes/dashboardatas');
 const report = require('./routes/report');
 const wallet = require('./routes/wallet');
+const inventory = require('./routes/inventory');
+const moneymanagement = require('./routes/cashier');
+const offers = require('./routes/offers');
 
 const cors = require("cors");
 
@@ -75,6 +78,9 @@ app.use('/', cities);
 app.use('/', dashboard);
 app.use('/', report);
 app.use('/', wallet);
+app.use('/', inventory);
+app.use('/', moneymanagement);
+app.use('/', offers);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

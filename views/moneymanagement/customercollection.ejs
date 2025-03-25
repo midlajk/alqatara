@@ -1,0 +1,224 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+  <div class="row"> 
+    <div class="col-xl-3 col-md-6">
+      <div class="card card-stats">
+        <!-- Card body -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h5 class="card-title text-uppercase text-muted mb-0">Today Cash To Accounts</h5>
+              <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+            </div>
+            <div class="col-auto">
+              <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                <i class="ni ni-delivery-fast" ></i>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+      <div class="card card-stats">
+        <!-- Card body -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h5 class="card-title text-uppercase text-muted mb-0">Customer Cash</h5>
+              <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+            </div>
+            <div class="col-auto">
+              <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                <i class="ni ni-delivery-fast" ></i>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-6"></div>
+    <div class="col-xl-4 col-md-6">
+      <a class="btn btn-primary" href="/collectedpayments">Collected Payments</a>
+
+      <a class="btn" href="#">Download Report</a>
+      <!-- <a  class="btn" href="#">Credit Report</a> -->
+
+    </div>
+
+  </div>
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <style>
+            .tab-button {
+              padding: 10px 15px;
+              border: 1px solid #ccc;
+              cursor: pointer;
+              background: #e7e7e7;
+              font-weight: bold;
+              margin-right: 5px;
+              transition: 0.3s;
+            }
+          
+            .tab-button.active {
+              background: #4d8da9;
+              color: #ffffff;
+            }
+          
+            .report-table {
+              display: none;
+            }
+          
+            .report-table.active {
+              display: block;
+            }
+          </style>
+          
+          <div>
+            <a class="tab-button" href="/cashier" data-table="salesmanTable">Salesman Collection</a>
+            <a class="tab-button active" href="/customercollection" data-table="customerTable">Customer Collection</a>
+          
+
+          </div>
+            <!-- Card header -->
+            <div class="card-header border-0">
+              <h3 class="mb-0">Payment Collection</h3>
+            </div>
+            <!-- Light table -->
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush" id="rechargeTable">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">Customer ID</th>
+                    <th scope="col" class="sort" data-sort="status">Customer Name</th>
+                    <th scope="col" class="sort">Total Due</th>
+                    <th scope="col" class="sort">Last Pending</th>
+             
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <tr>
+                    <td><a href="creditpayment/${row.id}">SM001</a></td>
+                    <td>$500</td>
+                    <td>$300</td>
+                    <td>$100</td>
+                    
+                  </tr>
+                  <tr>
+                    <td><a href="creditpayment/${row.id}">SM001</a></td>
+                    <td>$500</td>
+                    <td>$300</td>
+                    <td>$100</td>
+                  </tr>
+                  <tr>
+                    <td><a href="creditpayment/${row.id}">SM001</a></td>
+                    <td>$500</td>
+                    <td>$300</td>
+                    <td>$100</td>
+                  </tr>
+             
+                </tbody>
+              </table>
+              
+            </div>
+            <!-- Card footer -->
+ 
+          </div>
+      </div>
+    </div>
+    <!-- Footer -->
+</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+  // $(document).ready(function () {
+  //   $('#rechargeTable').DataTable({
+  //     processing: true,
+  //     serverSide: true,
+  //     ajax: {
+  //       url: '/getrecharges',
+  //       type: 'GET',
+  //       dataSrc: 'data'
+  //     },
+  //     columns: [
+  //       { data: 'customerId' },
+  //       // { data: 'customer.name' },
+  //       { data: 'amount' },
+  //       { data: 'salesmanId' },
+  //       { data: 'paidcoupons' },
+  //       { data: 'freecoupons' },
+
+  //       { 
+  //         data: 'createdAt',
+  //         render: function (data) {
+  //           return new Date(data).toLocaleString();
+  //         }
+  //       },
+  //       { 
+  //         data: 'updatedAt',
+  //         render: function (data) {
+  //           return new Date(data).toLocaleString();
+  //         }
+  //       },
+  //       { 
+  //   data: null, 
+  //   orderable: false, // Prevent sorting on this column
+  //   searchable: false, // Prevent search filter on buttons
+  //   render: function(data, type, row) {
+  //     return `
+  //       <button class="btn btn-secondary viewsaleszone-zone" data-id="${row._id}">Collect Money</button>
+  //     `;
+  //   }
+  // },
+  //       // {
+  //       //   data: '_id',
+  //       //   render: function (data) {
+  //       //     // <button class="btn btn-sm btn-warning" onclick="editRecharge('${data}')">Edit</button>
+  //       //     return `
+  //       //             <button class="btn btn-sm btn-danger" onclick="deleteRecharge('${data}')">Delete</button>`;
+  //       //   }
+  //       // }
+  //     ]
+  //   });
+  // });
+
+  // function editRecharge(id) {
+  //   alert('Edit Recharge ID: ' + id);
+  //   // Implement edit logic here
+  // }
+
+  // function deleteRecharge(id) {
+  //   if (confirm('Are you sure you want to delete this recharge?')) {
+  //     fetch(`/recharges/${id}`, { method: 'DELETE' })
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         alert('Recharge deleted successfully');
+  //         $('#rechargeTable').DataTable().ajax.reload();
+  //       })
+  //       .catch(error => console.error('Error:', error));
+  //   }
+  // }
+</script>
+
+    <%- include('../includes/footer.ejs') -%>
+
+    <%- include('../includes/end.ejs') -%>

@@ -1,0 +1,243 @@
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+  <div class="row">
+      <div class="col-12">
+          <div class="card">
+              <div class="card-header">
+                  <h3 class="mb-0">Update Stock</h3>
+              </div>
+              <div class="card-body" id="cardb">
+                  <form id="updateStockForm">
+                    <div class="form-group row">
+                        <label for="item-id" class="col-md-2 col-form-label form-control-label">Stock Date</label>
+                        <div class="col-md-10">
+                          <input class="form-control"  value="" disabled type="date" name="stockDate" id="stockDate">
+                          
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="item-id" class="col-md-2 col-form-label form-control-label">Store</label>
+                        <div class="col-md-10">
+                          <select class="form-control" name="store" id="store" required>
+                            <option value="Al Ain">Al Ain</option>
+                            <option value="Abu Dhabi">Abu Dhabi</option>
+
+                        </select>
+                        </div>
+                    </div>
+                      <div class="form-group row">
+                          <label for="item-id" class="col-md-2 col-form-label form-control-label">Item</label>
+                          <div class="col-md-10">
+                            <select class="form-control itemid-js" name="itemId" id="itemId" required>
+                            
+                          </select>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="item-type" class="col-md-2 col-form-label form-control-label">Item Type</label>
+                          <div class="col-md-10">
+                              <select class="form-control" name="itemType" id="item-type" required>
+                                  <option value="New">New</option>
+                                  <option value="Damaged">Damaged</option>
+                                  <option value="Old">Old</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="quantity" class="col-md-2 col-form-label form-control-label">Quantity</label>
+                          <div class="col-md-10">
+                              <input class="form-control" type="number" placeholder="Enter Quantity" id="quantity" name="quantity" required>
+                          </div>
+                      </div>
+                      <div>
+                          <button type="submit" class="btn btn-success">Add Item</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+      <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">Input Stocks</h3>
+            </div>
+            <div class="mt-4">
+                <table class="table table-bordered" id="stockTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Item ID</th>
+                            <th>Item Name</th>
+                            <th>Item Type</th>
+                            <th>Store</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button id="submitStock" class="btn btn-primary mt-2 m-2 float-right" style="display: none;">Submit Stock</button>
+            </div>
+            
+        </div>
+        
+      </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+<script>
+    let itemname =''
+    $(document).ready(function () {
+      let stockData = [];
+  // Reset Stock Data and Table When Store (City) Changes
+$("#store").on("change", function () {
+    // Clear stockData array
+    stockData = [];
+
+    // Clear table contents
+    $("#stockTable tbody").empty();
+
+    // Hide submit button
+    $("#submitStock").hide();
+
+    console.log("Store changed! Stock data and table cleared.");
+});
+
+      // Initialize Select2 and Fetch Item Name
+      $('.itemid-js').select2({
+          dropdownParent: $("#cardb"),
+          ajax: {
+              url: '/productids',
+              dataType: 'json',
+              delay: 250,
+              processResults: function (data) {
+                  return {
+                      results: data.results
+                  };
+              },
+              cache: true
+          }
+      })
+  
+      // Function to fetch item name based on selected item ID
+      $('.itemid-js').on("select2:select", function (e) {
+        let selectedData = e.params.data;
+        let itemId = selectedData.id;    // Get item ID
+        let itemName = selectedData.text; // Get item Name
+
+        console.log("Selected ID:", itemId);
+        console.log("Selected Name:", itemName);
+
+        // Store the item name in a hidden input (optional)
+        itemname = itemName
+        console.log(itemname)
+    });
+  
+      // Handle "Add Item" Click
+      $("#updateStockForm").on("submit", function (event) {
+    event.preventDefault();
+    const user = '<%=user.name%>'
+
+    let stockDate = $("#stockDate").val();
+    let itemId = $("#itemId").val();
+    let itemName = itemname
+    let itemType = $("#item-type").val();
+    let store = $("#store").val();
+    let quantity = $("#quantity").val();
+
+    if (!stockDate || !itemId || !itemType || !store || !quantity) {
+        alert("Please fill all fields.");
+        return;
+    }
+
+    // Append to table
+    $("#stockTable tbody").append(`
+        <tr>
+            <td>${stockDate}</td>
+            <td>${itemId}</td>
+            <td>${itemName}</td>
+            <td>${itemType}</td>
+            <td>${store}</td>
+            <td>${quantity}</td>
+            <td><button class="btn btn-danger btn-sm remove-item">Remove</button></td>
+        </tr>
+    `);
+
+    // Store Data in Array
+    stockData.push({
+        date: stockDate, // Include stock date
+        productid: itemId,
+        productname: itemName,
+        itemtype: itemType,
+        city: store,
+        quantity: quantity,
+        inwardoutward: "inward",
+        time: new Date().toISOString(),
+        doneby: user
+    });
+
+    // Show Submit Button
+    $("#submitStock").show();
+
+    // Clear Quantity Field
+    $("#quantity").val("");
+});
+
+      // Remove Item from Table and Array
+      $(document).on("click", ".remove-item", function () {
+          let rowIndex = $(this).closest("tr").index();
+          stockData.splice(rowIndex, 1);
+          $(this).closest("tr").remove();
+  
+          // Hide submit button if no items
+          if (stockData.length === 0) {
+              $("#submitStock").hide();
+          }
+      });
+      let city = $("#store").val();
+
+      // Submit Stock Data
+      $("#submitStock").on("click", function () {
+          $.ajax({
+              url: "/updatestock",
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify({ truckId:'Production',city:city,productDetails: stockData }),
+              success: function (response) {
+                  alert("Stock updated successfully!");
+                  $("#stockTable tbody").empty();
+                  stockData = [];
+                  $("#submitStock").hide();
+              },
+              error: function (error) {
+                  console.log(error);
+                  alert("Error updating stock.");
+              }
+          });
+      });
+    });
+    $(document).ready(function () {
+      let today = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+      $("#stockDate").val(today);
+  });
+  </script>
+  
+  
+
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const Customer = mongoose.model('Customer')
 const Recharge = mongoose.model('Recharge')
 const createError = require('http-errors');
+const { v4: uuidv4 } = require('uuid'); // For generating unique coupon IDs
 
 exports.getrecharges = async (req, res) => {
   try {
@@ -47,6 +48,9 @@ exports.getrecharges = async (req, res) => {
           salesmanId: 1,
           status: 1,
           createdAt: 1,
+          paidcoupons: 1,
+          freecoupons: 1,
+
           updatedAt: 1
         }
       },
@@ -56,8 +60,7 @@ exports.getrecharges = async (req, res) => {
 
     const data = await Recharge.aggregate(pipeline);
     const totalRecords = await Recharge.countDocuments();
-
-    console.log('Fetched Recharges:', data); // Debugging Output
+console.log(data)
 
     res.json({
       draw,
@@ -69,4 +72,67 @@ exports.getrecharges = async (req, res) => {
     console.error('Error fetching recharges:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+};
+
+
+
+exports.addwalletmoney = async (req, res) => {
+  try {
+    const { customerId, salesman, walletrecharge, couponagainst, freecoupons } = req.body;
+    // Convert input values to numbers
+    const amount = parseFloat(walletrecharge);
+    const numCoupons = parseInt(couponagainst, 10);
+    const numFreeCoupons = parseInt(freecoupons, 0);
+
+    // Validate inputs
+    if (!customerId || isNaN(amount) || isNaN(numCoupons) || isNaN(numFreeCoupons)) {
+        return res.status(400).json({ message: 'Invalid input values' });
+    }
+
+    // Generate paid coupons
+    let coupons = [];
+    if (numCoupons > 0) {
+        const couponAmount = amount / numCoupons; // Calculate amount per paid coupon
+        for (let i = 0; i < numCoupons; i++) {
+            coupons.push({
+                couponid: 'P-'+uuidv4(), // Unique ID for each coupon
+                couponamt: couponAmount,
+                coupontype: 'PAID',
+                created: new Date(),
+                status: 'ACTIVE'
+            });
+        }
+    }
+
+    // Generate free coupons with amount 0
+    if (numFreeCoupons > 0) {
+        for (let i = 0; i < numFreeCoupons; i++) {
+            coupons.push({
+                couponid: 'F-'+uuidv4(),
+                couponamt: 0,
+                coupontype: 'FREE',
+                created: new Date(),
+                status: 'ACTIVE'
+            });
+        }
+    }
+      console.log(numCoupons,numFreeCoupons)
+    // Create a new recharge entry
+    const recharge = new Recharge({
+        amount,
+        customerId,
+        salesmanId: salesman,
+        paidcoupons:numCoupons,
+        freecoupons:numFreeCoupons,
+        coupons,
+    });
+
+    // Save to database
+    await recharge.save();
+
+    // res.redirect('/wallet')
+} catch (error) {
+    console.error('Error processing wallet recharge:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+}
 };

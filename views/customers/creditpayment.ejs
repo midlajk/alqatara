@@ -1,0 +1,180 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+<a href="#" class="btn btn-danger ml-3" type="button" aria-label="Add New">Bulk Pay Credit</a>
+</div>
+</div>
+
+
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+  <style>
+    .filter-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+    }
+</style>
+
+
+  <div class="row">
+
+
+    
+    <div class="col-12">
+
+    <div class="filter-box">
+    <h5 class="mb-3">Filter By</h5>
+    <div class="row g-3">
+        <!-- ID -->
+        <div class="col-md-3">
+            <label class="form-label">Sales Man I.D</label>
+            <input type="text" class="form-control" placeholder="Search ID Here">
+        </div>
+        
+        <div class="col-md-3">
+            <label class="form-label">From</label>
+            <input type="date" class="form-control">
+        </div>
+        <!-- Date -->
+        <div class="col-md-3">
+            <label class="form-label">To</label>
+            <input type="date" class="form-control">
+        </div>
+    </div>
+</div>
+  
+
+    </div>
+    <div class="col-12">
+    <div class="row"> 
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Due</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                    <i class="fa-solid fa-credit-card"></i>
+                                  </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card card-stats">
+              <!-- Card body -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h5 class="card-title text-uppercase text-muted mb-0">Today Paid</h5>
+                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  </div>
+                  <div class="col-auto">
+                    <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
+                        <i class="fa-solid fa-money-bill"></i>
+                                        </div>
+                  </div>
+                </div>
+              
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6">
+            <div class="card card-stats">
+              <!-- Card body -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
+                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  </div>
+                  <div class="col-auto">
+                    <div class="icon icon-shape bg-gradient-orange  text-white rounded-circle shadow">
+                      <i class="ni ni-delivery-fast" ></i>
+                    </div>
+                  </div>
+                </div>
+              
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6">
+            <div class="card card-stats">
+              <!-- Card body -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h5 class="card-title text-uppercase text-muted mb-0">Mobile Number</h5>
+                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  </div>
+                  <div class="col-auto">
+                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                        <i class="fa-solid fa-phone"></i>
+                                        </div>
+                  </div>
+                </div>
+              
+              </div>
+            </div>
+          </div>
+    </div>
+</div>
+    <div class="col">
+      <div class="card">
+        <!-- Card header -->
+        <div class="card-header border-0">
+          <h3 class="mb-0">Credit Payment of user1</h3>
+        </div>
+        <!-- Light table -->
+        <div class="table-responsive">
+          <table id="customertable" class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col" class="sort" data-sort="name">Order Id</th>
+                <th scope="col" class="sort" data-sort="budget">Salesman ID</th>
+                <th scope="col" class="sort" data-sort="status">Total Credit</th>
+                <th scope="col" class="sort">Credit Recieved</th>
+                <th scope="col" class="sort" data-sort="completion">Credit Balance</th>
+                <th scope="col" class="sort">Last Recieved</th>
+                <th scope="col" class="sort" data-sort="completion">Pay Credit</th>
+                <!-- <th scope="col" class="sort" data-sort="completion">Status</th>
+                <th scope="col" class="sort" data-sort="completion">Caption</th> -->
+              </tr>
+            </thead>
+            <tbody class="list">
+              <tr>
+                
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Card footer -->
+      
+      </div>
+    </div>
+  </div>
+    <!-- Footer -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    
+
+
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

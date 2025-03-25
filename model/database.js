@@ -90,12 +90,23 @@ customerSchema.pre('save', async function (next) {
 });
 const rechargeSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
+  customerId: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   isDebit: { type: Boolean, default: false },
   salesmanId: { type: String },
-  status: { type: String, default: 'PENDING' }
+  status: { type: String, default: 'PENDING' },
+  paidcoupons:Number,
+  freecoupons:Number,
+  coupons : [{
+    couponid:String,
+    couponamt:Number,
+    coupontype:String,
+    created:{ type: Date, default: Date.now },
+    status:String,
+    updated:Date,
+
+  }]
 });
 
 const routeSchema = new mongoose.Schema({
@@ -337,7 +348,56 @@ const citySchema = new mongoose.Schema({
   supervisorMobileNumber: { type: String } ,
   id:Number,
 });
-const PrevilageClass = mongoose.model('PrevilageClass', PrevilageClassSchema);
+
+
+
+const productSchema = new mongoose.Schema({
+  productid: { type: String, required: true, unique: true }, // Ensure uniqueness
+  name: { type: String, required: true },
+  type: { type: String },
+  priority: { type: String },
+  baseprice: { type: Number },
+  description: { type: String },
+  currentStock: { type: Number, default: 0 },
+  damagedStock: { type: Number, default: 0 }, // Track damaged products
+  discardedStock: { type: Number, default: 0 }, // Track damaged products
+
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+const stockdelivery = new mongoose.Schema({
+  date: { type: Date, default: Date.now },
+  truckId: { type: String, required: true },
+  city: { type:String},
+  productDetails: [{
+    productid: { type: String },
+    productname: { type:String}, 
+    quantity: { type: Number },
+    inwardoutward:{ type:String}, 
+    time: { type: Date }, // If product is returned
+    itemtype: { type:String}, // If product is damaged
+    doneby: { type:String}, // If product is damaged
+    city: { type:String},
+    previousStock: { type: Number },
+    previousDamage: { type: Number },
+    previousDiscard: { type: Number },
+  }],
+  status: { type: String }, // Total products loaded onto the truck
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
+const stockAdditionSchema = new mongoose.Schema({
+  productid: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+  quantityAdded: { type: Number },
+  date: { type: Date, default: Date.now },
+  reason: { type: String } // (e.g., "stock purchase", "return", etc.)
+});
+
+// const StockAddition = mongoose.model('StockAddition', stockAdditionSchema);
+
+
+
+// const PrevilageClass = mongoose.model('PrevilageClass', PrevilageClassSchema);
 
   // Create the Zone Model
   const Zone = mongoose.model('Zone', zoneSchema);
@@ -356,6 +416,10 @@ const PrevilageClass = mongoose.model('PrevilageClass', PrevilageClassSchema);
     TruckHistory: mongoose.model('TruckHistory', truckHistorySchema),
     CitySchema:mongoose.model('CitySchema', citySchema),
     Zone:Zone,
-    PrevilageClass:PrevilageClass
+    PrevilageClass:mongoose.model('PrevilageClass', PrevilageClassSchema),
+    Product:mongoose.model('Product', productSchema),
+    Stockdelivery:mongoose.model('Stockdelivery', stockdelivery),
+    StockAddition:mongoose.model('StockAddition', stockAdditionSchema)
+
   };
   

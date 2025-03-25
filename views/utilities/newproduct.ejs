@@ -1,0 +1,96 @@
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Add / Update Product</h3>
+                </div>
+
+                <!-- Card body -->
+                <div class="card-body" id="cardb">
+                    <form id="productForm">
+                        <div class="form-group row">
+                            <label for="productid" class="col-md-2 col-form-label form-control-label">Product ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" placeholder="Enter Product ID" id="productid" name="productid" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="name" class="col-md-2 col-form-label form-control-label">Product Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" placeholder="Enter Product Name" id="name" name="name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="description" class="col-md-2 col-form-label form-control-label">Description</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" placeholder="Enter Product Description" id="description" name="description">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="type" class="col-md-2 col-form-label form-control-label">Type</label>
+                            <div class="col-md-10">
+                                <select class="form-control" name="type" id="type">
+                                    <option value="OLD">OLD</option>
+                                    <option value="NEW">NEW</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="priority" class="col-md-2 col-form-label form-control-label">Priority</label>
+                            <div class="col-md-10">
+                                <select class="form-control" name="priority" id="priority">
+                                    <option value="Primary">Primary</option>
+                                    <option value="Secondary">Secondary</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-success">Save Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Include jQuery -->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+            <!-- AJAX Form Submission -->
+            <script>
+                $(document).ready(function () {
+                    $("#productForm").submit(function (event) {
+                        event.preventDefault(); // Prevent default form submission
+
+                        $.ajax({
+                            url: "/addnewproduct",
+                            type: "POST",
+                            data: $(this).serialize(), // Serialize form data
+                            success: function (response) {
+                                alert(response.message); // Show success message
+                                $("#productForm")[0].reset(); // Reset form fields
+                            },
+                            error: function (xhr) {
+                                alert("Error: " + xhr.responseJSON.error); // Show error message
+                            }
+                        });
+                    });
+                });
+            </script>
+
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

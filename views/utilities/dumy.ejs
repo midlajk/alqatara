@@ -114,3 +114,675 @@
                           </script>   
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>
+
+
+
+
+/<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+  <div class="row">
+      <div class="col">
+          <div class="card">
+              <div class="card-header">
+                  <h3 class="mb-0">Manage Truck Stock</h3>
+              </div>
+              
+              <!-- Simplified Form -->
+              <div class="card-body" id="cardb">
+                  <form id="stockForm">
+                      <input type="hidden" name="truckId" value="<%=truck.id%>">
+                      <input type="hidden" name="customKey" value="utilities">
+
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Truck ID</label>
+                          <div class="col-md-10">
+                              <input class="form-control" disabled type="text" value="<%=truck.id%>">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Product</label>
+                          <div class="col-md-10">
+                              <input class="form-control" type="text" name="productName" placeholder="Product name" required>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Status</label>
+                          <div class="col-md-10">
+                              <select class="form-control" name="itemStatus" required>
+                                  <option value="New">New</option>
+                                  <option value="Old">Used</option>
+                                  <option value="Damaged">Damaged</option>
+                              </select>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Added Qty</label>
+                          <div class="col-md-10">
+                              <input class="form-control" type="number" name="addedQuantity" placeholder="Quantity added to truck" min="0">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Returned Qty</label>
+                          <div class="col-md-10">
+                              <input class="form-control" type="number" name="returnedQuantity" placeholder="Quantity returned from truck" min="0">
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <div class="col-md-10 offset-md-2">
+                              <button type="submit" class="btn btn-success">Add Stock Record</button>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+
+              <!-- Stock Summary Table -->
+              <div class="card-body">
+                  <table class="table table-flush">
+                      <thead>
+                          <tr>
+                              <th>Product</th>
+                              <th>Added</th>
+                              <th>Returned</th>
+                              <th>Used</th>
+                              <th>Damaged</th>
+                              <th>Balance</th>
+                          </tr>
+                      </thead>
+                      <tbody id="stockTableBody">
+                          <!-- Rows will be added dynamically -->
+                      </tbody>
+                  </table>
+                  
+                  <div class="mt-2">
+                      <button id="finalizeStock" class="btn btn-danger">Finalize Stock</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  const stockRecords = [];
+  
+  // Form submission
+  $("#stockForm").submit(function(e) {
+      e.preventDefault();
+      
+      const record = {
+          productName: $("input[name='productName']").val().trim(),
+          itemStatus: $("select[name='itemStatus']").val(),
+          addedQty: parseInt($("input[name='addedQuantity']").val()) || 0,
+          returnedQty: parseInt($("input[name='returnedQuantity']").val()) || 0,
+          timestamp: new Date()
+      };
+      
+      if (!record.productName || (record.addedQty === 0 && record.returnedQty === 0)) {
+          alert("Please enter valid product and quantity");
+          return;
+      }
+      
+      stockRecords.push(record);
+      updateStockTable();
+      this.reset();
+  });
+  
+  // Update table function
+  function updateStockTable() {
+      const summary = {};
+      
+      stockRecords.forEach(record => {
+          if (!summary[record.productName]) {
+              summary[record.productName] = {
+                  added: 0,
+                  returned: 0,
+                  used: 0,
+                  damaged: 0
+              };
+          }
+          
+          summary[record.productName].added += record.addedQty;
+          summary[record.productName].returned += record.returnedQty;
+          
+          if (record.itemStatus === "Old") {
+              summary[record.productName].used += record.returnedQty;
+          } else if (record.itemStatus === "Damaged") {
+              summary[record.productName].damaged += record.returnedQty;
+          }
+      });
+      
+      $("#stockTableBody").empty();
+      
+      Object.entries(summary).forEach(([product, data]) => {
+          $("#stockTableBody").append(`
+              <tr>
+                  <td>${product}</td>
+                  <td>${data.added}</td>
+                  <td>${data.returned}</td>
+                  <td>${data.used}</td>
+                  <td>${data.damaged}</td>
+                  <td>${data.added - data.returned}</td>
+              </tr>
+          `);
+      });
+  }
+  
+  // Finalize stock
+  $("#finalizeStock").click(async function() {
+      if (stockRecords.length === 0) {
+          alert("No stock records to finalize");
+          return;
+      }
+      
+      try {
+          const response = await $.ajax({
+              url: '/api/stock/finalize',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({
+                  truckId: $("input[name='truckId']").val(),
+                  records: stockRecords
+              })
+          });
+          
+          if (response.success) {
+              alert("Stock finalized successfully!");
+              stockRecords.length = 0;
+              $("#stockTableBody").empty();
+          }
+      } catch (error) {
+          console.error("Error:", error);
+          alert("Error finalizing stock");
+      }
+  });
+});
+</script>
+            
+               
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>
+///
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+</div></div></div></div></div>
+
+<style>
+  /* Enhanced styling for the entire page */
+  .truck-history-container {
+    background-color: #f8f9fc;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Card styling */
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  
+  .card-header {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    border-bottom: none;
+    padding: 15px 25px;
+  }
+  
+  /* Filter section styling */
+  .filter-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .filter-btn {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .date-filter {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .date-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #e3e6f0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    background: white;
+    transition: all 0.3s;
+  }
+  
+  .date-input:hover {
+    border-color: #bac8f3;
+  }
+  
+  .date-input span {
+    color: #5a5c69;
+    font-weight: 500;
+    margin-right: 10px;
+    min-width: 40px;
+  }
+  
+  .date-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    color: #5a5c69;
+  }
+  
+  /* Table styling */
+  .table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table thead th {
+    background-color: #f8f9fc;
+    color: #4e73df;
+    font-weight: 600;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 15px 20px;
+  }
+  
+  .table tbody td {
+    padding: 12px 20px;
+    vertical-align: middle;
+    border-top: 1px solid #f0f2f5;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #f8fafd;
+  }
+  
+  /* Status badges */
+  .badge {
+    padding: 6px 10px;
+    font-weight: 500;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .badge-primary {
+    background-color: #e1e7ff;
+    color: #4e73df;
+  }
+  
+  .badge-success {
+    background-color: #e1f5ee;
+    color: #1cc88a;
+  }
+  
+  .badge-info {
+    background-color: #e6f3ff;
+    color: #36b9cc;
+  }
+  
+  /* Action buttons */
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-action {
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .btn-view {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+  }
+  
+  .btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(78, 115, 223, 0.3);
+  }
+  
+  /* Modal styling */
+  .modal-content {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+    border-bottom: none;
+    padding: 15px 25px;
+  }
+  
+  .modal-title {
+    font-weight: 600;
+  }
+  
+  .modal-body {
+    padding: 25px;
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #e3e6f0;
+    padding: 15px 25px;
+  }
+  
+  /* Stock details table */
+  .stock-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .stock-table th {
+    background-color: #f8f9fc;
+    color: #4e73df;
+    font-weight: 600;
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .stock-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  
+  .stock-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .stock-table tr:hover td {
+    background-color: #f8fafd;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .date-filter {
+      flex-direction: column;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .btn-action {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<div class="container-fluid mt--6 truck-history-container">
+  <div class="row">
+    <div class="col-12">
+      <div class="filter-container">
+        <h4 class="mb-3"><i class="fas fa-filter mr-2"></i>Filter History</h4>
+        <div class="date-filter">
+          <label class="date-input">
+            <span>From</span>
+            <input type="date" id="fromDate">
+            <i class="fas fa-calendar-alt ml-2"></i>
+          </label>
+          <label class="date-input">
+            <span>To</span>
+            <input type="date" id="toDate">
+            <i class="fas fa-calendar-alt ml-2"></i>
+          </label>
+        </div>
+        <button class="btn btn-primary" id="applyFilterBtn">
+          <i class="fas fa-filter mr-2"></i>Apply Filters
+        </button>
+      </div>
+    </div>
+    
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0 text-white"><i class="fas fa-truck mr-2"></i>Truck Delivery History</h3>
+        </div>
+        
+        <div class="table-responsive">
+          <table id="truckTable" class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th>Truck ID</th>
+                <th>In-Charge</th>
+                <th>Assistants</th>
+                <th>Route</th>
+                <th>Actions</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+  <!-- Stock Details Modal -->
+  <div class="modal fade" id="stockDetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-white">Stock Details</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <p><strong>Truck ID:</strong> <span id="modalTruckId"></span></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Date:</strong> <span id="modalDate"></span></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>In-Charge:</strong> <span id="modalInCharge"></span></p>
+            </div>
+          </div>
+          
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="thead-light">
+                <tr>
+                  <th>Product</th>
+                  <th class="text-success">Loaded</th>
+                  <th class="text-primary">Delivered</th>
+                  <th class="text-danger">Returned/Damaged</th>
+                  <th class="text-info">Balance</th>
+                </tr>
+              </thead>
+              <tbody id="modalProductSummary"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // Initialize DataTable with exact API matching
+    var datatable = $('#truckTable').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: '/gettruchhistory',
+        type: 'GET',
+        data: function (d) {
+          return {
+            id: '<%= id %>', // Pass the truck ID from EJS
+            start: d.start,
+            length: d.length,
+            draw: d.draw,
+            search: {
+              value: d.search.value
+            }
+          };
+        },
+        dataSrc: function (json) {
+          // Map the API response to DataTables expected format
+          return json.docs || [];
+        }
+      },
+      columns: [
+        { data: 'truckId' },
+        { data: 'salesmanId' },
+        { 
+          data: 'assistants',
+          render: function(data) {
+            return Array.isArray(data) ? data.join(', ') : data;
+          }
+        },
+        { data: 'routeId' },
+        {
+          data: null,
+          render: function(data, type, row) {
+            return `<button class="btn btn-view" data-id="${row._id}">
+                      <i class="fas fa-box-open"></i> View
+                    </button>`;
+          }
+        },
+        { 
+          data: 'updatedAt',
+          render: function(data) {
+            return data ? moment(data).format('DD/MM/YYYY HH:mm') : 'N/A';
+          }
+        }
+      ],
+      createdRow: function(row, data, dataIndex) {
+        // Add hover effect
+        $(row).hover(
+          function() { $(this).css('background-color', '#f8f9fe'); },
+          function() { $(this).css('background-color', ''); }
+        );
+      }
+    });
+
+    // Apply date filter
+    $('#applyFilterBtn').click(function() {
+      datatable.ajax.reload();
+    });
+
+    $('#truckTable').on('click', '.btn-view', function() {
+    const rowData = datatable.row($(this).parents('tr')).data();
+    
+    // Populate modal with basic info
+    $('#modalTruckId').text(rowData.truckId || 'N/A');
+    $('#modalTruckIdHeader').text(rowData.truckId || 'N/A');
+    $('#modalInCharge').text(rowData.salesmanId || 'N/A');
+    $('#modalDate').text(rowData.updatedAt ? moment(rowData.updatedAt).format('DD/MM/YYYY HH:mm') : 'N/A');
+    
+    // Clear previous data
+    $('#modalProductSummary').html('<tr><td colspan="5" class="text-center">Loading...</td></tr>');
+    
+    // Process product details if available
+    if (rowData.productDetails && rowData.productDetails.length > 0) {
+      // Create a product summary map
+      const productSummary = {};
+      
+      rowData.productDetails.forEach(product => {
+        const productKey = product.productname || product.productid || 'Unknown';
+        
+        if (!productSummary[productKey]) {
+          productSummary[productKey] = {
+            loaded: 0,
+            delivered: 0,
+            returned: 0
+          };
+        }
+        
+        // Categorize by action type
+        if (product.inwardoutward === 'inward') {
+          productSummary[productKey].loaded += product.quantity || 0;
+        }  else {
+          productSummary[productKey].returned += product.quantity || 0;
+        }
+          productSummary[productKey].delivered += product.delivered || 0;
+      });
+      
+      // Generate summary table
+      let summaryHtml = '';
+      Object.keys(productSummary).forEach(productName => {
+        const summary = productSummary[productName];
+        const balance = summary.loaded - summary.delivered - summary.returned;
+        
+        summaryHtml += `
+          <tr>
+            <td>${productName}</td>
+            <td class="text-success">${summary.loaded}</td>
+            <td class="text-primary">${summary.delivered}</td>
+            <td class="text-danger">${summary.returned}</td>
+            <td class="text-info">${balance}</td>
+          </tr>
+        `;
+      });
+      $('#modalProductSummary').html(summaryHtml);
+    } else {
+      $('#modalProductSummary').html('<tr><td colspan="5" class="text-center">No product data available</td></tr>');
+    }
+    
+    $('#stockDetailsModal').modal('show');
+  });
+    // Set default date range (last 7 days)
+    const defaultFromDate = new Date();
+    defaultFromDate.setDate(defaultFromDate.getDate() - 7);
+    $('#fromDate').val(defaultFromDate.toISOString().split('T')[0]);
+    $('#toDate').val(new Date().toISOString().split('T')[0]);
+  });
+</script>
+
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

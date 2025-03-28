@@ -1,120 +1,719 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
-
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="container-fluid mt--6">
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <!-- Card header -->
-          <div class="card-header border-0">
-            <h3 class="mb-0">Truck Delivery and Details</h3>
-          </div>
-          <!-- Light table -->
-          <div  class="table-responsive">
-            <table id="truckTable"  class="table align-items-center table-flush">
-              <thead class="thead-light">
-                <tr>
-                  <th scope="col" class="sort" data-sort="name">Truck ID</th>
-                  <th scope="col" class="sort" data-sort="budget">In-Charge</th>
-                  <th scope="col" class="sort" data-sort="status">Delivered 5 gal</th>
-                  <th scope="col" class="sort">Delivered 200ml</th>
-                  <th scope="col" class="sort" data-sort="completion">5 gal Bottle Balance</th>
-                  <th scope="col" class="sort">Damaged Bottles</th>
-                  <th scope="col" class="sort" data-sort="completion">Updated</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody class="list">
-                <tr>
-                  
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- Card footer -->
-          <!-- <div class="card-footer py-4">
-            <nav aria-label="...">
-              <ul class="pagination justify-content-end mb-0">
-                <li class="page-item disabled">
-                  <a class="page-link" href="#" tabindex="-1">
-                    <i class="fas fa-angle-left"></i>
-                    <span class="sr-only">Previous</span>
-                  </a>
-                </li>
-                <li class="page-item active">
-                  <a class="page-link" href="#">1</a>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                  <a class="page-link" href="#">
-                    <i class="fas fa-angle-right"></i>
-                    <span class="sr-only">Next</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div> -->
+</div></div></div></div></div>
+
+<style>
+    :root {
+    --primary-color: #4d8da9;
+    --secondary-color: #61A3C0;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
+  }
+
+  /* Enhanced styling for the entire page */
+  .truck-history-container {
+    background-color: #f8f9fc;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Card styling */
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+  
+  .card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-bottom: none;
+    padding: 15px 25px;
+  }
+  
+  /* Filter section styling */
+  .filter-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .filter-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(77, 141, 169, 0.2);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(77, 141, 169, 0.3);
+  }
+  .date-filter {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .date-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #e3e6f0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    background: white;
+    transition: all 0.3s;
+  }
+  
+  .date-input:hover {
+    border-color: #bac8f3;
+  }
+  
+  .date-input span {
+    color: #5a5c69;
+    font-weight: 500;
+    margin-right: 10px;
+    min-width: 40px;
+  }
+  
+  .date-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    color: #5a5c69;
+  }
+  
+  /* Table styling */
+  .table-responsive {
+    border-radius: 8px;
+    /* overflow: hidden; */
+  }
+  
+  .table thead th {
+    background-color: #f8f9fc;
+    color: #4e73df;
+    font-weight: 600;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 15px 20px;
+  }
+  
+  .table tbody td {
+    padding: 12px 20px;
+    vertical-align: middle;
+    border-top: 1px solid #f0f2f5;
+  }
+  
+  .table tbody tr:hover {
+    background-color: #f8fafd;
+  }
+  
+  /* Status badges */
+  .badge {
+    padding: 6px 10px;
+    font-weight: 500;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .badge-primary {
+    background-color: #e1e7ff;
+    color: #4e73df;
+  }
+  
+  .btn-summary {
+    background: linear-gradient(135deg, var(--success-color) 0%, #13855c 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(28, 200, 138, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    color: white;
+  }
+
+  .btn-summary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(28, 200, 138, 0.3);
+    color: white;
+  }
+
+  
+  .badge-info {
+    background-color: #e6f3ff;
+    color: #36b9cc;
+  }
+  
+  /* Action buttons */
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .btn-action {
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .btn-view {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+  }
+  
+  .btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(78, 115, 223, 0.3);
+  }
+  
+  /* Modal styling */
+  .modal-content {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-bottom: none;
+    padding: 15px 25px;
+  }
+  
+  .modal-title {
+    font-weight: 600;
+  }
+  
+  .modal-body {
+    padding: 25px;
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #e3e6f0;
+    padding: 15px 25px;
+  }
+  
+  /* Stock details table */
+  .stock-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .stock-table th {
+    background-color: #f8f9fc;
+    color: #4e73df;
+    font-weight: 600;
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .stock-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  
+  .stock-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .stock-table tr:hover td {
+    background-color: #f8fafd;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .date-filter {
+      flex-direction: column;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .btn-action {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<div class="container-fluid mt--6 truck-history-container">
+  <div class="row">
+    <div class="col-12">
+      <div class="filter-container">
+        <h4 class="mb-3"><i class="fas fa-filter mr-2"></i>Filter History</h4>
+        <div class="date-filter">
+          <label class="date-input">
+            <span>From</span>
+            <input type="date" id="fromDate">
+            <i class="fas fa-calendar-alt ml-2"></i>
+          </label>
+          <label class="date-input">
+            <span>To</span>
+            <input type="date" id="toDate">
+            <i class="fas fa-calendar-alt ml-2"></i>
+          </label>
+        </div>
+        <button class="btn btn-primary filter-btn" id="applyFilterBtn">
+          <i class="fas fa-filter mr-2"></i>Apply Filters
+        </button>
+        <button class="btn btn-summary" id="showSumBtn">
+          <i class="fas fa-chart-bar mr-2"></i>Show Product Summary
+        </button>
+      </div>
+    </div>
+    
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0 text-white"><i class="fas fa-truck mr-2"></i>Truck Delivery History</h3>
+        </div>
+        
+        <div class="table-responsive">
+          <table id="truckTable" class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th>Truck ID</th>
+                <th>In-Charge</th>
+                <th>Assistants</th>
+                <th>Route</th>
+                <th>Actions</th>
+                <th>Last Updated</th>
+              </tr>
+            </thead>
+          </table>
         </div>
       </div>
     </div>
-    <!-- Footer -->
+  
+  <!-- Stock Details Modal -->
+  <div class="modal fade" id="stockDetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-white">Stock Details</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <p><strong>Truck ID:</strong> <span id="modalTruckId"></span></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Date:</strong> <span id="modalDate"></span></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>In-Charge:</strong> <span id="modalInCharge"></span></p>
+            </div>
+          </div>
+          
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="thead-light">
+                <tr>
+                  <th>Product</th>
+                  <th class="text-success">Loaded</th>
+                  <th class="text-primary">Delivered</th>
+                  <th class="text-danger">Returned/Damaged</th>
+                  <th class="text-info">Balance</th>
+                </tr>
+              </thead>
+              <tbody id="modalProductSummary"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
- 
- <!-- Load jQuery first -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<!-- Add this right after the stockDetailsModal -->
+<!-- Product Summary Side Panel -->
+<div class="modal fade" id="productSummaryModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-slideout" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title text-white">
+          <i class="fas fa-chart-pie mr-2"></i>Product Delivery Summary
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="input-group">
+            <input type="text" class="form-control" id="productSearch" placeholder="Search products...">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row" id="productCardsContainer">
+          <!-- Product cards will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<style>
+  /* Add these styles to your existing style section */
+  .modal-dialog-slideout {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    width: 500px;
+    max-width: 100vw;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-out;
+  }
+  
+  .modal-dialog-slideout.show {
+    transform: translateX(0);
+  }
+  
+  .modal-dialog-slideout .modal-content {
+    height: 100vh;
+    overflow-y: auto;
+    border-radius: 0;
+    border: none;
+  }
+  
+  .product-card {
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+    background: white;
+  }
+  
+  .product-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+  }
+  
+  .product-name {
+    font-weight: 600;
+    color: #4e73df;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .product-stats {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .stat-item {
+    text-align: center;
+    flex: 1;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    color: #858796;
+    text-transform: uppercase;
+  }
+  
+  .text-delivered {
+    color: #1cc88a;
+  }
+  
+  .text-loaded {
+    color: #4e73df;
+  }
+  
+  .text-returned {
+    color: #e74a3b;
+  }
+  
+  .product-icon {
+    font-size: 24px;
+    margin-right: 10px;
+    color: #4e73df;
+  }
+</style>
+
+<!-- Add this button next to your existing filter button -->
+
+
 
 <script>
-  $(document).ready(function () {
+  // Add this to your existing script section
+  $(document).ready(function() {
+    // Show product summary panel
+    $('#showSumBtn').click(function() {
+      const fromDate = $('#fromDate').val();
+      const toDate = $('#toDate').val();
+      const truckId = '<%= id %>';
+      
+      // Show loading state
+      $('#productCardsContainer').html(`
+        <div class="col-12 text-center py-5">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p>Loading product data...</p>
+        </div>
+      `);
+      
+      // Fetch product summary data
+      $.ajax({
+        url: '/getProductHistorySummary',
+        method: 'GET',
+        data: {
+          truckId: truckId,
+          fromDate: fromDate,
+          toDate: toDate
+        },
+        success: function(response) {
+          if (response.success && response.data && response.data.length > 0) {
+            renderProductCards(response.data);
+          } else {
+            $('#productCardsContainer').html(`
+              <div class="col-12 text-center py-5">
+                <i class="fas fa-box-open fa-2x mb-3"></i>
+                <p>No product data available for this period</p>
+              </div>
+            `);
+          }
+        },
+        error: function() {
+          $('#productCardsContainer').html(`
+            <div class="col-12 text-center py-5">
+              <i class="fas fa-exclamation-triangle fa-2x mb-3 text-danger"></i>
+              <p>Error loading product data</p>
+            </div>
+          `);
+        }
+      });
+      
+      $('#productSummaryModal').modal('show');
+    });
     
-    // Initialize DataTable
-   var datatable = $('#truckTable').DataTable({
-    responsive: true,
-          processing: true,
-          serverSide: true,
-      ajax: {
-        url: '/gettruchhistory', // Backend API endpoint
-        headers: { "x-custom-key": "utilities" }, // Example: Sending key in headers
-
-        dataSrc: 'docs', // Key that holds the array of data in the API response
-            data: function (d) {
-              d.id = '<%= id %>'; // Dynamically pass id parameter to the server
-              return d;
-              // Add any additional parameters you want to send to the server here
-            },// Data source is the root of the response array
-      },
-      columns: [
-  { data: 'truckId', render: data => data ? data : 'N/A' }, // Truck ID
-  { data: 'salesmanId', render: data => data ? data : 'N/A' }, // In-Charge
-  { data: 'delivered5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Today's 5-Gallon Bottles Delivered
-  { data: 'delivered200mlBottles', render: data => data !== undefined ? data : 'N/A' }, // Total Bottles Delivered
-  { data: 'remaining5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Bottle Balance
-  { data: 'damaged5galBottles', render: data => data !== undefined ? data : 'N/A' }, // Damaged 5-Gallon Bottles
-  { 
-    data: 'updatedAt', // Last Delivery Date and Time
-    render: function (data) {
-      return data ? new Date(data).toLocaleString() : 'N/A'; // Format timestamp or show 'N/A'
+    // Product search functionality
+    $('#productSearch').on('input', function() {
+      const searchTerm = $(this).val().toLowerCase();
+      $('.product-card').each(function() {
+        const productName = $(this).find('.product-name').text().toLowerCase();
+        $(this).toggle(productName.includes(searchTerm));
+      });
+    });
+    
+    // Function to render product cards
+    function renderProductCards(products) {
+      let html = '';
+      
+      products.forEach(product => {
+        html += `
+          <div class="col-md-12 product-card">
+            <div class="product-name">
+              <i class="fas fa-box mr-2"></i>${product.productName}
+            </div>
+            <div class="product-stats">
+              <div class="stat-item">
+                <div class="stat-value text-loaded">${product.totalLoaded || 0}</div>
+                <div class="stat-label">Loaded</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value text-delivered">${product.totalDelivered || 0}</div>
+                <div class="stat-label">Delivered</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value text-returned">${product.totalReturned || 0}</div>
+                <div class="stat-label">Returned</div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      $('#productCardsContainer').html(html);
     }
-  }
-]
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    // Initialize DataTable with exact API matching
+    var datatable = $('#truckTable').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: '/gettruchhistory',
+        type: 'GET',
+        data: function (d) {
+          return {
+            id: '<%= id %>', // Pass the truck ID from EJS
+            start: d.start,
+            length: d.length,
+            draw: d.draw,
+            search: {
+              value: d.search.value
+            },
+            fromDate: $('#fromDate').val(),
+            toDate: $('#toDate').val()
+          };
+        },
+        dataSrc: function (json) {
+          // Map the API response to DataTables expected format
+          return json.docs || [];
+        }
+      },
+      language: {
+        paginate: {
+            next: '<i class="fas fa-chevron-right"></i>',
+            previous: '<i class="fas fa-chevron-left"></i>'
+        }
+    },
+      columns: [
+        { data: 'truckId' },
+        { data: 'salesmanId' },
+        { 
+          data: 'assistants',
+          render: function(data) {
+            return Array.isArray(data) ? data.join(', ') : data;
+          }
+        },
+        { data: 'routeId' },
+        {
+          data: null,
+          render: function(data, type, row) {
+            return `<button class="btn btn-view" data-id="${row._id}">
+                      <i class="fas fa-box-open"></i> View
+                    </button>`;
+          }
+        },
+        { 
+          data: 'updatedAt',
+          render: function(data) {
+            return data ? moment(data).format('DD/MM/YYYY HH:mm') : 'N/A';
+          }
+        }
+      ],
+      createdRow: function(row, data, dataIndex) {
+        // Add hover effect
+        $(row).hover(
+          function() { $(this).css('background-color', '#f8f9fe'); },
+          function() { $(this).css('background-color', ''); }
+        );
+      }
     });
 
+    // Apply date filter
+    $('#applyFilterBtn').click(function() {
+      datatable.ajax.reload();
+    });
+
+    $('#truckTable').on('click', '.btn-view', function() {
+    const rowData = datatable.row($(this).parents('tr')).data();
+    
+    // Populate modal with basic info
+    $('#modalTruckId').text(rowData.truckId || 'N/A');
+    $('#modalTruckIdHeader').text(rowData.truckId || 'N/A');
+    $('#modalInCharge').text(rowData.salesmanId || 'N/A');
+    $('#modalDate').text(rowData.updatedAt ? moment(rowData.updatedAt).format('DD/MM/YYYY HH:mm') : 'N/A');
+    
+    // Clear previous data
+    $('#modalProductSummary').html('<tr><td colspan="5" class="text-center">Loading...</td></tr>');
+    
+    // Process product details if available
+    if (rowData.productDetails && rowData.productDetails.length > 0) {
+      // Create a product summary map
+      const productSummary = {};
+      
+      rowData.productDetails.forEach(product => {
+        const productKey = product.productname || product.productid || 'Unknown';
+        
+        if (!productSummary[productKey]) {
+          productSummary[productKey] = {
+            loaded: 0,
+            delivered: 0,
+            returned: 0
+          };
+        }
+        
+        // Categorize by action type
+        if (product.inwardoutward === 'outward') {
+          productSummary[productKey].loaded += product.quantity || 0;
+        }  else {
+          productSummary[productKey].returned += product.quantity || 0;
+        }
+          productSummary[productKey].delivered += product.delivered || 0;
+      });
+      
+      // Generate summary table
+      let summaryHtml = '';
+      Object.keys(productSummary).forEach(productName => {
+        const summary = productSummary[productName];
+        const balance = summary.loaded - summary.delivered - summary.returned;
+        
+        summaryHtml += `
+          <tr>
+            <td>${productName}</td>
+            <td class="text-success">${summary.loaded}</td>
+            <td class="text-primary">${summary.delivered}</td>
+            <td class="text-danger">${summary.returned}</td>
+            <td class="text-info">${balance}</td>
+          </tr>
+        `;
+      });
+      $('#modalProductSummary').html(summaryHtml);
+    } else {
+      $('#modalProductSummary').html('<tr><td colspan="5"a class="text-center">No product data available</td></tr>');
+    }
+    
+    $('#stockDetailsModal').modal('show');
+  });
+    // Set default date range (last 7 days)
+    const defaultFromDate = new Date();
+    defaultFromDate.setDate(defaultFromDate.getDate() - 7);
+    $('#fromDate').val(defaultFromDate.toISOString().split('T')[0]);
+    $('#toDate').val(new Date().toISOString().split('T')[0]);
   });
 </script>
 
 <%- include('../includes/footer.ejs') -%>
-
 <%- include('../includes/end.ejs') -%>

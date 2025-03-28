@@ -3,6 +3,8 @@ require('../model/database')
 const mongoose = require('mongoose');
 const Truck = mongoose.model('Truck');
 const TruckHistory = mongoose.model('TruckHistory')
+const Product = mongoose.model('Product');
+const Stockdelivery = mongoose.model('Stockdelivery');
 
 const createError = require('http-errors');
 
@@ -181,60 +183,7 @@ exports.updateTruck = async (req, res) => {
 };
 
 
-exports.closeTruckStock = async (req, res) => {
-  try {
-    const { truckId } = req.body;
 
-    // Fetch the truck details
-    const truck = await Truck.findOne({ id: truckId });
-
-    if (!truck) {
-        return res.status(404).json({ success: false, message: "Truck not found!" });
-    }
-
-    // Create truck history entry
-    const truckHistory = new TruckHistory({
-        truckCreatedAt: truck.createdAt,
-        truckUpdatedAt: truck.updatedAt,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        truckId: truck.id,
-        salesmanId: truck.salesmanId,
-        damaged5galBottles: truck.damaged5galBottles,
-        delivered200mlBottles: truck.delivered200mlBottles,
-        delivered5galBottles: truck.delivered5galBottles,
-        remaining200mlBottles: truck.remaining200mlBottles,
-        remaining5galBottles: truck.remaining5galBottles,
-        stockOf200mlBottles: truck.stockOf200mlBottles,
-        stockOf5galBottles: truck.stockOf5galBottles,
-        assistants: truck.assistants,
-        routeId: truck.routeId,
-        updatedBottleType: "BOTH" // Adjust logic as needed
-    });
-
-    // Save to TruckHistory collection
-    await truckHistory.save();
-
-    // Reset stock values while setting current stock with remaining stock
-    
-    truck.stockOf200mlBottles = truck.remaining200mlBottles;
-    truck.stockOf5galBottles = truck.remaining5galBottles-truck.damaged5galBottles;
-    truck.damaged5galBottles = 0;
-    truck.delivered200mlBottles = 0;
-    truck.delivered5galBottles = 0;
-    truck.remaining200mlBottles = 0;
-    truck.remaining5galBottles = 0;
-
-    // Update the truck in the database
-    await truck.save();
-
-    res.json({ success: true, message: "Stock closed, history saved, and stock reset!" });
-
-} catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Server error!" });
-}
-};
 
 exports.truckhistorypage = async (req, res) => {
   
@@ -251,36 +200,43 @@ exports.truckhistorypage = async (req, res) => {
 
 exports.gettruckhistory = async (req, res) => {
   try {
-    const { start, length, draw, search } = req.query; // Extract DataTables parameters
-    const searchQuery = search && search.value ? search.value : ''; // Search value
-    const limit = parseInt(length, 10) || 10; // Number of records per page
-    const skip = parseInt(start, 10) || 0; // Offset
+    const { start, length, draw, search, fromDate, toDate } = req.query;
+    const searchQuery = search && search.value ? search.value : '';
+    const limit = parseInt(length, 10) || 10;
+    const skip = parseInt(start, 10) || 0;
     
-    // Build query with optional search
+    // Date handling
+    const startDate = fromDate ? new Date(fromDate) : new Date(0); // Beginning of time if no date
+    const endDate = toDate ? new Date(toDate) : new Date(); // Now if no date
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
+    // Build query with all filters
     const query = {
-      truckId: req.query.id, // Filter by truckId
-      ...(searchQuery
-        ? {
-            $or: [
-              { salesmanId: { $regex: searchQuery, $options: 'i' } },
-              { routeId: { $regex: searchQuery, $options: 'i' } }
-            ]
-          }
-        : {})
+      truckId: req.query.id,
+      updatedAt: { $gte: startDate, $lte: endDate },
+      ...(searchQuery ? {
+        $or: [
+          { salesmanId: { $regex: searchQuery, $options: 'i' } },
+          { routeId: { $regex: searchQuery, $options: 'i' } }
+        ]
+      } : {})
     };
-    // Get filtered data and total count
+
     const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-      TruckHistory.find(query).sort({ id: -1 }).skip(skip).limit(limit), // Fetch paginated data
-      TruckHistory.countDocuments({ truckId: req.query.id }), // Total records count
-      TruckHistory.countDocuments(query) // Filtered records count
+      TruckHistory.find(query)
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      TruckHistory.countDocuments({ truckId: req.query.id }),
+      TruckHistory.countDocuments(query)
     ]);
 
-    // Respond with DataTables-compatible JSON
     res.json({
-      draw: parseInt(draw, 10) || 1, // Pass draw counter
-      recordsTotal: totalRecords, // Total records in database
-      recordsFiltered: totalFiltered, // Total records after filtering
-      docs: filteredTrucks // Data for the current page
+      draw: parseInt(draw, 10) || 1,
+      recordsTotal: totalRecords,
+      recordsFiltered: totalFiltered,
+      docs: filteredTrucks
     });
   } catch (err) {
     console.error('Error fetching trucks:', err);
@@ -289,6 +245,136 @@ exports.gettruckhistory = async (req, res) => {
 };
 
 
+
+
+exports.TruckStrocks = async (req, res) => {
+  try {
+    const truck = await Truck.findOne({id: req.params.id});
+    if (!truck) {
+        return res.status(404).json({ 
+            success: false, 
+            error: "Truck not found" 
+        });
+    }
+    res.json({ 
+        success: true, 
+        data: truck // Now returns a single truck object
+    });
+  } catch (error) {
+    console.error('Error fetching truck:', error);
+    res.status(500).json({ 
+        success: false, 
+        error: 'Internal Server Error',
+        message: error.message 
+    });
+  }
+};
+
+function getPreviousStock(truck, productName) {
+  if (productName === '5galBottles') return truck.stockOf5galBottles;
+  if (productName === '200mlBottles') return truck.stockOf200mlBottles;
+  return 0;
+}
+
+
+exports.UpdateTruckStrocks = async (req, res) => {
+  try {
+    const { truckId, productName, actionType, itemStatus, quantity, city, doneby, productId } = req.body;
+    
+    // Validate input
+    if (!truckId || !productName || !actionType || !quantity || quantity <= 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "Invalid input data" 
+      });
+    }
+
+    // Find truck - use findOne instead of find
+    const truck = await Truck.findOne({ id: truckId });
+    if (!truck) {
+      return res.status(404).json({ success: false, error: "Truck not found" });
+    }
+    
+    // Find product
+    const product = await Product.findOne({ productid: productId });
+    if (!product) {
+      return res.status(404).json({ 
+        success: false, 
+        error: `Product ${productName} not found in inventory` 
+      });
+    }
+    console.log('her2')
+
+    // Get previous stock values
+    const previousStock = product.currentStock || 0;
+    const previousDamage = product.damagedStock || 0;
+    const previousDiscard = product.discardedStock || 0;
+    
+    // Create new product detail
+    const productDetail = {
+      productid: productId,
+      productname: productName,
+      quantity: quantity,
+      inwardoutward: actionType,
+      time: new Date(),
+      itemtype: itemStatus,
+      doneby: doneby,
+      city: city,
+      previousStock: previousStock,
+      previousDamage: previousDamage,
+      previousDiscard: previousDiscard
+    };
+    
+    // Initialize productDetails array if it doesn't exist
+    if (!truck.productDetails) {
+      truck.productDetails = [];
+    }
+    
+    // Update truck's productDetails
+    truck.productDetails.push(productDetail);
+    
+    // Update product inventory based on action
+    if (actionType === 'outward') {
+      product.currentStock -= quantity; // Remove from inventory
+
+    } else {
+      // For outward movement
+      // product.currentStock += quantity; // Return to inventory
+      
+      if (itemStatus === 'Damaged') {
+        product.damagedStock += quantity;
+      } else{
+        product.currentStock += quantity; // Return to inventory
+
+      }
+      // else if (itemStatus === 'Old') {
+      //   product.discardedStock += quantity;
+      // }
+    }
+    
+    // Save both documents
+    await Promise.all([
+      truck.save(),
+      product.save()
+    ]);
+    console.log(truck)
+    res.json({ 
+      success: true, 
+      data: {
+        truck: truck,
+        product: product
+      } 
+    });
+    
+  } catch (error) {
+    console.log('Error updating truck stock:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Internal Server Error',
+      message: error.message 
+    });
+  }
+};
 ///apis 
 
 exports.truckdetails = async (req, res) => {
@@ -307,9 +393,274 @@ exports.truckdetails = async (req, res) => {
   }
 
 };
+exports.closeTruckStock = async (req, res) => {
+
+  try {
+    const { truckId } = req.body;
+
+    // 1. Find the truck document
+    const truck = await Truck.findOne({ id: truckId })
+    if (!truck) {
+      return res.status(404).json({ success: false, message: "Truck not found" });
+    }
+
+    // 2. Create stock delivery record
+    const stockDelivery = new Stockdelivery({
+      truckId: truck.id,
+      city: truck.city,
+      date:new Date(),
+      productDetails: truck.productDetails.map(detail => ({
+        productid: detail.productid,
+        productname: detail.productname,
+        quantity: detail.quantity,
+        inwardoutward: detail.inwardoutward,
+        time: detail.time,
+        itemtype: detail.itemtype,
+        doneby: detail.doneby,
+        city: detail.city,
+        previousStock: detail.previousStock,
+        previousDamage: detail.previousDamage,
+        previousDiscard: detail.previousDiscard
+      })),
+      status: 'completed'
+    });
+
+    // 3. Create truck history record
+    const truckHistory = new TruckHistory({
+      truckId: truck.id,
+      truckCreatedAt: truck.createdAt,
+      truckUpdatedAt: truck.updatedAt,
+      salesmanId: truck.salesmanId,
+
+      assistants: truck.assistants.join(', '), // Convert array to string
+      routeId: truck.routeId,
+      productDetails: truck.productDetails.map(detail => ({
+        ...detail.toObject(),
+        delivered: detail.delivered
+      }))
+    });
+
+    // 4. Clear truck's product details and reset counts
+    truck.productDetails = [];
+  
+    truck.updatedAt = new Date();
+
+    // 5. Save all changes in a transaction
+    await Promise.all([
+      stockDelivery.save(),
+      truckHistory.save(),
+      truck.save()
+    ]);
+
+    
+    res.json({ 
+      success: true,
+      message: "Stock successfully closed and archived",
+      data: {
+        stockDeliveryId: stockDelivery._id,
+        truckHistoryId: truckHistory._id
+      }
+    });
+
+  } catch (error) {
+    console.error("Error closing truck stock:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Error closing stock",
+      error: error.message 
+    });
+  } 
+};
 
 
 
+// Backend API endpoint
+exports.getProductHistorySummary = async (req, res) => {
+  try {
+    const { truckId, fromDate, toDate } = req.query;
+    
+    // Convert dates to proper Date objects
+    const startDate = fromDate ? new Date(fromDate) : new Date(0);
+    const endDate = toDate ? new Date(toDate) : new Date();
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
+    // Aggregation pipeline with date filtering
+    const productSummaries = await TruckHistory.aggregate([
+      {
+        $match: {
+          truckId: truckId,
+          updatedAt: { $gte: startDate, $lte: endDate }
+        }
+      },
+      { $unwind: "$productDetails" },
+      {
+        $group: {
+          _id: {
+            productId: "$productDetails.productid",
+            productName: "$productDetails.productname"
+          },
+          totalLoaded: {
+            $sum: {
+              $cond: [
+                { $eq: ["$productDetails.inwardoutward", "outward"] },
+                "$productDetails.quantity",
+                0
+              ]
+            }
+          },
+          totalDelivered: {
+            $sum: "$productDetails.delivered"
+          },
+          totalReturned: {
+            $sum: {
+              $cond: [
+                { $eq: ["$productDetails.inwardoutward", "inward"] },
+                "$productDetails.quantity",
+                0
+              ]
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          productId: "$_id.productId",
+          productName: "$_id.productName",
+          totalLoaded: 1,
+          totalDelivered: 1,
+          totalReturned: 1
+        }
+      },
+      { $sort: { productName: 1 } }
+    ]);
+
+    // Get all products to ensure we show all even if no activity
+    const allProducts = await Product.find({}, 'productid name type');
+    
+    const mergedData = allProducts.map(product => {
+      const summary = productSummaries.find(p => p.productId === product.productid) || {};
+      return {
+        productId: product.productid,
+        productName: product.name,
+        productType: product.type,
+        totalLoaded: summary.totalLoaded || 0,
+        totalDelivered: summary.totalDelivered || 0,
+        totalReturned: summary.totalReturned || 0
+      };
+    });
+
+    res.json({
+      success: true,
+      data: mergedData
+    });
+
+  } catch (err) {
+    console.error('Error fetching product summary:', err);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to fetch product summary'
+    });
+  }
+};
+
+
+exports.getalltruckProductHistorySummary = async (req, res) => {
+  try {
+    const { truckId, fromDate, toDate } = req.query;
+    console.log(req.query)
+    
+    // Convert dates to proper Date objects
+    const startDate = fromDate ? new Date(fromDate) : new Date(0); // Beginning of time if no date
+    const endDate = toDate ? new Date(toDate) : new Date(); // Now if no date
+    
+    // Aggregation pipeline to calculate product summaries
+    const productSummaries = await Truck.aggregate([
+      // Match documents for the specific truck and date range
+      
+      // Unwind the productDetails array to process each product separately
+      { $unwind: "$productDetails" },
+      // Group by product and calculate sums
+      {
+        $group: {
+          _id: {
+            productId: "$productDetails.productid",
+            productName: "$productDetails.productname"
+          },
+          totalLoaded: {
+            $sum: {
+              $cond: [
+                  { $eq: ["$productDetails.inwardoutward", "outward"] },
+                  "$productDetails.quantity",
+                  0
+              ]
+          }
+              // $sum: "$productDetails.quantity"
+
+          },
+          totalDelivered: {
+              $sum: "$productDetails.delivered"
+              
+          },
+          totalReturned: {
+
+            $sum: {
+              $cond: [
+                  { $eq: ["$productDetails.inwardoutward", "inward"] },
+                  "$productDetails.quantity",
+                  0
+              ]
+          }
+
+            
+          }
+        }
+      },
+      // Project to reshape the output
+      {
+        $project: {
+          _id: 0,
+          productId: "$_id.productId",
+          productName: "$_id.productName",
+          totalLoaded: 1,
+          totalDelivered: 1,
+          totalReturned: 1
+        }
+      },
+      // Sort by product name
+      { $sort: { productName: 1 } }
+    ]);
+
+    // Get all products to ensure we show all even if no activity
+    const allProducts = await Product.find({}, 'productid name type');
+    
+    // Merge with product data to include all products
+    const mergedData = allProducts.map(product => {
+      const summary = productSummaries.find(p => p.productId === product.productid) || {};
+      return {
+        productId: product.productid,
+        productName: product.name,
+        productType: product.type,
+        totalLoaded: summary.totalLoaded || 0,
+        totalDelivered: summary.totalDelivered || 0,
+        totalReturned: summary.totalReturned || 0
+      };
+    });
+
+    res.json({
+      success: true,
+      data: mergedData
+    });
+
+  } catch (err) {
+    console.error('Error fetching product summary:', err);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to fetch product summary'
+    });
+  }
+};
 // exports.updateapi = async (req, res) => {
 //   try {
 //     const { truckId, damagedBottles } = req.body;

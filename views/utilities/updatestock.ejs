@@ -10,167 +10,262 @@
 </div>
 </div>
 <div class="container-fluid mt--6">
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">Manage Truck Stock</h3>
-                </div>
-                <!-- Card body -->
-         
+  <div class="row">
+      <div class="col">
+          <div class="card" id="cardb">
+              <div class="card-header">
+                  <h3 class="mb-0">Manage Truck Stock</h3>
+              </div>
+              
+              <!-- Stock Entry Form -->
+              <div class="card-body">
+                  <form id="stockForm">
+                      <input type="hidden" name="truckId" value="<%=truck.id%>">
+                      <input type="hidden" name="city" value="<%=truck.city%>">
 
-
-
-                <div class="card-body" id="cardb">
-                    <form id="updatestock">
-                        <div class="form-group row">
-                            <label for="truck-id" class="col-md-2 col-form-label form-control-label">Truck ID</label>
-                            <div class="col-md-10">
-                              <input type="hidden" name="customKey" id="customKey" value="utilities">
-
-                                
-                                <input class="form-control" disabled type="text" placeholder="Enter Truck ID" value="<%=truck.id%>" id="truck-id" name="truckId" required>
-                                <input class="form-control" type="hidden" placeholder="Enter Truck ID" value="<%=truck.id%>" id="truck-id" name="truckId" required>
-
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                          <label for="truck-id" class="col-md-2 col-form-label form-control-label">Item</label>
-                          <div class="col-md-10">
-                            <input type="hidden" name="customKey" id="customKey" value="utilities">
-
-                              
-                              <input class="form-control"  type="text" placeholder="Item" id="item" name="item" required>
-
-                          </div>
-                      </div>
-                        <div class="form-group row">
-                            <label for="city" class="col-md-2 col-form-label form-control-label">Type</label>
-                            <div class="col-md-10">
-                                <select class=" form-control" id="city" name="city" required>
-                                  <option value="New">New</option>
-                                  <option value="Old">Old</option>
-                                  <option value="Damaged">Damaged</option>
-
-                                </select>
-
-                                <!-- <input class="form-control" type="text" placeholder="Select or enter the city"  required> -->
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                          <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Quantity Loaded</label>
-                          <div class="col-md-10">
-                              <input class="form-control" type="number"  placeholder="Quantity loaded" id="max-stock-5gallon" name="maxStock5Gallon">
-                          </div>
-                      </div>
                       <div class="form-group row">
-                        <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Quantity returned</label>
-                        <div class="col-md-10">
-                            <input class="form-control" type="number"  placeholder="Quantity returned" id="max-stock-5gallon" name="maxStock5Gallon">
-                        </div>
-                    </div>
-                     
-                        <div>
-                            <button type="submit" class="btn btn-success">Add Item</button>
+                          <label class="col-md-2 col-form-label form-control-label">Truck ID</label>
+                          <div class="col-md-10">
+                              <input class="form-control" type="text" value="<%=truck.id%>" disabled>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Product</label>
+                          <div class="col-md-10">
+                            <select class="form-control itemid-js" name="itemId" id="itemId" required>
+                            
+                            </select>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Action</label>
+                          <div class="col-md-10">
+                              <select class="form-control" name="actionType" required>
+                                  <option value="outward">Add to Truck</option>
+                                  <option value="inward">Return from Truck</option>
+                              </select>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Condition</label>
+                          <div class="col-md-10">
+                              <select class="form-control" name="itemStatus" required>
+                                  <option value="New">New</option>
+                                  <option value="Old">Used</option>
+                                  <option value="Damaged">Damaged</option>
+                              </select>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <label class="col-md-2 col-form-label form-control-label">Quantity</label>
+                          <div class="col-md-10">
+                              <input class="form-control" type="number" name="quantity" placeholder="Enter quantity" min="1" required>
+                          </div>
+                      </div>
+                      
+                      <div class="form-group row">
+                          <div class="col-md-10 offset-md-2">
+                              <button type="submit" class="btn btn-success">Add Record</button>
+                          </div>
+                      </div>
+                  </form>
+              </div>
 
-                        </div>
-                    </form>
-                </div>
-
-
-                <div class="card-body" id="cardb">
+              <!-- Stock Summary Table -->
+              <div class="card-body">
                   <table class="table table-flush">
-                    <thead>
-                      <tr>
-                        <th>Item</th>
-                        <th>Loaded</th>
-                        <th>Returned</th>
-                        <th>Old Return</th>
-                        <th>Damaged Return</th>
-                        <th>Balance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- New rows will be appended here -->
-                    </tbody>
+                      <thead>
+                          <tr>
+                              <th>Product</th>
+                              <th>Added</th>
+                              <th>Returned</th>
+                              <th>Used</th>
+                              <th>Damaged</th>
+                              <th>Balance</th>
+                          </tr>
+                      </thead>
+                      <tbody id="stockTableBody">
+                          <!-- Will be populated from truck.productDetails -->
+                      </tbody>
                   </table>
-                   <div class="mt-2">
-                    <button type="submit" class="btn btn-danger">Close Stock</button>
-
-                </div>
+                  
+                  <div class="mt-2">
+                      <button id="finalizeStock" class="btn btn-danger">Close Stock</button>
                   </div>
-                 
-            </div>
-            <!-- Footer -->
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+              </div>
+          </div>
+      </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script>
+$(document).ready(function() {
+  $('.itemid-js').select2({
+          dropdownParent: $("#cardb"),
+          ajax: {
+              url: '/productids',
+              dataType: 'json',
+              delay: 250,
+              processResults: function (data) {
+                  return {
+                      results: data.results
+                  };
+              },
+              cache: true
+          }
+      })
 
-            <!-- Include Select2 CSS -->
-            
-            <!-- Include Select2 JS -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-            <script>
-              $(document).ready(function () {
-                $("#updatestock").submit(function (event) {
-                  event.preventDefault(); // Prevent form submission
-            
-                  // Get input values
-                  let item = $("input[name='item']").val().trim();
-                  let loaded = parseInt($("input[name='maxStock5Gallon']").eq(0).val()) || 0;
-                  let returned = parseInt($("input[name='maxStock5Gallon']").eq(1).val()) || 0;
-                  let type = $("#city").val();
-            
-                  // Find if the item already exists in the table
-                  let existingRow = $(".table tbody tr").filter(function () {
-                    return $(this).find("td:first").text() === item;
-                  });
-            
-                  if (existingRow.length > 0) {
-                    // If item exists, update the row
-                    let prevLoaded = parseInt(existingRow.find("td:eq(1)").text()) || 0;
-                    let prevReturned = parseInt(existingRow.find("td:eq(2)").text()) || 0;
-                    let prevOldReturn = parseInt(existingRow.find("td:eq(3)").text()) || 0;
-                    let prevDamagedReturn = parseInt(existingRow.find("td:eq(4)").text()) || 0;
-                    let prevBalance = parseInt(existingRow.find("td:eq(5)").text()) || 0;
-            
-                    // Update values
-                    let newLoaded = prevLoaded + loaded;
-                    let newReturned = prevReturned + returned;
-                    let newOldReturn = type === "Old" ? prevOldReturn + returned : prevOldReturn;
-                    let newDamagedReturn = type === "Damaged" ? prevDamagedReturn + returned : prevDamagedReturn;
-                    let newBalance = prevBalance + loaded - returned;
-            
-                    // Update row with new values
-                    existingRow.find("td:eq(1)").text(newLoaded);
-                    existingRow.find("td:eq(2)").text(newReturned);
-                    existingRow.find("td:eq(3)").text(newOldReturn);
-                    existingRow.find("td:eq(4)").text(newDamagedReturn);
-                    existingRow.find("td:eq(5)").text(newBalance);
-                  } else {
-                    // If item doesn't exist, add a new row
-                    let oldReturn = type === "Old" ? returned : 0;
-                    let damagedReturn = type === "Damaged" ? returned : 0;
-                    let balance = loaded - returned;
-            
-                    $(".table tbody").append(`
-                      <tr>
-                        <td>${item}</td>
-                        <td>${loaded}</td>
-                        <td>${returned}</td>
-                        <td>${oldReturn}</td>
-                        <td>${damagedReturn}</td>
-                        <td>${balance}</td>
-                      </tr>
-                    `);
-                  }
-            
-                  // Clear the input fields after adding
-                  $("input[name='item']").val('');
-                  $("input[name='maxStock5Gallon']").val('');
-                });
-              });
-            </script>
-            
-            
+      let itemname = ''
+      $('.itemid-js').on("select2:select", function (e) {
+        let selectedData = e.params.data;
+        let itemId = selectedData.id;    // Get item ID
+        let itemName = selectedData.text; // Get item Name
+
+      
+
+        // Store the item name in a hidden input (optional)
+        itemname = itemName
+    });
+  // Load initial truck stock data
+  loadTruckStock();
+  
+  // Form submission
+  $("#stockForm").submit(async function(e) {
+      e.preventDefault();
+       const user = '<%=user.name%>'
+      const formData = {
+          truckId: $("input[name='truckId']").val(),
+          productId: $("#itemId").val(),
+          productName:itemname,
+          actionType: $("select[name='actionType']").val(),
+          itemStatus: $("select[name='itemStatus']").val(),
+          quantity: parseInt($("input[name='quantity']").val()),
+          city: $("input[name='city']").val(),
+          doneby: user// Replace with actual user
+      };
+      
+      try {
+          const response = await $.ajax({
+              url: '/updatetruckstock',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify(formData)
+          });
+          
+          if (response.success) {
+              loadTruckStock();
+              this.reset();
+          }
+      } catch (error) {
+          console.error("Error:", error);
+          alert("Error updating stock");
+      }
+  });
+  
+  // Finalize stock
+  $("#finalizeStock").click(async function() {
+      const truckId = $("input[name='truckId']").val();
+      
+      if (!confirm("Are you sure you want to close this stock?")) return;
+      
+      try {
+          const response = await $.ajax({
+              url: '/closeTruckStock',
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({ truckId })
+          });
+          
+          if (response.success) {
+              alert("Stock closed successfully!");
+              loadTruckStock();
+          }
+      } catch (error) {
+          console.error("Error:", error);
+          alert("Error closing stock");
+      }
+  });
+  
+// Load truck stock data
+async function loadTruckStock() {
+    const truckId = $("input[name='truckId']").val();
+    
+    try {
+        const response = await $.ajax({
+            url: `/gettruckstocks/${truckId}`,
+            method: 'GET'
+        });
+        
+        if (response.success && response.data && response.data.productDetails) {
+            console.log("Received product details:", response.data.productDetails);
+            updateStockTable(response.data.productDetails);
+        } else {
+            console.warn("No valid stock data available for this truck:", response);
+            updateStockTable([]); // Pass empty array to clear the table
+        }
+    } catch (error) {
+        console.error("Error loading truck stock:", error);
+        updateStockTable([]); // Clear table on error
+    }
+}
+
+// Update table with productDetails
+function updateStockTable(productDetails = []) {
+    const summary = {};
+    
+    // Ensure productDetails is always an array
+    const detailsArray = Array.isArray(productDetails) ? productDetails : [];
+    
+    detailsArray.forEach(item => {
+        // Ensure item has required properties
+        if (!item || !item.productname) return;
+        
+        if (!summary[item.productname]) {
+            summary[item.productname] = {
+                added: 0,
+                returned: 0,
+                used: 0,
+                damaged: 0
+            };
+        }
+        
+        if (item.inwardoutward === 'inward') {
+            summary[item.productname].added += item.quantity || 0;
+        } else {
+            summary[item.productname].returned += item.quantity || 0;
+            if (item.itemtype === 'Old') summary[item.productname].used += item.quantity || 0;
+            if (item.itemtype === 'Damaged') summary[item.productname].damaged += item.quantity || 0;
+        }
+    });
+    
+    $("#stockTableBody").empty();
+    
+    Object.entries(summary).forEach(([product, data]) => {
+        $("#stockTableBody").append(`
+            <tr>
+                <td>${product}</td>
+                <td>${data.added}</td>
+                <td>${data.returned}</td>
+                <td>${data.used}</td>
+                <td>${data.damaged}</td>
+                <td>${data.added - data.returned}</td>
+            </tr>
+        `);
+    });
+}
+  // function formatProductName(name) {
+  //     const names = {
+  //         '5galBottles': '5 Gallon Bottles',
+  //         '200mlBottles': '200ml Bottles'
+  //     };
+  //     return names[name] || name;
+  // }
+});
+</script> 
                
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

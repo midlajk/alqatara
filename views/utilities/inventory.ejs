@@ -1,147 +1,365 @@
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
-
 <%- include('../includes/header.ejs') -%>
-<%- include('../components/searchbartr.ejs') -%>
+
 <style>
-  /* Scoped styles for custom-nav-tabs */
-  .custom-nav-tabs {
-    display: flex;
-    gap: 10px;
-    /* Add space between tabs for clear distinction */
-    padding: 0;
-    margin: 0;
-    list-style: none;
+  /* Modern Dashboard Styles */
+  :root {
+    --primary-color: #4d8da9;
+    --secondary-color: #61A3C0;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
+  }
+
+  /* Card Styles */
+  .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Tab Navigation */
+  .tab-navigation {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
   }
   .tab-button {
-              padding: 10px 15px;
-              border: 1px solid #ccc;
-              cursor: pointer;
-              background: #e7e7e7;
-              font-weight: bold;
-              margin-right: 5px;
-              transition: 0.3s;
-            }
-          
-            .tab-button.active {
-              background: #4d8da9;
-              color: #ffffff;
-            }
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: #495057;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin-right: 5px;
+    background: transparent;
+    border: none;
+  }
+
+  .tab-button:hover {
+    background: rgba(77, 141, 169, 0.1);
+    color: #4d8da9;
+  }
+
+  .tab-button.active {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(77, 141, 169, 0.2);
+  }
+
+  /* Action Buttons */
+  .btn-add-new {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #f56036 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(245, 54, 92, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    color: white;
+  }
+
+  .btn-add-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(245, 54, 92, 0.3);
+    color: white;
+  }
+
+  .btn-update {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(77, 141, 169, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    color: white;
+  }
+
+  .btn-update:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(77, 141, 169, 0.3);
+    color: white;
+  }
+
+  /* Filter Section */
   .filter-container {
-              margin-top: 10px;
-              padding: 15px;
-              border-radius: 8px;
-              background-color: #fff;
-          }
-          .filter-btn {
-              background-color: black;
-              color: white;
-              padding: 8px 16px;
-              border: none;
-              border-radius: 5px;
-              font-size: 14px;
-          }
-          .date-filter {
-              display: flex;
-              gap: 10px;
-              flex-wrap: wrap;
-              margin-top: 10px;
-          }
-          .date-input {
-              flex: 1;
-              padding: 8px;
-              border: 1px solid #ccc;
-              border-radius: 5px;
-              display: flex;
-              align-items: center;
-              background: white;
-          }
-          .date-input input {
-              border: none;
-              outline: none;
-              flex: 1;
-          }
-          .date-input svg {
-              width: 20px;
-              height: 20px;
-              margin-left: 8px;
-          }
-          .download-link {
-              color: black;
-              text-decoration: none;
-              font-size: 14px;
-          }
-          @media (max-width: 600px) {
-              .date-filter {
-                  flex-direction: column;
-              }
-          }
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .date-filter {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+
+  .date-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: white;
+    border: 1px solid #e3e6f0;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  .date-input:hover {
+    border-color: var(--secondary-color);
+  }
+
+  .date-input span {
+    margin-right: 10px;
+    font-weight: 500;
+    color: var(--dark-color);
+  }
+
+  .date-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    background: transparent;
+  }
+
+  .date-input svg {
+    width: 18px;
+    height: 18px;
+    color: #adb5bd;
+  }
+
+  .filter-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(77, 141, 169, 0.2);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(77, 141, 169, 0.3);
+  }
+
+  /* Table Styles */
+  .table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    overflow-x: scroll;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #e3e6f0;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    padding: 1rem;
+    
+  }
+
+  .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #e3e6f0;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .table-responsive {
+    border-radius: 12px;
+    overflow-x: scroll;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  /* View Button */
+  .btn-view {
+    background: linear-gradient(135deg, var(--info-color) 0%, #1f9dbd 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(54, 185, 204, 0.2);
+  }
+
+  .btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(54, 185, 204, 0.3);
+    color: white;
+  }
+
+  /* Stock Value Colors */
+  .positive-stock {
+    color: var(--success-color);
+    font-weight: 600;
+  }
+
+  .warning-stock {
+    color: var(--warning-color);
+    font-weight: 600;
+  }
+
+  .danger-stock {
+    color: var(--danger-color);
+    font-weight: 600;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .date-filter {
+      flex-direction: column;
+    }
+    
+    .date-input {
+      min-width: 100%;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .btn-add-new, .btn-update {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Animation for table rows */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .table tbody tr {
+    animation: fadeIn 0.3s ease-out;
+  }
 </style>
-
-<a href="/updateinventory" class="btn btn-primary ml-3" type="button" aria-label="Update Inventory">Update Inventory</a>
-<a href="/addnewproduct" class="btn btn-danger ml-3" type="button" aria-label="Add New Item">Add New Item</a>
-</div>
 </div>
 </div>
 </div>
 </div>
 
-<div class="container-fluid mt--6">
-  <div class="row">
+<div class="container-fluid mt-4">
+  <!-- Action Buttons -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="tab-navigation">
+      <a class="tab-button active" href="/inventorymanagement">Store Inventory</a>
+      <a class="tab-button" href="/utilities">Car Stock Transaction</a>
+    </div>
+    <div class="action-buttons">
+      <a href="/updateinventory" class="btn btn-update mr-2">
+        <i class="fas fa-sync-alt mr-2"></i>Update Inventory
+      </a>
+      <a href="/addnewproduct" class="btn btn-add-new">
+        <i class="fas fa-plus mr-2"></i>Add New Item
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <!-- <div class="row mb-4">
     <div class="col-12">
       <div class="filter-container">
-          <div class="date-filter">
-              <label class="date-input">
-                  <span>From</span>
-                  <input type="date" id="fromDate">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
-              </label>
-              <label class="date-input">
-                  <span>To</span>
-                  <input type="date" id="toDate">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
-              </label>
+        <h5 class="mb-3"><i class="fas fa-filter mr-2"></i>Filter Inventory</h5>
+        <div class="row align-items-end">
+          <div class="col-md-4">
+            <label class="date-input">
+              <span>From Date</span>
+              <input type="date" id="fromDate" class="form-control">
+            </label>
           </div>
-          <button class="filter-btn float-right" id="applyFilterBtn">Filter By</button>
+          <div class="col-md-4">
+            <label class="date-input">
+              <span>To Date</span>
+              <input type="date" id="toDate" class="form-control">
+            </label>
+          </div>
+          <div class="col-md-4 text-right">
+            <button class="filter-btn" id="applyFilterBtn">
+              <i class="fas fa-search mr-2"></i>Apply Filters
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col">
+  </div> -->
+
+  <!-- Data Table -->
+  <div class="row">
+    <div class="col-12">
       <div class="card">
-        <div>
-          <a class="tab-button active" href="/inventorymanagement" data-table="inventoryTable">Store Inventory</a>
-          <a class="tab-button" href="/utilities" data-table="salesTable">Trucks Details</a>
+        <div class="card-header bg-white border-0 mb-2">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0 text-white"><i class="fas fa-boxes mr-2"></i>Inventory Management</h3>
+            </div>
+          </div>
         </div>
-        <br>
-     
         <div class="table-responsive">
-          <table id="inventoryTable" class="table align-items-center table-flush">
+          <table id="inventoryTable" class="table align-items-center table-striped">
             <thead class="thead-light">
               <tr>
-                <th scope="col" class="sort" data-sort="name">ProductId</th>
-                <th scope="col" class="sort" data-sort="name">Item</th>
-                <th scope="col" class="sort" data-sort="description">Item Description</th>
-                <th scope="col" class="sort" data-sort="type">Type</th>
-                <th scope="col" class="sort" data-sort="currentStock">Current Stock</th>
-                <th scope="col" class="sort" data-sort="damagedQuantity">Damaged Quantity</th>
-                <th scope="col" class="sort" data-sort="damagedQuantity">Discarded Qauntity</th>
+                <th>Product ID</th>
+                <th>Item</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Current Stock</th>
+                <th>Damaged</th>
+                <th>Discarded</th>
+                <!-- <th>Issued Out</th>
+                <th>Received In</th>
+                <th>Damaged Items</th> -->
+                <th>Actions</th>
 
-                <th scope="col" class="sort" data-sort="issued">Issued Out</th>
-                <th scope="col" class="sort" data-sort="received">Received In</th>
-                <th scope="col" class="sort" data-sort="oldItem">Damaged Item</th>
-                <th scope="col"></th>
               </tr>
             </thead>
-            <tbody class="list">
-              <!-- Dynamic data will be inserted here -->
-     
-            </tbody>
+            <tbody class="list"></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
 
-<!-- Load jQuery first -->
+<!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
@@ -154,39 +372,85 @@
       processing: true,
       serverSide: true,
       ajax: {
-        url: '/getinventory', // Update this endpoint to your actual API
+        url: '/getinventory',
         data: function (d) {
           d.fromDate = $('#fromDate').val();
           d.toDate = $('#toDate').val();
           return d;
         }
       },
+      language: {
+        paginate: {
+          next: '<i class="fas fa-chevron-right"></i>',
+          previous: '<i class="fas fa-chevron-left"></i>'
+        },
+        search: "_INPUT_",
+        searchPlaceholder: "Search inventory...",
+        lengthMenu: "Show _MENU_ items",
+        info: "Showing _START_ to _END_ of _TOTAL_ items"
+      },
       columns: [
-      { data: 'productid', render: data => data || 'N/A' },
-
-        { data: 'name', render: data => data || 'N/A' },
+        { 
+          data: 'productid', 
+          render: data => data ? `<span class="font-weight-bold">${data}</span>` : 'N/A' 
+        },
+        { 
+          data: 'name', 
+          render: data => data ? `<span class="font-weight-bold">${data}</span>` : 'N/A' 
+        },
         { data: 'description', render: data => data || 'N/A' },
         { data: 'type', render: data => data || 'N/A' },
-        { data: 'currentStock', render: data => data || 'N/A' },
-        { data: 'damagedStock', render: data => data || 'N/A' },
-        { data: 'discardedStock', render: data => data || 'N/A' },
-
-        { data: 'issued', render: data => data || 'N/A' },
-        { data: 'received', render: data => data || 'N/A' },
-        { data: 'damagedQuantity', render: data => data || 'N/A' },
-        { data: null, orderable: false, searchable: false, render: function(data, type, row) {
-          return `<a class="btn btn-primary edit-item" href="/stockhistory/${row.productid}" data-id="${row._id}">View</a>`;
-        }}
+        { 
+          data: 'currentStock', 
+          render: function(data) {
+            if (!data) return 'N/A';
+            const stockClass = data <= 0 ? 'danger-stock' : (data < 10 ? 'warning-stock' : 'positive-stock');
+            return `<span class="${stockClass}">${data}</span>`;
+          }
+        },
+        { 
+          data: 'damagedStock', 
+          render: function(data) {
+            if (!data) return 'N/A';
+            return `<span class="danger-stock">${data}</span>`;
+          }
+        },
+        { 
+          data: 'discardedStock', 
+          render: function(data) {
+            if (!data) return 'N/A';
+            return `<span class="danger-stock">${data}</span>`;
+          }
+        },
+        // { data: 'issued', render: data => data || 'N/A' },
+        // { data: 'received', render: data => data || 'N/A' },
+        // { data: 'damagedQuantity', render: data => data || 'N/A' },
+        { 
+          data: null, 
+          orderable: false, 
+          searchable: false, 
+          render: function(data, type, row) {
+            return `<a class="btn btn-view" href="/stockhistory/${row.productid}" data-id="${row._id}">
+              <i class="fas fa-eye mr-1"></i> View
+            </a>`;
+          }
+          
+        },
       ]
     });
 
-    // Apply filters
+    // Set default dates to today
+    const today = new Date().toISOString().split('T')[0];
+    $('#fromDate').val(today);
+    $('#toDate').val(today);
+
+    // Apply filter button click handler
     $('#applyFilterBtn').click(function() {
       datatable.ajax.reload();
     });
 
     // Handle edit button click
-    $('#inventoryTable tbody').on('click', '.edit-item', function () {
+    $('#inventoryTable tbody').on('click', '.btn-view', function() {
       var itemId = $(this).data('id');
       window.location.href = '/edititem/' + itemId;
     });
@@ -194,5 +458,4 @@
 </script>
 
 <%- include('../includes/footer.ejs') -%>
-
 <%- include('../includes/end.ejs') -%>

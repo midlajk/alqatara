@@ -283,10 +283,24 @@ const salesmanSchema = new mongoose.Schema({
     remaining5galBottles: { type: Number, default: 0 },
     stockOf200mlBottles: { type: Number, default: 0 },
     stockOf5galBottles: { type: Number, default: 0 },
-    assistants: { type: String},
+    assistants: [],
     routeId: { type: String, required: true },
-    city: { type: String, required: true }
-  }, { timestamps: true });
+    city: { type: String, required: true },
+    productDetails: [{
+      productid: { type: String },
+      productname: { type:String}, 
+      quantity: { type: Number },
+      inwardoutward:{ type:String}, 
+      time: { type: Date }, // If product is returned
+      itemtype: { type:String}, // If product is damaged
+      doneby: { type:String}, // If product is damaged
+      city: { type:String},
+      previousStock: { type: Number },
+      previousDamage: { type: Number },
+      previousDiscard: { type: Number },
+      delivered:Number
+    }]
+    }, { timestamps: true });
   const truckHistorySchema = new mongoose.Schema({
     id: { type: String, },
     truckCreatedAt: { type: Date, required: true },
@@ -302,9 +316,23 @@ const salesmanSchema = new mongoose.Schema({
     remaining5galBottles: { type: Number, default: 0 },
     stockOf200mlBottles: { type: Number, default: 0 },
     stockOf5galBottles: { type: Number, default: 0 },
-    assistants: { type: String},
+    assistants: [],
     routeId: { type: String, required: true },
-    updatedBottleType: { type: String, enum: ['BOTH', '200ML', '5GAL'] }
+    updatedBottleType: { type: String, enum: ['BOTH', '200ML', '5GAL'] },
+    productDetails: [{
+      productid: { type: String },
+      productname: { type:String}, 
+      quantity: { type: Number },
+      inwardoutward:{ type:String}, 
+      time: { type: Date }, // If product is returned
+      itemtype: { type:String}, // If product is damaged
+      doneby: { type:String}, // If product is damaged
+      city: { type:String},
+      previousStock: { type: Number },
+      previousDamage: { type: Number },
+      previousDiscard: { type: Number },
+      delivered:Number
+    }]
   });
   truckHistorySchema.pre("save", function (next) {
     if (this.isNew && !this.id) {

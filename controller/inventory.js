@@ -7,7 +7,6 @@ const Stockdelivery = mongoose.model('Stockdelivery');
 exports.updatestockinventory = async (req, res) => {
     try {
         const { truckId, city, productDetails } = req.body;
-        console.log(req.body)
 
         if (!truckId || !city || !productDetails.length) {
             return res.status(400).json({ error: "Missing required fields" });
@@ -162,33 +161,48 @@ console.log(products)
 
 exports.getStockhistory = async (req, res) => {
     try {
-        const { fromDate, toDate, city, start, length, search, draw, product } = req.query;
-        
+        const { fromDate, toDate, city, start, length, search, draw, product, truck } = req.query;
         // Create match stage with optimized filters
         const matchStage = {};
         
+        // Date filtering
+        const startDate = fromDate ? new Date(fromDate) : new Date();
+        startDate.setHours(0, 0, 0, 0);
+        
+        const endDate = toDate ? new Date(toDate) : new Date();
+        endDate.setHours(23, 59, 59, 999);
+
+        matchStage.date = { 
+            $gte: startDate, 
+            $lte: endDate 
+        };
+
+        // City filter
         if (city) matchStage.city = city;
-        if (product) matchStage["productDetails.productid"] = product;
-        console.log(fromDate,toDate)
-        if (fromDate && toDate) {
-            matchStage.date = { 
-                $gte: new Date(fromDate),
-                $lte: new Date(toDate)
-            };
+        
+        // Truck ID filter
+        if (truck) matchStage.truckId = truck;
+
+        // Product ID filter (inside productDetails array)
+        if (product) {
+            matchStage['productDetails.productid'] = product;
         }
 
         // Text search if needed
         if (search?.value) {
             matchStage.$or = [
                 { truckId: { $regex: search.value, $options: "i" } },
-                { "productDetails.doneby": { $regex: search.value, $options: "i" } }
+                { 'productDetails.doneby': { $regex: search.value, $options: "i" } },
+                { 'productDetails.productname': { $regex: search.value, $options: "i" } }
             ];
         }
 
-        // Aggregation pipeline
+        // Aggregation pipeline with optimized filtering
         const pipeline = [
             { $match: matchStage },
             { $unwind: "$productDetails" },
+            // Apply product filter after unwind if specified
+            ...(product ? [{ $match: { 'productDetails.productid': product } }] : []),
             { 
                 $project: {
                     date: 1,
@@ -201,23 +215,33 @@ exports.getStockhistory = async (req, res) => {
                     inwardoutward: "$productDetails.inwardoutward",
                     time: "$productDetails.time",
                     itemtype: "$productDetails.itemtype",
-                    doneby: "$productDetails.doneby"
+                    doneby: "$productDetails.doneby",
+                    city: "$productDetails.city"
                 }
             },
             { $skip: parseInt(start) || 0 },
             { $limit: parseInt(length) || 25 }
         ];
 
-        // Get data and count in parallel
-        const [data, total] = await Promise.all([
+        // Count pipeline for accurate filtered count
+        const countPipeline = [
+            { $match: matchStage },
+            { $unwind: "$productDetails" },
+            ...(product ? [{ $match: { 'productDetails.productid': product } }] : []),
+            { $count: "total" }
+        ];
+
+        // Get data and counts in parallel
+        const [data, total, filtered] = await Promise.all([
             Stockdelivery.aggregate(pipeline),
-            Stockdelivery.countDocuments(matchStage) // Approximate count
+            Stockdelivery.countDocuments(), // Total records
+            Stockdelivery.aggregate(countPipeline).then(res => res[0]?.total || 0) // Filtered count
         ]);
 
         res.json({
             draw: parseInt(draw),
             recordsTotal: total,
-            recordsFiltered: total,
+            recordsFiltered: filtered,
             data: data
         });
 
@@ -229,32 +253,44 @@ exports.getStockhistory = async (req, res) => {
 
 
 
-
 exports.getsumstockhistory = async (req, res) => {
     try {
-        const { fromDate, toDate, city } = req.query;
+        const { fromDate, toDate, city, truck, product } = req.query;
         
-        // Default to current day if no dates provided
-        const today = new Date();
-        const defaultFrom = new Date(today.setHours(0, 0, 0, 0));
-        const defaultTo = new Date(today.setHours(23, 59, 59, 999));
+        // Date handling
+        const startDate = fromDate ? new Date(fromDate) : new Date();
+        startDate.setHours(0, 0, 0, 0);
         
+        const endDate = toDate ? new Date(toDate) : new Date();
+        endDate.setHours(23, 59, 59, 999);
+
+        // Base match stage with date range
         const matchStage = {
-            date: {
-                $gte: fromDate ? new Date(fromDate) : defaultFrom,
-                $lte: toDate ? new Date(toDate) : defaultTo
-            }
+            date: { $gte: startDate, $lte: endDate }
         };
         
+        // Add optional filters
         if (city) matchStage.city = city;
+        if (truck) matchStage.truckId = truck;
+        
+        // For product filter, we'll match after unwinding
+        const productMatchStage = {};
+        if (product) productMatchStage['productDetails.productid'] = product;
 
         const pipeline = [
-            { $match: matchStage },
+            { $match: matchStage }, // Apply date/city/truck filters first
             { $unwind: "$productDetails" },
+            ...(product ? [{ $match: productMatchStage }] : []), // Apply product filter after unwind if needed
             {
                 $group: {
                     _id: null,
-                    previousStock: { $sum: "$productDetails.previousstock" },
+                    firstDocument: { 
+                        $first: {
+                            previousStock: "$productDetails.previousStock",
+                            previousDamage: "$productDetails.previousDamage",
+                            previousDiscard: "$productDetails.previousDiscard"
+                        }
+                    },
                     stockInward: { 
                         $sum: {
                             $cond: [
@@ -273,16 +309,33 @@ exports.getsumstockhistory = async (req, res) => {
                             ]
                         }
                     },
-                    damagedItems: { $sum: "$productDetails.previousdamage" },
-                    disposedStock: { $sum: "$productDetails.previousdiscard" },
-                    currentStock: {
+                    damagedItems: {
                         $sum: {
-                            $subtract: [
-                                { $add: ["$productDetails.previousstock", "$productDetails.quantity"] },
-                                { $add: ["$productDetails.previousdamage", "$productDetails.previousdiscard"] }
+                            $cond: [
+                                { $eq: ["$productDetails.itemtype", "Damaged"] },
+                                "$productDetails.quantity",
+                                0
+                            ]
+                        }
+                    },
+                    disposedStock: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$productDetails.itemtype", "Discarded"] },
+                                "$productDetails.quantity",
+                                0
                             ]
                         }
                     }
+                }
+            },
+            {
+                $project: {
+                    firstDocument: 1,
+                    stockInward: 1,
+                    stockOutward: 1,
+                    damagedItems: 1,
+                    disposedStock: 1
                 }
             }
         ];
@@ -290,12 +343,15 @@ exports.getsumstockhistory = async (req, res) => {
         const results = await Stockdelivery.aggregate(pipeline);
         console.log(results)
         const stats = results[0] || {
-            previousStock: 0,
+            firstDocument: {
+                previousStock: 0,
+                previousDamage: 0,
+                previousDiscard: 0
+            },
             stockInward: 0,
             stockOutward: 0,
             damagedItems: 0,
-            disposedStock: 0,
-            currentStock: 0
+            disposedStock: 0
         };
 
         res.json({
@@ -305,6 +361,10 @@ exports.getsumstockhistory = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching dashboard stats:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ 
+            success: false,
+            error: 'Internal Server Error',
+            message: error.message 
+        });
     }
-}
+};

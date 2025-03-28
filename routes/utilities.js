@@ -37,7 +37,11 @@ router.get('/updatetruckstock/:id', setCustomHeader('utilities'),authMiddleware,
     const truck = await Truck.findById(id)
     res.render('utilities/updatestock',{ title: 'Al Qattara',route:'Utilities',sub :'Update Truck Stock',truck:truck });
   });
+  router.get('/gettruckstocks/:id', setCustomHeader('utilities'),authMiddleware, utilitiesApis.TruckStrocks);
+  router.post('/updatetruckstock', setCustomHeader('utilities'),authMiddleware, utilitiesApis.UpdateTruckStrocks);
 
+  router.get('/getProductHistorySummary', setCustomHeader('utilities'),authMiddleware, utilitiesApis.getProductHistorySummary);
+  router.get('/getalltruckProductHistorySummary', setCustomHeader('utilities'),authMiddleware, utilitiesApis.getalltruckProductHistorySummary);
 
 
 ///apis 

@@ -1,278 +1,435 @@
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
-
 <%- include('../includes/header.ejs') -%>
-<%- include('../components/searchbartr.ejs') -%>
+
 <style>
-  /* Scoped styles for custom-nav-tabs */
-  .custom-nav-tabs {
-    display: flex;
-    gap: 10px;
-    /* Add space between tabs for clear distinction */
-    padding: 0;
-    margin: 0;
-    list-style: none;
+  /* Modern Dashboard Styles */
+  :root {
+    --primary-color: #4d8da9;
+    --secondary-color: #61A3C0;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
   }
-  .tab-button {
-              padding: 10px 15px;
-              border: 1px solid #ccc;
-              cursor: pointer;
-              background: #e7e7e7;
-              font-weight: bold;
-              margin-right: 5px;
-              transition: 0.3s;
-            }
-          
-            .tab-button.active {
-              background: #4d8da9;
-              color: #ffffff;
-            }
+
+  /* Card Styles */
+  .card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-stats .card-body {
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+  }
+
+  .icon-shape {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Stats Card Colors */
+  .bg-gradient-info {
+    background: linear-gradient(135deg, #36b9cc 0%, #1f9dbd 100%);
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+  }
+
+  .bg-gradient-orange {
+    background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+  }
+
+  .bg-gradient-green {
+    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+  }
+
+  .bg-gradient-danger {
+    background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%);
+  }
+
+  /* Filter Section */
   .filter-container {
-              margin-top: 10px;
-              padding: 15px;
-              border-radius: 8px;
-              background-color: #fff;
-          }
-          .filter-btn {
-              background-color: black;
-              color: white;
-              padding: 8px 16px;
-              border: none;
-              border-radius: 5px;
-              font-size: 14px;
-          }
-          .date-filter {
-              display: flex;
-              gap: 10px;
-              flex-wrap: wrap;
-              margin-top: 10px;
-          }
-          .date-input {
-              flex: 1;
-              padding: 8px;
-              border: 1px solid #ccc;
-              border-radius: 5px;
-              display: flex;
-              align-items: center;
-              background: white;
-          }
-          .date-input input {
-              border: none;
-              outline: none;
-              flex: 1;
-          }
-          .date-input svg {
-              width: 20px;
-              height: 20px;
-              margin-left: 8px;
-          }
-          .download-link {
-              color: black;
-              text-decoration: none;
-              font-size: 14px;
-          }
-          @media (max-width: 600px) {
-              .date-filter {
-                  flex-direction: column;
-              }
-          }
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .date-filter {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+
+  .date-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: white;
+    border: 1px solid #e3e6f0;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  .date-input:hover {
+    border-color: var(--secondary-color);
+  }
+
+  .date-input span {
+    margin-right: 10px;
+    font-weight: 500;
+    color: var(--dark-color);
+  }
+
+  .date-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    background: transparent;
+  }
+  .date-input select {
+    border: none;
+    outline: none;
+    flex: 1;
+    background: transparent;
+  }
+
+  .date-input svg {
+    width: 18px;
+    height: 18px;
+    color: #adb5bd;
+  }
+
+
+  .filter-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(77, 141, 169, 0.2);
+  }
+
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(77, 141, 169, 0.3);
+  }
+
+  /* Table Styles */
+  .table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #e3e6f0;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    padding: 1rem;
+  }
+
+  .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-top: 1px solid #e3e6f0;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .table-responsive {
+    border-radius: 12px;
+    
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .col-xl-3 {
+      margin-bottom: 15px;
+    }
+    
+    .date-filter {
+      flex-direction: column;
+    }
+    
+    .date-input {
+      min-width: 100%;
+    }
+  }
+
+  /* Animation for stats */
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-stats .h2 {
+    animation: countUp 0.6s ease-out;
+  }
+
+  /* Value colors */
+  .positive-value {
+    color: var(--success-color);
+  }
+
+  .negative-value {
+    color: var(--danger-color);
+  }
+
+  .neutral-value {
+    color: var(--dark-color);
+  }
 </style>
-
-
-</div>
 </div>
 </div>
 </div>
 </div>
 
-<div class="container-fluid mt--6">
+<div class="container-fluid mt-4">
+  <!-- Stats Cards Row -->
   <div class="row">
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+      <div class="card card-stats h-100">
         <div class="card-body">
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Previous Stock</h5>
-              <span class="h2 font-weight-bold mb-0" id="previousStock">0</span>
+              <span class="h2 font-weight-bold mb-0 neutral-value" id="previousStock">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                <i class="fa-solid fa-cubes-stacked"></i>              </div>
+                <i class="fa-solid fa-cubes-stacked"></i>
+              </div>
             </div>
           </div>
-    
         </div>
       </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        
-        <!-- Card body -->
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+      <div class="card card-stats h-100">
         <div class="card-body">
-            
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Stock Inward</h5>
-              <span class="h2 font-weight-bold mb-0" id="stockInward">0</span>
+              <span class="h2 font-weight-bold mb-0 positive-value" id="stockInward">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
                 <i class="fa-solid fa-cash-register"></i>
-                            </div>
+              </div>
             </div>
           </div>
-        
         </div>
       </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+      <div class="card card-stats h-100">
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Stock OutWard</h5>
-              <span class="h2 font-weight-bold mb-0" id="stockOutward">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Stock Outward</h5>
+              <span class="h2 font-weight-bold mb-0 negative-value" id="stockOutward">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                <i class="ni ni-delivery-fast" ></i>
-            </div>
+                <i class="ni ni-delivery-fast"></i>
+              </div>
             </div>
           </div>
-         
         </div>
       </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+      <div class="card card-stats h-100">
         <div class="card-body">
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Damaged Items</h5>
-              <span class="h2 font-weight-bold mb-0" id="damagedItems">0</span>
+              <span class="h2 font-weight-bold mb-0 negative-value" id="damagedItems">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                <i class="fa-solid fa-circle-exclamation"></i>              </div>
+                <i class="fa-solid fa-circle-exclamation"></i>
+              </div>
             </div>
           </div>
-         
         </div>
       </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+      <div class="card card-stats h-100">
         <div class="card-body">
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Current Stock</h5>
-              <span class="h2 font-weight-bold mb-0" id="currentStock">0</span>
+              <span class="h2 font-weight-bold mb-0 neutral-value" id="currentStock">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                <i class="fa-solid fa-boxes-stacked"></i>    
-                        </div>
+                <i class="fa-solid fa-boxes-stacked"></i>
+              </div>
             </div>
           </div>
-    
         </div>
       </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
+    
+    <div class="col-xl-2 col-md-4 col-sm-6 mb-4">
+      <div class="card card-stats h-100">
         <div class="card-body">
           <div class="row">
             <div class="col">
               <h5 class="card-title text-uppercase text-muted mb-0">Disposed Stock</h5>
-              <span class="h2 font-weight-bold mb-0" id="disposedStock">0</span>
+              <span class="h2 font-weight-bold mb-0 negative-value" id="disposedStock">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
                 <i class="fa-solid fa-trash"></i>
-                                 </div>
+              </div>
             </div>
           </div>
-    
-        </div>
-      </div>
-    </div>
- 
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="filter-container">
-          <div class="date-filter">
-              <label class="date-input">
-                  <span>From</span>
-                  <input type="date" id="fromDate">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
-              </label>
-              <label class="date-input">
-                  <span>To</span>
-                  <input type="date" id="toDate">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
-              </label>
-          </div>
-          <button class="filter-btn float-right" id="applyFilterBtn">Filter By</button>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-       
-        <br>
-     
-        <div class="table-responsive">
-            <table id="stockTable" class="table align-items-center table-striped">
-                <thead class="thead-dark">
-                  <tr>
-                    <th>Date</th>
-                    <th>Truck ID</th>
-                    <th>City</th>
-                    <th>Product ID</th>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Inward/Outward</th>
-                    <th>Time</th>
-                    <th>Item Type</th>
-                    <th>Done By</th>
-                    <!-- <th>City</th> -->
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Dynamic data will be inserted here -->
-                </tbody>
-              </table>
         </div>
       </div>
     </div>
   </div>
 
-<!-- Load jQuery first -->
+  <!-- Filter Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="filter-container">
+        <h5 class="mb-3"><i class="fas fa-filter mr-2"></i>Filter Stock History</h5>
+        <div class="row align-items-end" >
+          <div class="col-md-3">
+            <label class="date-input">
+              <span>From Date</span>
+              <input type="date" id="fromDate" class="form-control">
+            </label>
+          </div>
+          <div class="col-md-3">
+            <label class="date-input">
+              <span>To Date</span>
+              <input type="date" id="toDate" class="form-control">
+            </label>
+          </div>
+          <div class="col-md-3" id="cardb">
+            <label class="date-input">
+              <span>Truck ID</span>
+              <select id="truck" class="form-control truck-js" >
+                <!-- Some default options -->
+            </select>
+              <!-- <input type="text" id="truck" class="form-control truck-js" placeholder="All Trucks"> -->
+            </label>
+          </div>
+          <div class="col-md-3 text-right">
+            <button class="filter-btn" id="applyFilterBtn">
+              <i class="fas fa-search mr-2"></i>Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0"><i class="fas fa-history mr-2"></i>Stock Transaction History</h3>
+            </div>
+            <div class="col text-right">
+              <button class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-download mr-2"></i>Export
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table id="stockTable" class="table align-items-center table-striped">
+            <thead class="thead-light">
+              <tr>
+                <th>Date</th>
+                <th>Truck ID</th>
+                <th>City</th>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>In/Out</th>
+                <th>Time</th>
+                <th>Item Type</th>
+                <th>Done By</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic data will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- JavaScript Libraries -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-
-      var datatable  = $('#stockTable').DataTable({
-    serverSide: true,
-    processing: true,
-    ajax: {
+  $(document).ready(function () {
+    // Initialize DataTable
+    var datatable = $('#stockTable').DataTable({
+      serverSide: true,
+      processing: true,
+      ajax: {
         url: '/getStockhistory',
         data: function(d) {
           const now = new Date();
-        
-        // Set default to current day (00:00:00 to 23:59:59)
-        let fromDate = $('#fromDate').val();
-        let toDate = $('#toDate').val();
-        
-        if (!fromDate || !toDate) {
+          let fromDate = $('#fromDate').val();
+          let toDate = $('#toDate').val();
+          let truck = $('#truck').val();
+
+          if (!fromDate || !toDate) {
             const todayStart = new Date(now);
             todayStart.setHours(0, 0, 0, 0);
             
@@ -281,102 +438,233 @@
             
             fromDate = fromDate || todayStart.toISOString();
             toDate = toDate || todayEnd.toISOString();
-        }
-        
-        return {
+          }
+          
+          return {
             ...d,
             fromDate: fromDate,
             toDate: toDate,
             city: $('#citySelect').val(),
-            product: '<%=id%>'
-        };
+            product: '<%=id%>',
+            truck:truck
+          };
         }
-    },
-    columns: [
+      },
+      columns: [
         { data: 'date', render: data => new Date(data).toLocaleDateString() },
         { data: 'truckId' },
         { data: 'city' },
         { data: 'productid' },
         { data: 'productname' },
         { data: 'quantity' },
-        { data: 'inwardoutward' },
         { 
-            data: 'time', 
-            render: data => data ? 
-                new Date(data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
-                'N/A' 
+          data: 'inwardoutward', 
+          render: data => {
+            const badgeClass = data === 'inward' ? 'badge-success' : 'badge-warning';
+            return `<span class="badge ${badgeClass}">${data}</span>`;
+          }
+        },
+        { 
+          data: 'time', 
+          render: data => data ? 
+            new Date(data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
+            'N/A' 
         },
         { data: 'itemtype' },
         { data: 'doneby' }
-    ],
-    // Additional optimizations:
-    deferRender: true,
-    scrollY: 400,
-    scrollCollapse: true,
-    scroller: true
-});
-        $('#applyFilterBtn').click(function() {
-            datatable.ajax.reload();
-            updateDashboardStats(
-            $('#fromDate').val(),
-            $('#toDate').val(),
-            $('#citySelect').val()
-        );
-        });
-    });
-  </script>
-
-  <script>
-    // Function to fetch and update dashboard stats
-function updateDashboardStats(fromDate, toDate, city) {
-    $.ajax({
-        url: '/stockhistory-stats',
-        method: 'GET',
-        data: {
-            fromDate: fromDate,
-            toDate: toDate,
-            city: city
-        },
-        success: function(response) {
-            if (response.success) {
-                const stats = response.data;
-                console.log(response.data)
-                
-                // Update each card
-                $('#previousStock').text(stats.previousStock);
-$('#stockInward').text(stats.stockInward);
-$('#stockOutward').text(stats.stockOutward);
-$('#damagedItems').text(stats.damagedItems);
-$('#currentStock').text(stats.currentStock);
-$('#disposedStock').text(stats.disposedStock);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching dashboard stats:', error);
+      ],
+      deferRender: true,
+      scrollY: 400,
+      scrollCollapse: true,
+      scroller: true,
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search transactions...",
+        lengthMenu: "Show _MENU_ entries",
+        info: "Showing _START_ to _END_ of _TOTAL_ entries",
+        paginate: {
+          previous: "<i class='fas fa-chevron-left'></i>",
+          next: "<i class='fas fa-chevron-right'></i>"
         }
+      }
     });
-}
 
-// Call this function on page load and when filters change
-$(document).ready(function() {
-    // Set default dates (today)
+    // Set default dates to today
     const today = new Date().toISOString().split('T')[0];
     $('#fromDate').val(today);
     $('#toDate').val(today);
-    
-    // Initial load
-    updateDashboardStats(today, today, $('#citySelect').val());
-    
-    // Update when filters change
-    // $('#applyFilterBtn').click(function() {
-    //     updateDashboardStats(
-    //         $('#fromDate').val(),
-    //         $('#toDate').val(),
-    //         $('#citySelect').val()
-    //     );
-    // });
-});
-  </script>
-<%- include('../includes/footer.ejs') -%>
 
+    // Apply filter button click handler
+    $('#applyFilterBtn').click(function() {
+      datatable.ajax.reload();
+      updateDashboardStats(
+        $('#fromDate').val(),
+        $('#toDate').val(),
+        $('#citySelect').val(),
+        $('#truck').val()
+      );
+    });
+
+    // Initial load of dashboard stats
+    updateDashboardStats(today, today, $('#citySelect').val(), $('#truck').val());
+  });
+
+  // Function to fetch and update dashboard stats
+  function updateDashboardStats(fromDate, toDate, city,truck) {
+    $.ajax({
+      url: '/stockhistory-stats',
+      method: 'GET',
+      data: {
+        fromDate: fromDate,
+        toDate: toDate,
+        city: city,
+        truck:truck,
+        product:'<%=id%>'
+      },
+      success: function(response) {
+        if (response.success) {
+          updateStockDisplay(response.data);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Error fetching dashboard stats:', error);
+      }
+    });
+  }
+
+  function calculateCurrentStock(stats) {
+    if (!stats || !stats.firstDocument) return 0;
+    
+    const { previousStock } = stats.firstDocument;
+    const { stockInward, stockOutward, damagedItems, disposedStock } = stats;
+    
+    return parseInt(previousStock || 0) + 
+           parseInt(stockInward || 0) - 
+           parseInt(stockOutward || 0) - 
+           parseInt(damagedItems || 0) - 
+           parseInt(disposedStock || 0);
+  }
+
+  // Update the DOM elements with animation
+  function updateStockDisplay(stats) {
+    if (!stats) return;
+    
+    // Helper function to ensure proper rounding
+    const displayValue = (value) => Math.max(0, Math.round(value));
+    
+    // Get the actual values (not animated yet)
+    const previousStock = stats.firstDocument?.previousStock || 0;
+    const stockInward = stats.stockInward || 0;
+    const stockOutward = stats.stockOutward || 0;
+    const damagedItems = stats.damagedItems || 0;
+    const disposedStock = stats.disposedStock || 0;
+    const currentStock = calculateCurrentStock(stats);
+
+    // Animate values counting up with proper final values
+    $({countNum: 0}).animate({countNum: previousStock}, {
+        duration: 800,
+        easing: 'swing',
+        step: function() {
+            $('#previousStock').text(displayValue(this.countNum));
+        },
+        complete: function() {
+            $('#previousStock').text(displayValue(previousStock));
+        }
+    });
+    
+    $({countNum: 0}).animate({countNum: stockInward}, {
+        duration: 800,
+        easing: 'swing',
+        step: function() {
+            $('#stockInward').text(displayValue(this.countNum));
+        },
+        complete: function() {
+            $('#stockInward').text(displayValue(stockInward));
+        }
+    });
+    
+    $({countNum: 0}).animate({countNum: stockOutward}, {
+        duration: 800,
+        easing: 'swing',
+        step: function() {
+            $('#stockOutward').text(displayValue(this.countNum));
+        },
+        complete: function() {
+            $('#stockOutward').text(displayValue(stockOutward));
+        }
+    });
+    
+    $({countNum: 0}).animate({countNum: damagedItems}, {
+        duration: 800,
+        easing: 'swing',
+        step: function() {
+            $('#damagedItems').text(displayValue(this.countNum));
+        },
+        complete: function() {
+            $('#damagedItems').text(displayValue(damagedItems));
+        }
+    });
+    
+    $({countNum: 0}).animate({countNum: disposedStock}, {
+        duration: 800,
+        easing: 'swing',
+        step: function() {
+            $('#disposedStock').text(displayValue(this.countNum));
+        },
+        complete: function() {
+            $('#disposedStock').text(displayValue(disposedStock));
+        }
+    });
+    
+    $({countNum: 0}).animate({countNum: currentStock}, {
+        duration: 800,
+        easing: 'swing',
+        step: function() {
+            $('#currentStock').text(displayValue(this.countNum));
+        },
+        complete: function() {
+            $('#currentStock').text(displayValue(currentStock));
+        }
+    });
+}</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script>
+  $(document).ready(function () {
+    // Initialize Select2 for the element with the correct ID or class
+    $('.truck-js').select2({
+      dropdownParent: $("#cardb"),
+ajax: {
+url: '/truckids', // Backend endpoint
+dataType: 'json',
+delay: 250, // Debounce for performance
+data: function (params) {
+return {
+  search: params.term, // Select2 search term
+  customKey: 'utilities' // Custom query parameter
+};
+},
+processResults: function (data) {
+// return {
+//   results: data.map(function (item) {
+
+
+//     let cityOptions = [{ id: "All", text: "All" }];
+//                 cityOptions = cityOptions.concat(data.map(item => ({ id: item.city, text: item.city })));
+
+//                 return { results: cityOptions };
+//     return { id: item.id, text: item.id }; // Customize text display
+//   }),
+// };
+let truckoption = [{ id: "Production", text: "Production", }];
+truckoption = truckoption.concat(data.map(item => ({ id: item.id, text: item.id })));
+
+                return { results: truckoption };
+},
+
+},
+});
+  });
+</script>  
+<%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

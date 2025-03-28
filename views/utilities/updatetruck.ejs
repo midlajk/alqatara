@@ -35,6 +35,7 @@
                             <div class="col-md-10">
                                 <select class="city-js form-control" id="city" name="city" required>
                                   <option value="<%=truck.city%>"><%=truck.city%></option>
+                                  
                                 </select>
 
                                 <!-- <input class="form-control" type="text" placeholder="Select or enter the city"  required> -->
@@ -184,33 +185,33 @@
                           </script> 
                           <script>
                         
-    $(document).ready(function () {
-        $("#closeStockBtn").click(function (event) {
-            event.preventDefault(); // Prevent default form submission
+    // $(document).ready(function () {
+    //     $("#closeStockBtn").click(function (event) {
+    //         event.preventDefault(); // Prevent default form submission
 
-            // Extract truck details from the form
-            var truckData = {
-                truckId: $("#truck-id").val(),
-                customKey:'utilities'
-            };
+    //         // Extract truck details from the form
+    //         var truckData = {
+    //             truckId: $("#truck-id").val(),
+    //             customKey:'utilities'
+    //         };
 
-            // Send AJAX request to close stock
-            $.ajax({
-                url: "/closeTruckStock",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(truckData),
-                success: function (response) {
-                    alert("Stock closed successfully!");
-                    location.reload(); // Refresh page
-                },
-                error: function (xhr) {
-                  console.log('sds',xhr)
-                    alert("Error closing stock: Permission Denied");
-                }
-            });
-        });
-    });
-                          </script>
+    //         // Send AJAX request to close stock
+    //         $.ajax({
+    //             url: "/closeTruckStock",
+    //             type: "POST",
+    //             contentType: "application/json",
+    //             data: JSON.stringify(truckData),
+    //             success: function (response) {
+    //                 alert("Stock closed successfully!");
+    //                 location.reload(); // Refresh page
+    //             },
+    //             error: function (xhr) {
+    //               console.log('sds',xhr)
+    //                 alert("Error closing stock: Permission Denied");
+    //             }
+    //         });
+    //     });
+    // });
+    //                       </script>
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

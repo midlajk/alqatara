@@ -1,346 +1,700 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
-<%- include('../includes/header.ejs') -%>
-<%- include('../components/searchbartr.ejs') -%>
-<a href="/orders/neworder" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
-</div>
-</div>
-</div>
-</div>
-</div>
 <style>
-  .filter-box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 10px;
+  :root {
+    --primary-color: #4d8da9;
+    --secondary-color: #61A3C0;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
   }
-  .search-icon {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
+
+  /* Modern Card Styles */
+  .dashboard-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  .btn-manage {
+    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+    color: white;
+  }
+  .card-header {
+    border-radius: 12px 12px 0 0 !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  /* Status Badges */
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .badge-pending {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .badge-completed {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .badge-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .badge-in-progress {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+  
+  /* Action Buttons */
+  .btn-action {
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    min-width: 90px;
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .btn-view {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+  }
+  
+  .btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  /* Summary Cards */
+  .summary-card {
+    border-left: 4px solid;
+    border-radius: 8px;
+  }
+  
+  .summary-card.pending {
+    border-left-color: #ffc107;
+  }
+  
+  .summary-card.completed {
+    border-left-color: #28a745;
+  }
+  
+  .summary-card.cancelled {
+    border-left-color: #dc3545;
+  }
+  
+  .summary-card.total {
+    border-left-color: #4d8da9;
+  }
+  
+  /* Filter Section */
+  .filter-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  .filter-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(77, 141, 169, 0.2);
+  }
+
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(77, 141, 169, 0.3);
+  }
+
+  /* Responsive Table */
+  .table-responsive {
+    border-radius: 10px;
+    /* overflow: hidden; */
+  }
+  
+  /* Date Inputs */
+  .date-input-group {
+    position: relative;
+  }
+  
+  .date-input-group i {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #adb5bd;
+  }
+  .btn-add-new {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #f56036 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(245, 54, 92, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    color: white;
+  }
+
+  .btn-add-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(245, 54, 92, 0.3);
+    color: white;
   }
 </style>
-<div class="container-fluid mt--6">
-    <div class="row">
-      <div class="col">
-        <div class="filter-box">
-          <h5 class="mb-3">Filter By</h5>
-          <div class="row g-3">
-              <!-- Customer ID -->
-              <div class="col-md-3 position-relative">
-                  <label class="form-label">Customer I.D</label>
-                  <input type="text" class="form-control" placeholder="Search ID Here">
-                  <span class="search-icon">&#128269;</span> <!-- Search icon -->
-              </div>
-  
-              <!-- Salesman ID -->
-              <div class="col-md-3">
-                  <label class="form-label">Salesman ID</label>
-                  <select class="form-control">
-                      <option selected>Select a Salesman</option>
-                      <option value="1">Salesman 1</option>
-                      <option value="2">Salesman 2</option>
-                      <option value="3">Salesman 3</option>
-                  </select>
-              </div>
-  
-              <!-- Truck ID -->
-              <div class="col-md-3">
-                  <label class="form-label">Truck ID</label>
-                  <select class="form-control">
-                      <option selected>Select a Truck</option>
-                      <option value="101">Truck 101</option>
-                      <option value="102">Truck 102</option>
-                      <option value="103">Truck 103</option>
-                  </select>
-              </div>
-  
-              <!-- Mode of Payment -->
-              <div class="col-md-3">
-                  <label class="form-label">Mode of Payment</label>
-                  <select class="form-control">
-                      <option selected>Select a Mode of Payment</option>
-                      <option value="Cash">Cash</option>
-                      <option value="Credit">Credit</option>
-                      <option value="Online">Online Transfer</option>
-                  </select>
-              </div>
-  
-              <!-- Order Status -->
-              <div class="col-md-3">
-                  <label class="form-label">Status</label>
-                  <select class="form-control">
-                      <option selected>Select Order status</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Completed">Completed</option>
-                      <option value="Cancelled">Cancelled</option>
-                  </select>
-              </div>
-  
-              <!-- From Date -->
-              <div class="col-md-3">
-                  <label class="form-label">From</label>
-                  <input type="date" class="form-control">
-              </div>
-  
-              <!-- To Date -->
-              <div class="col-md-3">
-                  <label class="form-label">To</label>
-                  <input type="date" class="form-control">
-              </div>
-          </div>
-      </div>
-  
-      </div>
-      <div class="col">
-        <div class="card">
-          <!-- Card header -->
-          <div class="card-header border-0">
-            <h3 class="mb-0">Truck Delivery and Details</h3>
-          </div>
-          <!-- Light table -->
-          <div class="table-responsive">
-            <table id="ordertable" class="table align-items-center table-flush">
-              <thead class="thead-light">
-                <tr>
-                  <th scope="col" class="sort" data-sort="name">Order ID</th>
-                  <th scope="col" class="sort" data-sort="name">createdAt</th>
-                  <th scope="col" class="sort" data-sort="budget">Customer Name</th>
-                  <th scope="col" class="sort" data-sort="status">View Order</th>
 
-                  <th scope="col" class="sort">Truck</th>
-                  <th scope="col" class="sort" data-sort="completion">Delivery Date</th>
-                  <!-- <th scope="col" class="sort">Time</th> -->
-                  
-                  <!-- <th scope="col" class="sort" data-sort="completion">Price 5-gal</th> -->
-                  <th scope="col" class="sort" data-sort="completion">Total Price</th>
-                  <th scope="col" class="sort" data-sort="completion">Credit Status</th>
-                  <!-- <th scope="col" class="sort" data-sort="completion">Pay by</th> -->
-                  <th scope="col" class="sort" data-sort="completion">Updated At</th>
 
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody class="list">
-                <tr>
-
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- Card footer -- -->
+<div class="header bg-primary pb-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0">Order Dashboard</h6>
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+              <li class="breadcrumb-item"><a href="/dashboard"><i class="fas fa-home"></i></a></li>
+              <li class="breadcrumb-item active" aria-current="page">Orders</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-lg-6 col-5 text-right">
+          <a href="/orders/neworder" class="btn btn-add-new">
+            <i class="fas fa-plus mr-2"></i> New Order
+          </a>
         </div>
       </div>
+      
+      <!-- Summary Cards -->
+      <div class="row">
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                    <i class="fa-solid fa-list"></i>
+                  </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+        
+       <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Orders</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>   
+         
+         <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Revenue</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                    <i class="fa-solid fa-credit-card"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div> 
+      </div>
     </div>
-    <div class="modal fade" id="salesZoneModal" tabindex="-1" aria-labelledby="salesZoneModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="salesZoneModalLabel">Truck Stock Details</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+  </div>
+</div>
+
+<div class="container-fluid mt--6">
+  <div class="row">
+    <div class="col">
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <h5 class="mb-4"><i class="fas fa-filter text-primary mr-2"></i>Filter Orders</h5>
+        <div class="row" id="cardb">
+          <div class="col-md-3 mb-3" id="cardb">
+            <label class="form-label small font-weight-bold">Customer</label>
+            <select class="form-control customer-code-js">
+              <option value="">All Customers</option>
+            </select>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <label class="form-label small font-weight-bold">Sales Rep</label>
+            <select class="form-control salesman-js">
+              <option value="">All Sales Reps</option>
+            </select>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <label class="form-label small font-weight-bold">Truck</label>
+            <select class="form-control truck-js">
+              <option value="">All Trucks</option>
+            </select>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <label class="form-label small font-weight-bold">Status</label>
+            <select class="form-control">
+              <option value="">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <label class="form-label small font-weight-bold">From Date</label>
+            <div class="date-input-group">
+              <input type="date" class="form-control">
+            </div>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <label class="form-label small font-weight-bold">To Date</label>
+            <div class="date-input-group">
+              <input type="date" class="form-control">
+            </div>
+          </div>
+          
+          <div class="col-md-3 mb-3 d-flex align-items-end">
+            <button class="btn btn-sm filter-btn mr-2">
+              <i class="fas fa-filter mr-1"></i> Apply
+            </button>
+            <button class="btn  btn-outline-secondary">
+              <i class="fas fa-sync-alt mr-1"></i> Reset
             </button>
           </div>
-          <div class="modal-body">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Order Quantity</th>
-                  <th>Customer Price</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody id="salesZoneTableBody">
-                <tr>
-                  <td>Water Cup</td>
-                  <td>1000 Cups</td>
-                  <td>$0.10 per cup</td>
-                  <td>$100</td>
-                </tr>
-                <tr>
-                  <td>200 ml Bottle</td>
-                  <td>500 Bottles</td>
-                  <td>$0.50 per bottle</td>
-                  <td>$250</td>
-                </tr>
-                <tr>
-                  <td>5 Gallon Bottle</td>
-                  <td>300 Bottles</td>
-                  <td>$5.00 per bottle</td>
-                  <td>$1500</td>
-                </tr>
-                <tr>
-                  <td>Dispenser</td>
-                  <td>50 Units</td>
-                  <td>$20.00 per unit</td>
-                  <td>$1000</td>
-                </tr>
-              </tbody>
-            </table>
-            
-            
+        </div>
+      </div>
+      
+      <!-- Orders Table -->
+      <div class="card dashboard-card">
+        <div class="card-header mb-2">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0 text-white"><i class="fas fa-list-alt mr-2"></i>Recent Orders</h3>
+            </div>
+            <div class="col text-right">
+              <button class="btn btn-sm btn-light">
+                <i class="fas fa-file-export mr-1"></i> Export
+              </button>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+        <div class="table-responsive">
+          <table id="ordertable" class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Truck</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Balance</th>
+                <th>Payment</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+          
+            </tbody>
+          </table>
+        </div>
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderDetailsModalLabel">Order Details - ORD-1001</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <h6 class="font-weight-bold">Customer Information</h6>
+            <p>John Smith<br>
+            123 Main Street<br>
+            New York, NY 10001<br>
+            Phone: (555) 123-4567</p>
+          </div>
+          <div class="col-md-6">
+            <h6 class="font-weight-bold">Order Information</h6>
+            <p>Order Date: May 15, 2023<br>
+            Delivery Date: May 16, 2023<br>
+            Truck: TRK-005<br>
+            Sales Rep: SR-008</p>
+          </div>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="thead-light">
+              <tr>
+                <th>Product</th>
+                <th>Lend Type</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>5 Gallon Bottle</td>
+                <td>SOLD</td>
+
+                <td>50</td>
+                <td>$5.00</td>
+                <td>$250.00</td>
+              </tr>
+              <tr>
+                <td>200ml Bottle</td>
+                <td>SOLD</td>
+
+                <td>200</td>
+                <td>$0.50</td>
+                <td>$100.00</td>
+              </tr>
+              <tr>
+                <td>Water Dispenser</td>
+                <td>SOLD</td>
+
+                <td>5</td>
+                <td>$80.00</td>
+                <td>$400.00</td>
+              </tr>
+       
+              <tr>
+                <td colspan="4" class="text-right font-weight-bold">Total</td>
+                <td>$800.00</td>
+             
+              </tr>
+              <tr>
+                <td colspan="4" class="text-right font-weight-bold">Amount Paid</td>
+                <td>$800.00</td>
+               
+              </tr>
+              <tr>
+                <td colspan="4" class="text-right font-weight-bold">Balance Payment</td>
+                <td>$800.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <h6 class="font-weight-bold">Delivery Notes</h6>
+            <p>Leave packages at front desk if no one is home. Customer requested morning delivery.</p>
+          </div>
+          <div class="col-md-6">
+            <h6 class="font-weight-bold">Payment Information</h6>
+            <p>Status: <span class="badge badge-success">Paid</span><br>
+            Method: Credit Card<br>
+            Transaction ID: TXN-987654</p>
           </div>
         </div>
       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="printInvoice">Print Invoice</button>
+      </div>
     </div>
-    <!-- Footer -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  </div>
+</div>
 
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>
 
-    <script>
-      $(document).ready(function () {
-        console.log('hehe')
-
-        // Initialize DataTable
-       var datatable = $('#ordertable').DataTable({
-        responsive: true,
-              processing: true,
-              serverSide: true,
-          ajax: {
-            url: '/getorders', // Backend API endpoint
-            dataSrc: 'docs', // Key that holds the array of data in the API response
-                data: function (d) {
-                  return d;
-
-                  // Add any additional parameters you want to send to the server here
-                },// Data source is the root of the response array
-          },
-          columns: [
-         { data: 'id', title: 'Order ID' }, // Order ID
-         {
-            data: 'createdAt',
-            title: 'Creation Date',
-            render: function (data) {
-              return new Date(data).toLocaleDateString(); // Format date
-            }
-          },
-           { data: 'name', title: 'Customer Name' }, // Customer Name
-           { 
-    data: null, 
-    orderable: false, // Prevent sorting on this column
-    searchable: false, // Prevent search filter on buttons
-    render: function(data, type, row) {
-      return `
-        <button class="btn btn-secondary viewsaleszone-zone" data-id="${row._id}">View Order</button>
-      `;
-    }
-  },          // { data: 'noOf200mlBottles', title: 'No:of 200ml bottles' },
-        { data: 'truckId', title: 'Truck' }, // Truck
-        { data: 'status', title: 'Delivery Status' },
-          //  {
-          //   data: 'status',
-          //   title: 'Delivery Status',
-          //   render: function (data) {
-          //     return new Date(data).toLocaleDateString(); // Format date
-          //   }
-          // },
-          // {
-          //   data: 'delivered_at',
-          //   title: 'Time',
-          //   render: function (data) {
-          //     return new Date(data).toLocaleTimeString(); // Format time
-          //   }
-          // },
-          
-          // { data: 'priceFor5galBottles', title: 'Price 5-gal' }, // Price 5-gal
-          { data: 'totalPrice', title: 'Total' }, // Price 200ml
-         {
-            data: 'isCreditCustomerPaid',
-            title: 'Credit Status',
-            render: function (data) {
-              return data ? 'Paid' : 'Unpaid'; // Render credit status
-            }
-          },
-          //  {
-          //   data: 'modeOfPayment',
-          //   title: 'Pay b',
-          //   render: function (data) {
-          //     return data || 'N/A'; // Display mode of payment or N/A
-          //   }
-          // },
-          {
-            data: 'updatedAt',
-            title: 'Updated At',
-            render: function (data) {
-              return new Date(data).toLocaleString(); // Format date
-            }
-          },
-        { data: null, render: function(data, type, row) {
-            return `
-              <button class="btn btn-primary edit-zone" data-id="${row._id}">Edit</button>
-              <button class="btn btn-danger history-zone" data-id="${row._id}">View</button>
-            `;
-          }
+<script>
+$(document).ready(function() {
+  // Initialize DataTable
+  var datatable = $('#ordertable').DataTable({
+    responsive: true,
+    processing: true,
+    serverSide: true,
+    ajax: {
+      url: '/getorders',
+      dataSrc: 'docs',
+      data: function(d) {
+        // Add filter parameters
+        d.customer = $('#customerFilter').val();
+        d.salesman = $('#salesmanFilter').val();
+        d.truck = $('#truckFilter').val();
+        d.status = $('#statusFilter').val();
+        d.fromDate = $('#fromDateFilter').val();
+        d.toDate = $('#toDateFilter').val();
+        
+        return d;
+      },
+      dataFilter: function(data) {
+        // Parse the response to get summary data
+        var json = JSON.parse(data);
+        if(json.summary) {
+          summaryData = {
+            total: json.summary.total || 0,
+            pending: json.summary.pending || 0,
+            completed: json.summary.completedToday || 0,
+            cancelled: json.summary.cancelled || 0
+          };
+          updateSummaryCards(summaryData);
         }
-]
-   });
+        return JSON.stringify(json); // Return the original data for DataTables
+      }
+    },
+    language: {
+      paginate: {
+        next: '<i class="fas fa-chevron-right"></i>',
+        previous: '<i class="fas fa-chevron-left"></i>'
+      },
+      search: "_INPUT_",
+      searchPlaceholder: "Search orders...",
+      lengthMenu: "Show _MENU_ orders",
+      info: "Showing _START_ to _END_ of _TOTAL_ orders"
+    },
+    columns: [
+      { data: 'id', title: 'Order ID' },
+      { data: 'name', title: 'Customer' },
+      { 
+        data: 'createdAt', 
+        title: 'Date',
+        render: function(data) {
+          return new Date(data).toLocaleDateString();
+        }
+      },
+      { data: 'truckId', title: 'Truck' },
+      { 
+        data: 'status', 
+        title: 'Status',
+        render: function(data) {
+          let badgeClass = 'badge-secondary';
+          if(data === 'Pending') badgeClass = 'badge-pending';
+          if(data === 'DELIVERED') badgeClass = 'badge-completed';
+          if(data === 'Cancelled') badgeClass = 'badge-cancelled';
+          if(data === 'In Progress') badgeClass = 'badge-in-progress';
+          
+          return `<span class="status-badge ${badgeClass}">${data}</span>`;
+        }
+      },
+      { 
+        data: 'totalPrice', 
+        title: 'Total',
+        render: function(data) {
+          return data ? '$' + parseFloat(data).toFixed(2) : '$0.00';
+        }
+      },
+      { 
+        data: 'totalPrice', 
+        title: 'Balance',
+        render: function(data) {
+          return data ? '$' + parseFloat(data).toFixed(2) : '$0.00';
+        }
+      },
+      { 
+        data: 'isCreditCustomerPaid', 
+        title: 'Payment',
+        render: function(data) {
+          return data ? 'Paid' : 'Unpaid';
+        }
+      },
+      { 
+        data: null,
+        orderable: false,
+        searchable: false,
+        render: function(data, type, row) {
+          return `
+            <button class="btn btn-action btn-view" data-id="${row._id}">View</button>
+                        <button class="btn btn-action btn-manage edit-zone" data-id="${row._id}">Edit</button>
+
+          `;
+        }
+      }
+    ],
+    drawCallback: function(settings) {
+      // Update summary cards after each draw
+      if(settings.json && settings.json.summary) {
+        updateSummaryCards({
+          total: settings.json.summary.total || 0,
+          pending: settings.json.summary.pending || 0,
+          completed: settings.json.summary.completedToday || 0,
+          cancelled: settings.json.summary.cancelled || 0
+        });
+      }
+    }
+  });
    $('#ordertable tbody').on('click', '.edit-zone', function () {
         var orderId = $(this).data('id');
         window.location.href = '/editorder/' + orderId;
     });
 
     // Handle History button click
-    $('#ordertable tbody').on('click', '.history-zone', function () {
-        var orderId = $(this).data('id');
-        window.location.href = '/orderhistory/' + orderId;
-    });
-      });
-    </script>
-<script>
-  $(document).ready(function () {
-    $(document).on("click", ".viewsaleszone-zone", function () {
-      let salesZoneId = $(this).data("id"); // Get the ID from button
 
-      // Fetch sales data using AJAX (assuming an API endpoint `/api/saleszone/:id`)
-      // $.ajax({
-      //   url: `/api/saleszone/${salesZoneId}`, // Modify this based on your API
-      //   type: "GET",
-      //   success: function (response) {
-      //     let salesData = response.salesData; // Assuming API returns { salesData: [...] }
-
-      //     // Clear the existing rows in the table
-      //     $("#salesZoneTableBody").empty();
-
-      //     // Populate the modal table with new data
-      //     salesData.forEach(sale => {
-      //       let available = sale.totalLoad - (sale.quantityDelivered + sale.quantityReturned + sale.damagedQuantity);
-
-      //       $("#salesZoneTableBody").append(`
-      //         <tr>
-      //           <td>${sale.item}</td>
-      //           <td>${sale.totalLoad}</td>
-      //           <td>${sale.quantityDelivered}</td>
-      //           <td>${sale.quantityReturned}</td>
-      //           <td>${sale.damagedQuantity}</td>
-      //           <td>${available}</td>
-      //         </tr>
-      //       `);
-      //     });
-
-      //     // Show the modal
-      //     $("#salesZoneModal").modal("show");
-      //   },
-      //   error: function () {
-      //     alert("Failed to fetch sales data.");
-      //   }
-      // });
-      $("#salesZoneModal").modal("show");
-
-    });
+  
+  // Show order details modal when view button is clicked
+  $('#ordertable tbody').on('click', '.btn-view', function () {
+    $('#orderDetailsModal').modal('show');
   });
+  $('#printInvoice').click(function() {
+    // Implement print functionality
+    window.print();
+  });
+  // Initialize select2 for dropdowns
+  // $('.customer-code-js, .salesman-js, .truck-js').select2({
+  //   width: '100%',
+  //   placeholder: "Select option",
+  //   allowClear: true
+  // });
+});
 </script>
-<%- include('../includes/footer.ejs') -%>
 
-<%- include('../includes/end.ejs') -%>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+<script>
+  $(document).ready(function() {
+    $('.customer-code-js').select2({
+    placeholder: "Select Customer",
+    allowClear: true,
+    ajax: {
+      url: "/customersee",
+      dataType: "json",
+      delay: 250,
+      data: function(params) {
+        return {
+          search: params.term || "",
+          customerName: $("#customerName").val() || ""
+        };
+      },
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.id, text: item.id };
+          }),
+        };
+      },
+    }
+  });
+
+  $('.salesman-js').select2({
+    dropdownParent: $("#cardb"),
+    ajax: {
+      url: '/salesmanids',
+      dataType: 'json',
+      delay: 250,
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.id, text: item.id };
+          }),
+        };
+      },
+    }
+  });
+
+  $('.truck-js').select2({
+    dropdownParent: $("#cardb"),
+    ajax: {
+      url: '/truckids',
+      dataType: 'json',
+      delay: 250,
+      data: function(params) {
+        return {
+          search: params.term,
+          customKey: 'utilities'
+        };
+      },
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.id, text: item.id };
+          }),
+        };
+      },
+    }
+  });
+});
+</script>

@@ -1,6 +1,239 @@
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
+<!-- Add CSS Libraries -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.3.4/dist/select2-bootstrap4.min.css" rel="stylesheet">
+
+<style>
+  :root {
+    --primary: #4d8da9;
+    --primary-light: #61A3C0;
+    --success: #1cc88a;
+    --success-dark: #17a673;
+    --danger: #e74a3b;
+    --light: #f8f9fc;
+    --dark: #5a5c69;
+    --gray: #e9ecef;
+  }
+
+  .order-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .card-header-custom {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 1.5rem;
+    border-bottom: none;
+  }
+
+  .card-header-custom h3 {
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .card-header-custom i {
+    margin-right: 12px;
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-weight: 600;
+    color: var(--dark);
+    position: relative;
+    padding-bottom: 12px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+  }
+
+  .section-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 3px;
+  }
+
+  .section-title i {
+    margin-right: 10px;
+    color: var(--primary);
+  }
+
+  .form-label {
+    font-weight: 500;
+    color: var(--dark);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-label i {
+    margin-right: 8px;
+    font-size: 0.9rem;
+    color: var(--primary);
+  }
+
+  .form-control, .select2-selection {
+    border: 1px solid var(--gray);
+    border-radius: 8px;
+    padding: 10px 15px;
+    transition: all 0.3s;
+  }
+
+  .form-control:focus, .select2-selection--single:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(77, 141, 169, 0.25);
+  }
+
+  .product-table {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .product-table thead th {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+    border: none;
+    padding: 12px 15px;
+  }
+
+  .product-table tbody td {
+    vertical-align: middle;
+    padding: 15px;
+    border-color: var(--gray);
+  }
+
+  .product-table select, .product-table input {
+    border-radius: 6px;
+  }
+
+  .btn-add {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s;
+  }
+
+  .btn-add:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(77, 141, 169, 0.3);
+  }
+
+  .btn-add i {
+    margin-right: 8px;
+  }
+
+  .btn-remove {
+    background: var(--danger);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+
+  .btn-remove:hover {
+    transform: scale(1.1);
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 30px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s;
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(28, 200, 138, 0.3);
+  }
+
+  .btn-submit i {
+    margin-right: 10px;
+    font-size: 1.1rem;
+  }
+
+  .notes-box {
+    border-left: 4px solid var(--primary);
+    background-color: var(--light);
+    border-radius: 0 8px 8px 0;
+    padding: 15px;
+  }
+
+  .select2-container--bootstrap4 .select2-selection--single {
+    height: auto;
+    padding: 10px 15px;
+  }
+
+  .select2-container--bootstrap4 .select2-selection__arrow {
+    height: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .section-title {
+      font-size: 1.2rem;
+    }
+    
+    .product-table thead {
+      display: none;
+    }
+    
+    .product-table tbody tr {
+      display: block;
+      margin-bottom: 20px;
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+    }
+    
+    .product-table tbody td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: none;
+      border-bottom: 1px solid var(--gray);
+    }
+    
+    .product-table tbody td:before {
+      content: attr(data-label);
+      font-weight: 500;
+      color: var(--dark);
+      margin-right: 15px;
+    }
+    
+    .product-table tbody td:last-child {
+      border-bottom: none;
+    }
+  }
+</style>
+
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
 </div>
@@ -8,213 +241,294 @@
 </div>
 </div>
 </div>
+
 <div class="container-fluid mt--6">
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">Create Orders</h3>
-                </div>
-                <!-- Card body -->
-                <div class="card-body" id="cardb">
-                    <form action="/orders/neworder" method="POST">
-                        <div class="form-group row">
-                            <label for="customerName"
-                                class="col-md-2 col-form-label form-control-label">Customer Name</label>
-                            <div class="col-md-10">
-                                <!-- <input class="form-control" name="name" type="text" placeholder="Enter customer name" id="customerName" required> -->
-                                <select class="customer-name-js form-control" id="customerName" name="name" required></select>
-
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="customerCode"
-                                class="col-md-2 col-form-label form-control-label">Customer Code</label>
-                            <div class="col-md-10">
-                                <!-- <input class="form-control" name="customerId" type="text" placeholder="Enter customer code" id="customerCode" required> -->
-                                <select class="customer-code-js form-control" id="customerCode" name="customerId" required></select>
-
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="truckId" class="col-md-2 col-form-label form-control-label">Truck ID</label>
-                            <div class="col-md-10">
-                                <select class="truck-js form-control" id="truckId" name="truckId" required></select>
-
-                                <!-- <input class="form-control" name="truckId" type="text" placeholder="Select or enter the truck id" id="truckId"> -->
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="zone"
-                                class="col-md-2 col-form-label form-control-label">Zone</label>
-                            <div class="col-md-10">
-                                <select class="zone-js form-control" id="zone" name="area" ></select>
-
-                                <!-- <input class="form-control" name="area" type="text" placeholder="Select or enter the zone" id="zone" required> -->
-                            </div>
-                        </div>
-                        <!-- <div class="form-group row">
-                            <label for="route"
-                                class="col-md-2 col-form-label form-control-label">Route</label>
-                            <div class="col-md-10">
-                                <select class="truck-js form-control" id="route" name="route" required></select>
-
-                             
-                            </div>
-                        </div> -->
-                        <div class="form-group row">
-                            <label for="quantity5gal"
-                                class="col-md-2 col-form-label form-control-label">Quantity (5-Gallon Bottles)</label>
-                            <div class="col-md-10">
-                                <input class="form-control" name="noOf5galBottles" type="number" placeholder="Enter quantity of 5-gallon bottles" id="quantity5gal">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="quantity200ml"
-                                class="col-md-2 col-form-label form-control-label">Quantity (200 ml Bottles)</label>
-                            <div class="col-md-10">
-                                <input class="form-control" name="noOf200mlBottles" type="number" placeholder="Enter quantity of 200 ml bottles" id="quantity200ml">
-                            </div>
-                        </div>
-                        <div>
-                            <button type="submit" class="btn btn-success">Submit Order</button>
-                            <!-- <a href="/" class="btn btn-danger">Cancel</a> -->
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!-- Footer -->
-          
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card order-card">
+        <div class="card-header card-header-custom">
+          <h3 class="text-white"><i class="fas fa-file-invoice"></i> Order Information</h3>
         </div>
+        <div class="card-body">
+          <form action="/orders/neworder" method="POST" id="orderForm">
+            <!-- Customer Information Section -->
+            <div class="mb-3">
+              <h5 class="section-title"><i class="fas fa-user-tag"></i> Customer Information</h5>
+              <div class="row">
+                <div class="col-md-6 mb-4">
+                  <label for="customerName" class="form-label"><i class="fas fa-user"></i> Customer Name</label>
+                  <select class="customer-name-js form-control" id="customerName" name="name" required></select>
+                </div>
+                <div class="col-md-6 mb-4">
+                  <label for="customerCode" class="form-label"><i class="fas fa-id-card"></i> Customer Code</label>
+                  <select class="customer-code-js form-control" id="customerCode" name="customerId" required></select>
+                </div>
+            
+                <div class="col-md-6 mb-4">
+                  <label for="truckId" class="form-label"><i class="fas fa-truck"></i> Truck ID</label>
+                  <select class="truck-js form-control" id="truckId" name="truckId" required></select>
+                </div>
+                <div class="col-md-6 mb-4">
+                  <label for="zone" class="form-label"><i class="fas fa-map-marked-alt"></i> Delivery Zone</label>
+                  <select class="zone-js form-control" id="zone" name="area"></select>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Products Section -->
+            <div class="mb-5">
+              <h5 class="section-title"><i class="fas fa-box-open"></i> Order Items</h5>
+              <div class="table-responsive">
+                <table class="table product-table" id="productsTable">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Type</th>
+                      <th>Unit Price</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td data-label="Product">
+                        <select class="form-control" name="products[0][name]" required>
+                          <option value="" disabled selected>Select Product</option>
+                          <option value="5 Gallon Bottle">5 Gallon Bottle</option>
+                          <option value="200ml Bottle">200ml Bottle</option>
+                          <option value="Water Dispenser">Water Dispenser</option>
+                        </select>
+                      </td>
+                      <td data-label="Quantity">
+                        <input type="number" class="form-control" name="products[0][quantity]" min="1" value="1" required>
+                      </td>
+                      <td data-label="Type">
+                        <select class="form-control" name="products[0][type]" required>
+                          <option value="Lend">Lend</option>
+                          <option value="Return">Return</option>
+                        </select>
+                      </td>
+                      <td data-label="Unit Price">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                          </div>
+                          <input type="number" class="form-control" name="products[0][price]" min="0" step="0.01" required>
+                        </div>
+                      </td>
+                      <td data-label="Action">
+                        <button type="button" class="btn-remove remove-product" disabled>
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <button type="button" class="btn btn-add mt-3" id="addProduct">
+                <i class="fas fa-plus-circle"></i> Add Product
+              </button>
+            </div>
+            
+            <!-- Additional Notes -->
+            <div class="mb-4">
+              <h5 class="section-title"><i class="fas fa-clipboard"></i> Additional Information</h5>
+              <div class="notes-box">
+                <label for="notes" class="form-label"><i class="fas fa-sticky-note"></i> Delivery Notes</label>
+                <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Any special instructions for delivery..."></textarea>
+              </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="text-center mt-5">
+              <button type="submit" class="btn btn-submit">
+                <i class="fas fa-check-circle"></i> CREATE ORDER
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </div>
+</div>
 
-    <!-- Include Select2 CSS -->
-    
-    <!-- Include Select2 JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
- 
-      </script>   
-      <script>
-        $(document).ready(function () {
-          // Initialize Select2 for the element with the correct ID or class
-          $('.zone-js').select2({
-            dropdownParent: $("#cardb"),
-  ajax: {
-    url: '/zoneids', // Backend endpoint
-    dataType: 'json',
-    delay: 250, // Debounce for performance
-    data: function (params) {
+<%- include('../includes/footer.ejs') -%>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+$(document).ready(function() {
+  // Initialize Select2 dropdowns with Bootstrap theme
+  $('.customer-name-js').select2({
+    theme: 'bootstrap4',
+    placeholder: "Search customer name...",
+    allowClear: true,
+    ajax: {
+      url: "/customersee",
+      dataType: "json",
+      delay: 250,
+      data: function(params) {
         return {
-          q: params.term, // Search term from Select2 input
-          truckid: $('#truckId').val() // Get the route ID from an input/select field
+          search: params.term || "",
+          customerId: $("#customerCode").val() || ""
         };
       },
-    processResults: function (data) {
-      return {
-        results: data.map(function (item) {
-          return { id: item.id, text: item.id }; // Customize text display
-        }),
-      };
-    },
-  
-  },
-});
-        });
-      </script>   
-      <script>
-        $(document).ready(function () {
-          // Initialize Select2 for the element with the correct ID or class
-          $('.truck-js').select2({
-            dropdownParent: $("#cardb"),
-  ajax: {
-    url: '/truckids', // Backend endpoint
-    dataType: 'json',
-    delay: 250, // Debounce for performance
-    data: function (params) {
-      return {
-        search: params.term, // Select2 search term
-        customKey: 'utilities' // Custom query parameter
-      };
-    },
-    processResults: function (data) {
-      return {
-        results: data.map(function (item) {
-          return { id: item.id, text: item.id }; // Customize text display
-        }),
-      };
-    },
-  
-  },
-});
-        });
-      </script>  
-      
-      <script>
-    $(document).ready(function () {
-    function initializeCustomerSelects() {
-        $(".customer-name-js").select2({
-            placeholder: "Select Customer Name",
-            allowClear: true,
-            ajax: {
-                url: "/customersee", // Your backend URL
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        search: params.term || "",
-                        customerId: $("#customerCode").val() || "" // If customerId exists, filter by it
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data.map(function (item) {
-                            return { id: item.name, text: item.name }; // Adjust field names as needed
-                        }),
-                    };
-                },
-            },
-        });
-
-        $(".customer-code-js").select2({
-            placeholder: "Select Customer Code",
-            allowClear: true,
-            ajax: {
-                url: "/customersee",
-                dataType: "json",
-                delay: 250,
-                data: function (params) {
-                    return {
-                        search: params.term || "",
-                        customerName: $("#customerName").val() || "" // If customerName exists, filter by it
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data.map(function (item) {
-                            return { id: item.id, text: item.id }; // Adjust field names as needed
-                        }),
-                    };
-                },
-            },
-        });
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.name, text: item.name };
+          }),
+        };
+      },
     }
+  });
 
-    // Initialize Select2
-    initializeCustomerSelects();
+  $('.customer-code-js').select2({
+    theme: 'bootstrap4',
+    placeholder: "Search customer code...",
+    allowClear: true,
+    ajax: {
+      url: "/customersee",
+      dataType: "json",
+      delay: 250,
+      data: function(params) {
+        return {
+          search: params.term || "",
+          customerName: $("#customerName").val() || ""
+        };
+      },
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.id, text: item.id };
+          }),
+        };
+      },
+    }
+  });
 
-    // Event Listener: Reset customer code or name based on selection
-    // $("#customerName").on("change", function () {
-    //     $("#customerCode").val(null).trigger("change"); // Reset customer code
-    //     initializeCustomerSelects();
-    // });
+  $('.truck-js').select2({
+    theme: 'bootstrap4',
+    placeholder: "Search truck...",
+    allowClear: true,
+    ajax: {
+      url: '/truckids',
+      dataType: 'json',
+      delay: 250,
+      data: function(params) {
+        return {
+          search: params.term,
+          customKey: 'utilities'
+        };
+      },
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.id, text: item.id };
+          }),
+        };
+      },
+    }
+  });
 
-    // $("#customerCode").on("change", function () {
-    //     $("#customerName").val(null).trigger("change"); // Reset customer name
-    //     initializeCustomerSelects();
-    // });
+  $('.zone-js').select2({
+    theme: 'bootstrap4',
+    placeholder: "Search zone...",
+    allowClear: true,
+    ajax: {
+      url: '/zoneids',
+      dataType: 'json',
+      delay: 250,
+      data: function(params) {
+        return {
+          q: params.term,
+          truckid: $('#truckId').val()
+        };
+      },
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.id, text: item.id };
+          }),
+        };
+      },
+    }
+  });
+
+  // Add product row
+  let productCount = 1;
+  $('#addProduct').click(function() {
+    const newRow = `
+      <tr>
+        <td data-label="Product">
+          <select class="form-control" name="products[${productCount}][name]" required>
+            <option value="" disabled selected>Select Product</option>
+            <option value="5 Gallon Bottle">5 Gallon Bottle</option>
+            <option value="200ml Bottle">200ml Bottle</option>
+            <option value="Water Dispenser">Water Dispenser</option>
+          </select>
+        </td>
+        <td data-label="Quantity">
+          <input type="number" class="form-control" name="products[${productCount}][quantity]" min="1" value="1" required>
+        </td>
+        <td data-label="Type">
+          <select class="form-control" name="products[${productCount}][type]" required>
+            <option value="Lend">Lend</option>
+            <option value="Return">Return</option>
+          </select>
+        </td>
+        <td data-label="Unit Price">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <input type="number" class="form-control" name="products[${productCount}][price]" min="0" step="0.01" required>
+          </div>
+        </td>
+        <td data-label="Action">
+          <button type="button" class="btn-remove remove-product">
+            <i class="fas fa-times"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+    $('#productsTable tbody').append(newRow);
+    productCount++;
+    
+    // Enable remove buttons if more than one row
+    if($('#productsTable tbody tr').length > 1) {
+      $('.remove-product').prop('disabled', false);
+    }
+  });
+
+  // Remove product row
+  $(document).on('click', '.remove-product', function() {
+    if($('#productsTable tbody tr').length > 1) {
+      $(this).closest('tr').remove();
+      productCount--;
+      
+      // Disable remove button if only one row left
+      if($('#productsTable tbody tr').length === 1) {
+        $('.remove-product:first').prop('disabled', true);
+      }
+    }
+  });
+
+  // Form submission handler
+  $('#orderForm').submit(function(e) {
+    // Validate at least one product has been selected
+    const firstProduct = $('select[name="products[0][name]"]').val();
+    if (!firstProduct) {
+      e.preventDefault();
+      alert('Please select at least one product');
+      return false;
+    }
+    return true;
+  });
 });
+</script>
 
-      </script>
-<%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

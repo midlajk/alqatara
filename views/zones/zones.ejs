@@ -4,7 +4,10 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/zones/addzone" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+<!-- <a href="/zones/addzone" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a> -->
+<a href="/zones/addzone" class="btn btn-add-new">
+  <i class="fas fa-plus mr-2"></i> New Zone
+</a>
 </div>
 </div>
 
@@ -17,7 +20,7 @@
       <div class="card">
         <!-- Card header -->
         <div class="card-header border-0">
-          <h3 class="mb-0">Manage Zones</h3>
+          <h3 class="mb-0 text-white">Manage Zones</h3>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
@@ -66,7 +69,11 @@
               return d;
               // Add any additional parameters you want to send to the server here
             }
-          },
+          }, language: {
+        paginate: {
+          next: '<i class="fas fa-chevron-right"></i>',
+          previous: '<i class="fas fa-chevron-left"></i>'
+        },},
           columns: [
     { 
         data: 'id', 

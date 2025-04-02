@@ -17,7 +17,7 @@
         <div class="card">
           <!-- Card header -->
           <div class="card-header border-0">
-            <h3 class="mb-0">Control and Customize User Access Levels</h3>
+            <h3 class="mb-0 text-white">Control and Customize User Access Levels</h3>
           </div>
           <!-- Light table -->
           <div class="table-responsive">
@@ -67,7 +67,11 @@
   
               // Add any additional parameters you want to send to the server here
             },// Data source is the root of the response array
-      },
+      },language: {
+        paginate: {
+          next: '<i class="fas fa-chevron-right"></i>',
+          previous: '<i class="fas fa-chevron-left"></i>'
+        }},
       columns: [
 { data: 'className', title: 'class Name' }, // Customer Name
 { data: 'readonly', title: 'readonly' }, // Customer ID (assuming 'uid' is the customer ID)

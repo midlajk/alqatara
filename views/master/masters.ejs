@@ -18,7 +18,7 @@
         <div class="card">
           <!-- Card header -->
           <div class="card-header border-0">
-            <h3 class="mb-0">Manage and Update Master Data Records</h3>
+            <h3 class="mb-0 text-white">Manage and Update Master Data Records</h3>
           </div>
           <!-- Light table -->
           <div class="table-responsive">
@@ -93,7 +93,11 @@
       
                   // Add any additional parameters you want to send to the server here
                 },// Data source is the root of the response array
-          },
+          },language: {
+        paginate: {
+          next: '<i class="fas fa-chevron-right"></i>',
+          previous: '<i class="fas fa-chevron-left"></i>'
+        }},
           columns: [
   { data: 'name', title: 'Customer Name' }, // Customer Name
   { data: 'email', title: 'Customer ID' }, // Customer ID (assuming 'uid' is the customer ID)
@@ -108,7 +112,8 @@
   { data: 'designation', title: 'Contact' },
   { data: null, render: function(data, type, row) {
             return `
-              <button class="btn btn-primary edit-zone" data-id="${row._id}">Edit</button>
+            <button class="btn btn-action btn-manage edit-zone" data-id="${row._id}">Edit</button>
+              
             `;
           }
         }

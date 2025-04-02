@@ -4,8 +4,9 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/addnewsalesman" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
-
+<a href="/addnewsalesman" class="btn btn-add-new">
+  <i class="fas fa-plus mr-2"></i> New Salesman
+</a>
 </div>
 
 </div>
@@ -18,7 +19,7 @@
         <div class="card">
           <!-- Card header -->
           <div class="card-header border-0">
-            <h3 class="mb-0">Manage and Update Master Data Records</h3>
+            <h3 class="mb-0 text-white">Manage and Update Master Data Records</h3>
           </div>
           <!-- Light table -->
           <div class="table-responsive">
@@ -91,7 +92,11 @@
       
                   // Add any additional parameters you want to send to the server here
                 },// Data source is the root of the response array
-          },
+          },language: {
+        paginate: {
+          next: '<i class="fas fa-chevron-right"></i>',
+          previous: '<i class="fas fa-chevron-left"></i>'
+        },},
           columns: [
           { 
                 data: 'name', 
@@ -109,7 +114,18 @@
       return new Date(data).toLocaleDateString(); // Format the date as required
     }
   }, // Registered On
-  
+  { 
+        data: null,
+        orderable: false,
+        searchable: false,
+        render: function(data, type, row) {
+          return `
+            
+                        <button class="btn btn-action btn-manage edit-zone" data-id="${row._id}">Edit</button>
+
+          `;
+        }
+      }
 ]
 });
       });

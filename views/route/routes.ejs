@@ -4,7 +4,10 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="/routes/addroute" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
+<a href="/routes/addroute" class="btn btn-add-new">
+  <i class="fas fa-plus mr-2"></i> New Route
+</a>
+<!-- <a href="/routes/addroute" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a> -->
 </div>
 </div>
 </div>
@@ -16,7 +19,7 @@
           <div class="card">
             <!-- Card header -->
             <div class="card-header border-0">
-              <h3 class="mb-0">Manage Routes</h3>
+              <h3 class="mb-0 text-white">Manage Routes</h3>
             </div>
             <!-- Light table -->
             <div class="table-responsive">
@@ -89,7 +92,11 @@
         data: function (d) {
           return d; // Optionally, add more parameters if needed
         }
-      },
+      },language: {
+        paginate: {
+          next: '<i class="fas fa-chevron-right"></i>',
+          previous: '<i class="fas fa-chevron-left"></i>'
+        },},
       columns: [
     { 
         data: 'id', 

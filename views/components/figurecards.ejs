@@ -174,184 +174,233 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 <div class="row">
   <div class="col-12">
-<div class="filter-container">
-    <div class="date-filter">
-        <label class="date-input">
-            <span>From</span>
-            <input type="date" id="toDate">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
-        </label>
-        <label class="date-input">
-            <span>To</span>
-            <input type="date" id="fromDate">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
-        </label>
+    <div class="filter-container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="date-filter">
+            <label class="date-input">
+              <span>From</span>
+              <input type="date" id="fromDate">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
+            </label>
+            <label class="date-input">
+              <span>To</span>
+              <input type="date" id="toDate">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 11h10v2H7z"/></svg>
+            </label>
+            <div class="col-md-4">
+              <select class="form-control" id="cityFilter">
+                <option value="All">All Cities</option>
+                <!-- Will be populated dynamically -->
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 text-md-right mt-3 mt-md-0">
+          <button class="filter-btn" id="applyFilterBtn">
+            <i class="fas fa-filter mr-2"></i> Apply Filters
+          </button>
+        </div>
+      </div>
     </div>
-    <button class="filter-btn float-right" id="applyFilterBtn">Filter By</button>
-  
   </div>
-  </div>
-  
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Number of Deliveries</h5>
-              <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                <i class="ni ni-delivery-fast" ></i>
-              </div>
-            </div>
-          </div>
-        
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Today's Active Vehicles</h5>
-              <span class="h2 font-weight-bold mb-0"  id="newUsers">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                <i class="ni ni-single-02"></i>
-              </div>
-            </div>
-          </div>
-         
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Deleted Users</h5>
-              <span class="h2 font-weight-bold mb-0" id="deletedUsers">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                <i class="ni ni-basket"></i>
-              </div>
-            </div>
-          </div>
-         
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Total Credit Sales</h5>
-              <span class="h2 font-weight-bold mb-0" id="creditSales">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                <i class="ni ni-money-coins"></i>
-              </div>
-            </div>
-          </div>
-    
-        </div>
-      </div>
-    </div> 
-     <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Companies Credits</h5>
-              <span class="h2 font-weight-bold mb-0"  id="newUsers">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                <i class="fas fa-building"></i>
-              </div>
-            </div>
-          </div>
-         
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">New Customers</h5>
-              <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                <i class="fas fa-user-plus"></i>
-              </div>
-            </div>
-          </div>
-        
-        </div>
-      </div>
-    </div>
-  
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Customers Credits</h5>
-              <span class="h2 font-weight-bold mb-0" id="deletedUsers">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                <i class="fas fa-credit-card"></i>
-              </div>
-            </div>
-          </div>
-         
-        </div>
-      </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Today Cash To Bank</h5>
-              <span class="h2 font-weight-bold mb-0" id="creditSales">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                <i class="fa-solid fa-sack-dollar"></i>
-                            </div>
-            </div>
-          </div>
-    
-        </div>
-      </div>
-    </div> 
-    <div class="col-12 m-1">
+</div>
 
-    <a href="/utilities" class="btn btn-primary text-white float-right" id="#">Stock Transaction In Car</a>
+<!-- Key Metrics Section -->
+<div class="row">
+  <!-- Deliveries -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">Number of Deliveries</span>
+            <h2 class="metric-value" id="deliveries">0</h2>
+            <div class="mt-2">
+              <span class="trend-up">
+                <i class="fas fa-arrow-up mr-1"></i> 12% from last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-red text-white">
+              <i class="ni ni-delivery-fast"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Active Vehicles -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">Active Vehicles</span>
+            <h2 class="metric-value" id="activeVehicles">0</h2>
+            <div class="mt-2">
+              <span class="trend-down">
+                <i class="fas fa-arrow-down mr-1"></i> 5% from last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-orange text-white">
+              <i class="fas fa-truck"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- New Customers -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">New Customers</span>
+            <h2 class="metric-value" id="newCustomers">0</h2>
+            <div class="mt-2">
+              <span class="trend-up">
+                <i class="fas fa-arrow-up mr-1"></i> 18% from last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-green text-white">
+              <i class="fas fa-user-plus"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  
+
+  <!-- Credit Sales -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">Total Credit Sales</span>
+            <h2 class="metric-value" id="creditSales">0</h2>
+            <div class="mt-2">
+              <span class="trend-neutral">
+                <i class="fas fa-equals mr-1"></i> Same as last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-info text-white">
+              <i class="ni ni-money-coins"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <!-- Companies Credits -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">Companies Credits</span>
+            <h2 class="metric-value" id="companyCredits">0</h2>
+            <div class="mt-2">
+              <span class="trend-up">
+                <i class="fas fa-arrow-up mr-1"></i> 8% from last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-blue text-white">
+              <i class="fas fa-building"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customers Credits -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">Customers Credits</span>
+            <h2 class="metric-value" id="customerCredits">0</h2>
+            <div class="mt-2">
+              <span class="trend-down">
+                <i class="fas fa-arrow-down mr-1"></i> 3% from last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-purple text-white">
+              <i class="fas fa-credit-card"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today Cash to Bank -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">Today Cash to Bank</span>
+            <h2 class="metric-value" id="cashToBank">0</h2>
+            <div class="mt-2">
+              <span class="trend-up">
+                <i class="fas fa-arrow-up mr-1"></i> 22% from last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-yellow text-white">
+              <i class="fas fa-sack-dollar"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottle Returns -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="row align-items-center">
+          <div class="col">
+            <span class="metric-label">Bottle Returns</span>
+            <h2 class="metric-value" id="bottleReturns">0</h2>
+            <div class="mt-2">
+              <span class="trend-up">
+                <i class="fas fa-arrow-up mr-1"></i> 15% from last period
+              </span>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card-icon bg-gradient-teal text-white">
+              <i class="fas fa-recycle"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
   <!-- Include Select2 CSS -->

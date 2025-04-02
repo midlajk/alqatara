@@ -1,4 +1,3 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
@@ -10,248 +9,593 @@
 </div>
 </div>
 </div>
+
+<!-- Main Content -->
 <div class="container-fluid mt--6">
-  <div class="row"> 
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Today Cash To Accounts</h5>
-              <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                <i class="ni ni-delivery-fast" ></i>
+  <!-- Summary Cards -->
+      <!-- Summary Cards -->
+      <div class="row">
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Collection</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                  </div>
+                </div>
               </div>
+            
             </div>
           </div>
-        
         </div>
-      </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <!-- Card body -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Customer Cash </h5>
-              <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                <i class="ni ni-delivery-fast" ></i>
+        
+       <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Customer Payments</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
+                    <i class="fa-solid fa-user"></i>
+                                    </div>
+                </div>
               </div>
+            
             </div>
           </div>
-        
+        </div>   
+         
+         <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Recieved Amount</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
         </div>
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div> 
+      </div>
+
+  <!-- Action Buttons -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="btn-group" role="group">
+        <a class="btn btn-primary btn-icon" href="/collectedpayments">
+          <span class="btn-inner--icon"><i class="ni ni-collection"></i></span>
+          <span class="btn-inner--text">Collected Payments</span>
+        </a>
+        <a class="btn btn-success btn-icon" href="#">
+          <span class="btn-inner--icon"><i class="ni ni-cloud-download-95"></i></span>
+          <span class="btn-inner--text">Download Report</span>
+        </a>
+        
+   
       </div>
     </div>
-    <div class="col-xl-2 col-md-6"></div>
-    <div class="col-xl-4 col-md-6">
-      <a class="btn btn-primary" href="/collectedpayments">Collected Payments</a>
-
-      <a class="btn" href="#">Download Report</a>
-      <!-- <a  class="btn" href="#">Credit Report</a> -->
-
-    </div>
-
   </div>
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <style>
-            .tab-button {
-              padding: 10px 15px;
-              border: 1px solid #ccc;
-              cursor: pointer;
-              background: #e7e7e7;
-              font-weight: bold;
-              margin-right: 5px;
-              transition: 0.3s;
-            }
-          
-            .tab-button.active {
-              background: #4d8da9;
-              color: #ffffff;
-            }
-          
-            .report-table {
-              display: none;
-            }
-          
-            .report-table.active {
-              display: block;
-            }
-          </style>
-          
-          <div>
-            <a class="tab-button active" href="/cashier" data-table="salesmanTable">Salesman Collection</a>
-            <a class="tab-button" href="/customercollection" data-table="customerTable">Customer Collection</a>
-          
 
-          </div>
-            <!-- Card header -->
+  <!-- Tabs Navigation -->
+  <div class="row">
+    <div class="col">
+      <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="salesman-tab" data-toggle="tab" href="#salesman-content" role="tab">
+            <i class="fa-solid fa-users-gear mr-2"></i>Salesman Collection
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="customer-tab" data-toggle="tab" href="#customer-content" role="tab">
+            <i class="ni ni-circle-08 mr-2"></i>Customer Credits
+          </a>
+        </li>
+      </ul>
+      
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Salesman Collection Tab -->
+        <div class="tab-pane fade show active" id="salesman-content" role="tabpanel">
+          <div class="card">
             <div class="card-header border-0">
-              <h3 class="mb-0">Payment Collection</h3>
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0 text-white">Payment Collection</h3>
+                </div>
+                <div class="col text-right">
+                  <button class="btn btn-sm btn-primary">Refresh Data</button>
+                </div>
+              </div>
             </div>
-            <!-- Light table -->
+            
             <div class="table-responsive">
-              <table class="table align-items-center table-flush" id="rechargeTable">
+              <table class="table align-items-center table-flush" id="salesmanTable">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col" class="sort" data-sort="name">Salesman ID</th>
+                    <th scope="col" class="sort" data-sort="name">Salesman</th>
                     <th scope="col" class="sort" data-sort="status">Today Sale</th>
-                    <th scope="col" class="sort">Cash Sale</th>
-                    <th scope="col" class="sort">Wallet Sale</th>
-                    <th scope="col" class="sort">Security Deposit</th>
-                    <th scope="col" class="sort" data-sort="completion">Credit Received</th>
-                    <th scope="col" class="sort">Wallet Recharge</th>
-                    <th scope="col" class="sort">Approve</th>
+                    <th scope="col" class="sort">Cash</th>
+                    <th scope="col" class="sort">Wallet</th>
+                    <th scope="col" class="sort">Deposit</th>
+                    <th scope="col" class="sort">Credit</th>
+                    <th scope="col" class="sort">Recharge</th>
+                    <th scope="col" class="sort">Status</th>
+                    <th scope="col" class="sort">Action</th>
                   </tr>
                 </thead>
                 <tbody class="list">
                   <tr>
-                    <td>SM001</td>
+                    <td class="font-weight-bold">SM001 - John Doe</td>
                     <td>$500</td>
                     <td>$300</td>
                     <td>$100</td>
                     <td>$50</td>
                     <td>$50</td>
                     <td>$30</td>
-                    <td><button class="btn btn-primary collect-payment" data-id="SM001">Collect Payment</button></td>
+                    <td><span class="badge badge-pill badge-default">Pending</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-payment" data-id="SM001">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
                   </tr>
                   <tr>
-                    <td>SM002</td>
+                    <td class="font-weight-bold">SM002 - Jane Smith</td>
                     <td>$750</td>
                     <td>$500</td>
                     <td>$150</td>
                     <td>$60</td>
                     <td>$40</td>
                     <td>$50</td>
-                    <td><button class="btn btn-primary collect-payment" data-id="SM002">Collect Payment</button></td>
+                    <td><span class="badge badge-pill badge-success">Collected</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-payment" data-id="SM002" disabled>
+                        <i class="ni ni-check-bold mr-1"></i> Collected
+                      </button>
+                    </td>
                   </tr>
                   <tr>
-                    <td>SM003</td>
+                    <td class="font-weight-bold">SM003 - Mike Johnson</td>
                     <td>$900</td>
                     <td>$600</td>
                     <td>$200</td>
                     <td>$70</td>
                     <td>$30</td>
                     <td>$80</td>
-                    <td><button class="btn btn-primary collect-payment" data-id="SM003">Collect Payment</button></td>
+                    <td><span class="badge badge-pill badge-default">Pending</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-payment" data-id="SM003">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
                   </tr>
                   <tr>
-                    <td>SM004</td>
+                    <td class="font-weight-bold">SM004 - Sarah Williams</td>
                     <td>$650</td>
                     <td>$400</td>
                     <td>$120</td>
                     <td>$40</td>
                     <td>$50</td>
                     <td>$60</td>
-                    <td><button class="btn btn-primary collect-payment" data-id="SM004">Collect Payment</button></td>
+                    <td><span class="badge badge-pill badge-warning">Partial</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-warning collect-payment" data-id="SM004">
+                        <i class="ni ni-money-coins mr-1"></i> Complete
+                      </button>
+                    </td>
                   </tr>
                   <tr>
-                    <td>SM005</td>
+                    <td class="font-weight-bold">SM005 - David Brown</td>
                     <td>$1,100</td>
                     <td>$800</td>
                     <td>$250</td>
                     <td>$90</td>
                     <td>$100</td>
                     <td>$120</td>
-                    <td><button class="btn btn-primary collect-payment" data-id="SM005">Collect Payment</button></td>
+                    <td><span class="badge badge-pill badge-default">Pending</span></td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-payment" data-id="SM005">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
-              
             </div>
-            <!-- Card footer -->
- 
           </div>
+        </div>
+        
+        <!-- Customer Collection Tab -->
+        <div class="tab-pane fade" id="customer-content" role="tabpanel">
+          <div class="card">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0 text-white">Customer Credits</h3>
+                </div>
+                <div class="col text-right">
+                  <button class="btn btn-sm btn-primary">Refresh Data</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="table align-items-center table-flush" id="customerTable">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="sort" data-sort="name">Customer ID</th>
+                    <th scope="col" class="sort" data-sort="status">Customer Name</th>
+                    <th scope="col" class="sort">Total Due</th>
+                    <th scope="col" class="sort">Last Pending</th>
+                    <th scope="col" class="sort">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="list">
+                  <tr>
+                    <td>CUST001</td>
+                    <td class="font-weight-bold">Global Enterprises</td>
+                    <td>$1,250</td>
+                    <td>$450</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-customer-payment" data-id="CUST001">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CUST002</td>
+                    <td class="font-weight-bold">Tech Solutions Inc.</td>
+                    <td>$3,200</td>
+                    <td>$800</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-customer-payment" data-id="CUST002">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CUST003</td>
+                    <td class="font-weight-bold">Acme Corporation</td>
+                    <td>$2,100</td>
+                    <td>$600</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-customer-payment" data-id="CUST003">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CUST004</td>
+                    <td class="font-weight-bold">Pinnacle Services</td>
+                    <td>$1,850</td>
+                    <td>$350</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-customer-payment" data-id="CUST004">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>CUST005</td>
+                    <td class="font-weight-bold">Evergreen Industries</td>
+                    <td>$4,500</td>
+                    <td>$1,200</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary collect-customer-payment" data-id="CUST005">
+                        <i class="ni ni-money-coins mr-1"></i> Collect
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- Footer -->
-</div>
-</div>
+  </div>
 </div>
 
+<!-- Collection Modal -->
+<div class="modal fade" id="collectionModal" tabindex="-1" role="dialog" aria-labelledby="collectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="collectionModalLabel">Collect Payment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="paymentForm">
+          <div class="form-group">
+            <label for="salesmanName">Salesman</label>
+            <input type="text" class="form-control" id="salesmanName" readonly>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="cashAmount">Cash Amount</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" class="form-control" id="cashAmount">
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="paymentMethod">Payment Method</label>
+              <select class="form-control" id="paymentMethod">
+                <option>Cash</option>
+                <option>Bank Transfer</option>
+                <option>Check</option>
+                <option>Mobile Payment</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="collectionNotes">Notes</label>
+            <textarea class="form-control" id="collectionNotes" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmCollection">Confirm Collection</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Collection Modal -->
+<div class="modal fade" id="customerCollectionModal" tabindex="-1" role="dialog" aria-labelledby="customerCollectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="customerCollectionModalLabel">Collect Customer Payment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="customerPaymentForm">
+          <div class="form-group">
+            <label for="customerName">Customer</label>
+            <input type="text" class="form-control" id="customerName" readonly>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="customerDueAmount">Total Due Amount</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="text" class="form-control" id="customerDueAmount" readonly>
+              </div>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="customerPaymentAmount">Payment Amount</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" class="form-control" id="customerPaymentAmount">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="customerPaymentMethod">Payment Method</label>
+              <select class="form-control" id="customerPaymentMethod">
+                <option>Cash</option>
+                <option>Bank Transfer</option>
+                <option>Check</option>
+                <option>Credit Card</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="paymentReference">Reference #</label>
+              <input type="text" class="form-control" id="paymentReference">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="customerCollectionNotes">Notes</label>
+            <textarea class="form-control" id="customerCollectionNotes" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmCustomerCollection">Confirm Collection</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom CSS -->
+<style>
+  .nav-tabs-custom {
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .nav-tabs-custom .nav-link {
+    border: none;
+    color: #8898aa;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s;
+  }
+  
+  .nav-tabs-custom .nav-link.active {
+    color: #5e72e4;
+    background-color: transparent;
+    border-bottom: 3px solid #5e72e4;
+  }
+  
+  .nav-tabs-custom .nav-link:hover:not(.active) {
+    color: #5e72e4;
+    background-color: rgba(94, 114, 228, 0.1);
+  }
+  
+  .card-stats .icon-shape {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .badge-pill {
+    padding: 0.5em 1em;
+  }
+  
+  .collect-payment, .collect-customer-payment {
+    transition: all 0.2s;
+  }
+  
+  .collect-payment:hover, .collect-customer-payment:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table tbody tr {
+    transition: all 0.2s;
+  }
+  
+  .table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    transform: translateX(2px);
+  }
+</style>
+
+<!-- JavaScript -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 <script>
-  // $(document).ready(function () {
-  //   $('#rechargeTable').DataTable({
-  //     processing: true,
-  //     serverSide: true,
-  //     ajax: {
-  //       url: '/getrecharges',
-  //       type: 'GET',
-  //       dataSrc: 'data'
-  //     },
-  //     columns: [
-  //       { data: 'customerId' },
-  //       // { data: 'customer.name' },
-  //       { data: 'amount' },
-  //       { data: 'salesmanId' },
-  //       { data: 'paidcoupons' },
-  //       { data: 'freecoupons' },
-
-  //       { 
-  //         data: 'createdAt',
-  //         render: function (data) {
-  //           return new Date(data).toLocaleString();
-  //         }
-  //       },
-  //       { 
-  //         data: 'updatedAt',
-  //         render: function (data) {
-  //           return new Date(data).toLocaleString();
-  //         }
-  //       },
-  //       { 
-  //   data: null, 
-  //   orderable: false, // Prevent sorting on this column
-  //   searchable: false, // Prevent search filter on buttons
-  //   render: function(data, type, row) {
-  //     return `
-  //       <button class="btn btn-secondary viewsaleszone-zone" data-id="${row._id}">Collect Money</button>
-  //     `;
-  //   }
-  // },
-  //       // {
-  //       //   data: '_id',
-  //       //   render: function (data) {
-  //       //     // <button class="btn btn-sm btn-warning" onclick="editRecharge('${data}')">Edit</button>
-  //       //     return `
-  //       //             <button class="btn btn-sm btn-danger" onclick="deleteRecharge('${data}')">Delete</button>`;
-  //       //   }
-  //       // }
-  //     ]
-  //   });
-  // });
-
-  // function editRecharge(id) {
-  //   alert('Edit Recharge ID: ' + id);
-  //   // Implement edit logic here
-  // }
-
-  // function deleteRecharge(id) {
-  //   if (confirm('Are you sure you want to delete this recharge?')) {
-  //     fetch(`/recharges/${id}`, { method: 'DELETE' })
-  //       .then(response => response.json())
-  //       .then(data => {
-  //         alert('Recharge deleted successfully');
-  //         $('#rechargeTable').DataTable().ajax.reload();
-  //       })
-  //       .catch(error => console.error('Error:', error));
-  //   }
-  // }
+  $(document).ready(function() {
+    // Initialize DataTables
+    $('#salesmanTable').DataTable({
+      "pagingType": "full_numbers",
+      "language": {
+        "paginate": {
+          "previous": "<i class='fas fa-angle-left'></i>",
+          "next": "<i class='fas fa-angle-right'></i>",
+          "first": "<i class='fas fa-angle-double-left'></i>",
+          "last": "<i class='fas fa-angle-double-right'></i>"
+        }
+      }
+    });
+    
+    $('#customerTable').DataTable({
+      "pagingType": "full_numbers",
+      "language": {
+        "paginate": {
+          "previous": "<i class='fas fa-angle-left'></i>",
+          "next": "<i class='fas fa-angle-right'></i>",
+          "first": "<i class='fas fa-angle-double-left'></i>",
+          "last": "<i class='fas fa-angle-double-right'></i>"
+        }
+      }
+    });
+    
+    // Collection modal handler for salesmen
+    $('.collect-payment').click(function() {
+      const salesmanId = $(this).data('id');
+      const salesmanName = $(this).closest('tr').find('td:first').text();
+      
+      $('#salesmanName').val(salesmanName);
+      $('#collectionModal').modal('show');
+    });
+    
+    // Collection modal handler for customers
+    $('.collect-customer-payment').click(function() {
+      const customerId = $(this).data('id');
+      const customerName = $(this).closest('tr').find('td:eq(1)').text();
+      const dueAmount = $(this).closest('tr').find('td:eq(2)').text();
+      
+      $('#customerName').val(customerName);
+      $('#customerDueAmount').val(dueAmount);
+      $('#customerPaymentAmount').val(dueAmount.replace('$', ''));
+      $('#customerCollectionModal').modal('show');
+    });
+    
+    // Confirm salesman collection
+    $('#confirmCollection').click(function() {
+      // Here you would typically send data to server
+      $('#collectionModal').modal('hide');
+      
+      // Show success notification
+      alert('Payment collected successfully!');
+    });
+    
+    // Confirm customer collection
+    $('#confirmCustomerCollection').click(function() {
+      // Here you would typically send data to server
+      $('#customerCollectionModal').modal('hide');
+      
+      // Show success notification
+      alert('Customer payment collected successfully!');
+    });
+    
+    // Animate numbers in summary cards
+    $('.card-stats .h2').each(function() {
+      const $this = $(this);
+      const target = parseInt($this.text().replace(/[^0-9]/g, ''));
+      const duration = 2000;
+      
+      $({ countNum: 0 }).animate({ countNum: target }, {
+        duration: duration,
+        easing: 'swing',
+        step: function() {
+          $this.text('$' + Math.floor(this.countNum).toLocaleString());
+        },
+        complete: function() {
+          $this.text('$' + target.toLocaleString());
+        }
+      });
+    });
+  });
 </script>
 
-    <%- include('../includes/footer.ejs') -%>
-
-    <%- include('../includes/end.ejs') -%>
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

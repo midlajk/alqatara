@@ -1,244 +1,543 @@
-
 <%- include('./includes/head.ejs') -%>
 <%- include('./includes/navigation.ejs') -%>
 
+<style>
+  :root {
+    --primary: #4d8da9;
+    --primary-light: #61A3C0;
+    --success: #1cc88a;
+    --success-dark: #17a673;
+    --danger: #e74a3b;
+    --warning: #f6c23e;
+    --info: #36b9cc;
+    --light: #f8f9fc;
+    --dark: #5a5c69;
+    --gray: #e9ecef;
+  }
+
+  .dashboard-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-header-custom {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: none;
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .metric-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  .metric-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .trend-up {
+    color: var(--success);
+  }
+
+  .trend-down {
+    color: var(--danger);
+  }
+
+  .trend-neutral {
+    color: var(--warning);
+  }
+
+  .filter-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+  }
+
+  .date-filter {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .date-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.75rem;
+    border: 1px solid var(--gray);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    background: white;
+    transition: all 0.3s;
+  }
+
+  .date-input:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(77, 141, 169, 0.25);
+  }
+
+  .date-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    background: transparent;
+  }
+
+  .date-input svg {
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+    color: var(--primary);
+  }
+
+  .filter-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .filter-btn:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+  }
+
+  .chart-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    height: 100%;
+  }
+
+  .summary-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .summary-table th {
+    background: var(--primary);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .summary-table td {
+    padding: 1rem;
+    text-align: center;
+    background: white;
+    border-bottom: 1px solid var(--gray);
+  }
+
+  .summary-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .summary-table .editable {
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .summary-table .editable:hover {
+    background: rgba(77, 141, 169, 0.1);
+  }
+
+  .summary-table .editable:after {
+    content: "✏️";
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .summary-table .editable:hover:after {
+    opacity: 1;
+  }
+
+  .quick-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+    text-decoration: none !important;
+  }
+
+  .quick-action-btn i {
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .date-filter {
+      flex-direction: column;
+    }
+    
+    .metric-value {
+      font-size: 1.5rem;
+    }
+    
+    .card-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+    }
+  }
+</style>
+
 <%- include('./includes/header.ejs') -%>
 
-<div class="container-fluid mt--6">
+<div class="container-fluid mt-4">
+  <!-- Filter Section -->
+
+
+  <!-- Second Row Metrics -->
+
+
+  <!-- Charts and Data Visualization -->
+
+  <!-- Quick Actions and Summary Tables -->
+
+  <!-- Recent Activity and Salesman Report -->
   <div class="row">
-    <div class="col-xl-8">
-      <div class="card bg-default">
-        <div class="card-header bg-transparent">
-          <div class="row align-items-center">
-            <div class="col">
-              <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-              <h5 class="h3 text-white mb-0">Sales value</h5>
+    <!-- Recent Activity -->
+    <div class="col-xl-6 mb-4">
+      <div class="chart-container">
+        <h5 class="mb-3">Recent Activity</h5>
+        <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">New order created</h6>
+              <small class="text-muted">5 mins ago</small>
             </div>
-            <div class="col">
-              <ul class="nav nav-pills justify-content-end">
-                <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales-dark"
-                  data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}' data-prefix="$"
-                  data-suffix="k">
-                  <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab">
-                    <span class="d-none d-md-block">Month</span>
-                    <span class="d-md-none">M</span>
-                  </a>
-                </li>
-                <li class="nav-item" data-toggle="chart" data-target="#chart-sales-dark"
-                  data-update='{"data":{"datasets":[{"data":[0, 20, 5, 25, 10, 30, 15, 40, 40]}]}}' data-prefix="$"
-                  data-suffix="k">
-                  <a href="#" class="nav-link py-2 px-3" data-toggle="tab">
-                    <span class="d-none d-md-block">Week</span>
-                    <span class="d-md-none">W</span>
-                  </a>
-                </li>
-              </ul>
+            <p class="mb-1">Order #ORD-1005 for 10 bottles</p>
+            <small class="text-muted">Customer: John Doe</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Payment received</h6>
+              <small class="text-muted">1 hour ago</small>
             </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <!-- Chart -->
-          <div class="chart">
-            <!-- Chart wrapper -->
-            <canvas id="chart-sales-dark" class="chart-canvas"></canvas>
-          </div>
+            <p class="mb-1">AED 250 for order #ORD-1004</p>
+            <small class="text-muted">Mode: Cash</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">New customer registered</h6>
+              <small class="text-muted">3 hours ago</small>
+            </div>
+            <p class="mb-1">Sarah Johnson - Zone B</p>
+            <small class="text-muted">Credit customer</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Stock updated</h6>
+              <small class="text-muted">5 hours ago</small>
+            </div>
+            <p class="mb-1">Added 50 bottles to TRK-005</p>
+            <small class="text-muted">By: Admin</small>
+          </a>
         </div>
       </div>
     </div>
-    <div class="col-xl-4">
-      <div class="card">
-        <div class="card-header bg-transparent">
-          <div class="row align-items-center">
-            <div class="col">
-              <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-              <h5 class="h3 mb-0">Total orders</h5>
-            </div>
-          </div>
+
+    <!-- Salesman Report -->
+    <div class="col-xl-6 mb-4">
+      <div class="chart-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Salesman Performance</h5>
+          <a href="/getsalesmanreport" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-download mr-1"></i> Export
+          </a>
         </div>
-        <div class="card-body">
-          <!-- Chart -->
-          <div class="chart">
-            <canvas id="chart-bars" class="chart-canvas"></canvas>
-          </div>
+        <div class="table-responsive">
+          <table id="salesmanTable" class="table table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Deposits</th>
+                <th>Wallet</th>
+                <th>Collection</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Will be populated dynamically -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
+</div>
+
 
 <%- include('./includes/footer.ejs') -%>
 
-<%- include('./includes/end.ejs') -%>
+<!-- JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-// exports.updatecustomer = async (req, res) => {
-  //   try {
-  //     const { id, noOf5galBottles, bottleSecurityDeposit, noOfCoolers, coolerSecurityDeposit, walletBalance, collectedMoney, bottleLendType, coolerLendType } = req.body;
-  
-  //     // Find the customer first
-  //     const customer = await Customer.findOne({ id:id });
-  
-  //     if (!customer) {
-  //       return res.status(404).json({ message: "Customer not found" });
-  //     }
-  
-  //     // Object to hold numeric updates (add to existing values)
-  //     const updateNumbers = {};
-  //     if (noOf5galBottles) updateNumbers.noOf5galBottles = parseInt(noOf5galBottles);
-  //     if (bottleSecurityDeposit) updateNumbers.bottleSecurityDeposit = parseFloat(bottleSecurityDeposit);
-  //     if (noOfCoolers) updateNumbers.noOfCoolers = parseInt(noOfCoolers);
-  //     if (coolerSecurityDeposit) updateNumbers.coolerSecurityDeposit = parseFloat(coolerSecurityDeposit);
-  //     if (walletBalance) updateNumbers.walletBalance = parseFloat(walletBalance);
-  //     if (collectedMoney) updateNumbers.collectedMoney = parseFloat(collectedMoney);
-  
-  //     // Object to hold string updates (replace existing values)
-  //     const updateStrings = {};
-  //     if (bottleLendType) updateStrings.bottleLendType = bottleLendType;
-  //     if (coolerLendType) updateStrings.coolerLendType = coolerLendType;
-  
-  //     // Perform the update using $inc for numbers and $set for strings
-  //     const updatedCustomer = await Customer.findOneAndUpdate(
-  //       { id },
-  //       { 
-  //         ...(Object.keys(updateNumbers).length > 0 && { $inc: updateNumbers }),
-  //         ...(Object.keys(updateStrings).length > 0 && { $set: updateStrings }),
-  //         $set: { updatedAt: new Date() } // Always update timestamp
-  //       },
-  //       { new: true }
-  //     );
-  
-  //     res.status(200).json({ message: "Customer updated successfully", updatedCustomer });
-  //   } catch (error) {
-  //     console.error("Update error:", error);
-  //     res.status(500).json({ message: "Error updating customer", error });
-  //   }
-  // }
-
-
-
-  index page 
-
-  ...1
-  <div class="col-xl-3">
-    <div class="card">
-        <div class="card-header bg-transparent">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h6 class="text-uppercase text-muted ls-1 mb-1">Truck <span id="selectedtruck"></span></h6>
-                    <!-- <h5 class="h3 text-white mb-0">Sales value</h5> -->
-                </div>
-            </div>
-        </div>
-        <style>
-          .card-body {
-font-family: Arial, sans-serif;
-}
-
-#searchTruck {
-margin-bottom: 10px;
-}
-
-#truckContainer > div:hover {
-background-color: #f0f0f0;
-}
-
-        </style>
-        <!-- <div class="card-body" style="height: 50vh;">
-          <div style="width: 100%;height: 70px;border-radius: 5px;box-shadow: 2px 1px 5px;margin-bottom: 5px;padding: 10px;">
-
-              <label for="">Truck Id</label> <br>
-              <label for="">Sales Person</label>
-
-          </div>
-          <div style="width: 100%;height: 70px;border-radius: 5px;box-shadow: 2px 1px 5px;margin-bottom: 5px;padding: 10px;">
-
-              <label for="">Truck Id</label> <br>
-              <label for="">Sales Person</label>
-          </div>
-        </div> -->
-        <div class="card-body" style="height: 50vh; overflow-y: auto;">
-          <div style="margin-bottom: 10px;">
-            <input
-              type="text"
-              id="searchTruck"
-              placeholder="Search Truck ID"
-              style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"
-            />
-          </div>
-          <div id="truckContainer">
-            <!-- Truck cards will be dynamically appended here -->
-          </div>
-        </div>
-    </div>
-</div>
 <script>
-  // Fetch trucks from the backend and render them
-  async function fetchTrucks(searchQuery = "",) {
-    try {
-      const city = document.getElementById("city").value
-      const response = await fetch(`/gettrucknames?search=${searchQuery}&city=${city}&customKey=utilities`);
-      const trucks = await response.json();
-      const truckContainer = document.getElementById("truckContainer");
-      truckContainer.innerHTML = ""; // Clear previous data
+$(document).ready(function() {
+  // Initialize Select2 for city filter
+  $('#cityFilter').select2({
+    placeholder: "Select a city",
+    allowClear: true
+  });
 
-      trucks.forEach((truck) => {
-        const truckDiv = document.createElement("div");
-        truckDiv.style.cssText =
-          "width: 100%; height: 70px; border-radius: 5px; box-shadow: 2px 1px 5px; margin-bottom: 5px; padding: 10px; cursor: pointer;";
-         
-        truckDiv.onclick = () => {
-          document.getElementById('selectedtruck').innerText = ' - '+ truck.id;
-          fetchDashboardData(truck.id)};
+  // Initialize DataTable for salesman report
+  $('#salesmanTable').DataTable({
+    responsive: true,
+    paging: false,
+    searching: false,
+    info: false
+  });
 
-        truckDiv.innerHTML = `
-          <label>Truck ID: ${truck.id}</label> <br>
-          <label>Sales Person ID: ${truck.salesmanId || "N/A"}</label>
-        `;
-        truckContainer.appendChild(truckDiv);
-      });
-    } catch (error) {
-      console.error("Error fetching trucks:", error);
+  // Initialize charts
+  initSalesChart();
+  initDeliveryChart();
+
+  // Set default dates
+  setDefaultDates();
+
+  // Fetch initial data
+  fetchDashboardData();
+
+  // Apply filter button click handler
+  $('#applyFilterBtn').click(function() {
+    fetchDashboardData();
+  });
+
+  // Period toggle buttons
+  $('[data-period]').click(function() {
+    $('[data-period]').removeClass('active');
+    $(this).addClass('active');
+    fetchDashboardData();
+  });
+
+  // Summary period dropdown
+  $('.dropdown-item[data-period]').click(function() {
+    const period = $(this).data('period');
+    $('#summaryDropdown').text($(this).text());
+    // Here you would fetch data for the selected period
+  });
+
+  // Editable cells in summary table
+  $('.editable').click(function() {
+    const currentValue = $(this).text();
+    const input = $('<input>', {
+      type: 'text',
+      val: currentValue,
+      class: 'form-control form-control-sm'
+    });
+    
+    $(this).html(input);
+    input.focus();
+    
+    input.blur(function() {
+      const newValue = $(this).val();
+      $(this).parent().text(newValue);
+      // Here you would save the new value to the database
+    });
+  });
+});
+
+function setDefaultDates() {
+  const today = new Date();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  
+  $('#fromDate').val(formatDate(firstDay));
+  $('#toDate').val(formatDate(lastDay));
+}
+
+function formatDate(date) {
+  const d = new Date(date);
+  let month = '' + (d.getMonth() + 1);
+  let day = '' + d.getDate();
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+}
+
+function initSalesChart() {
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  window.salesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [{
+        label: 'Bottle Sales',
+        data: [120, 190, 170, 220],
+        borderColor: '#4d8da9',
+        backgroundColor: 'rgba(77, 141, 169, 0.1)',
+        tension: 0.3,
+        fill: true
+      }, {
+        label: 'Dispenser Sales',
+        data: [50, 70, 60, 90],
+        borderColor: '#1cc88a',
+        backgroundColor: 'rgba(28, 200, 138, 0.1)',
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
     }
-  }
+  });
+}
 
-  // Call this function when the page loads
-  document.addEventListener("DOMContentLoaded", () => fetchTrucks());
+function initDeliveryChart() {
+  const ctx = document.getElementById('deliveryChart').getContext('2d');
+  window.deliveryChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Completed', 'Pending', 'Cancelled', 'In Progress'],
+      datasets: [{
+        data: [300, 50, 20, 30],
+        backgroundColor: [
+          '#1cc88a',
+          '#f6c23e',
+          '#e74a3b',
+          '#36b9cc'
+        ],
+        hoverBackgroundColor: [
+          '#17a673',
+          '#dda20a',
+          '#be2617',
+          '#2c9faf'
+        ],
+        hoverBorderColor: "rgba(234, 236, 244, 1)",
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+        },
+        tooltip: {
+          backgroundColor: "rgb(255,255,255)",
+          bodyColor: "#858796",
+          borderColor: '#dddfeb',
+          borderWidth: 1,
+          padding: 15,
+        }
+      },
+      cutout: '70%',
+    },
+  });
+}
 
-  // Add search functionality
-  // document.getElementById("searchTruck").addEventListener("input", (event) => {
-  //   const searchQuery = event.target.value;
-  //   fetchTrucks(searchQuery);
-  // });
+function fetchDashboardData() {
+  const fromDate = $('#fromDate').val();
+  const toDate = $('#toDate').val();
+  const city = $('#cityFilter').val();
+  
+  // Show loading state
+  $('.metric-value').html('<i class="fas fa-spinner fa-spin"></i>');
+  
+  // Simulate API call with timeout
+  setTimeout(function() {
+    // Update metrics with sample data
+    $('#deliveries').text('245');
+    $('#activeVehicles').text('18');
+    $('#newCustomers').text('32');
+    $('#creditSales').text('AED 12,450');
+    $('#companyCredits').text('AED 8,750');
+    $('#customerCredits').text('AED 3,700');
+    $('#cashToBank').text('AED 5,200');
+    $('#bottleReturns').text('128');
+    
+    // Update charts with sample data
+    updateCharts();
+    
+    // Populate salesman table with sample data
+    populateSalesmanTable();
+  }, 1000);
+}
 
-  // // Example function for handling truck dashboard display
-  // function showDashboard(truckId) {
-  //   alert(`Showing dashboard for Truck ID: ${truckId}`);
-  //   // Add logic to redirect or display the truck dashboard
-  // }
-  // document.addEventListener("DOMContentLoaded", () => fetchTrucks());
+function updateCharts() {
+  // Update sales chart with new data
+  window.salesChart.data.datasets[0].data = [150, 210, 190, 240];
+  window.salesChart.data.datasets[1].data = [60, 80, 70, 100];
+  window.salesChart.update();
+  
+  // Update delivery chart with new data
+  window.deliveryChart.data.datasets[0].data = [320, 40, 15, 25];
+  window.deliveryChart.update();
+}
 
-// Update truck list when city selection changes
-
-
-
+function populateSalesmanTable() {
+  const table = $('#salesmanTable').DataTable();
+  table.clear();
+  
+  // Add sample data
+  table.row.add(['SAL-001', 'John Smith', 'AED 1,200', 'AED 800', 'AED 2,500', 'AED 4,500']).draw();
+  table.row.add(['SAL-002', 'Sarah Johnson', 'AED 950', 'AED 1,100', 'AED 3,200', 'AED 5,250']).draw();
+  table.row.add(['SAL-003', 'Mike Brown', 'AED 1,500', 'AED 700', 'AED 2,800', 'AED 5,000']).draw();
+}
 </script>
-...1
 
-...2
-<div class="col-xl-4">
-  <div class="card">
-      <div class="card-header bg-transparent">
-          <div class="row align-items-center">
-              <div class="col">
-                  <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                  <h5 class="h3 mb-0">Total orders</h5>
-              </div>
-          </div>
-      </div>
-      <div class="card-body">
-          <!-- Chart -->
-          <div class="chart">
-              <canvas id="chart-bar" class="chart-canvas"></canvas>
-          </div>
-      </div>
-  </div>
-</div>
-...2
+<%- include('./includes/end.ejs') -%>

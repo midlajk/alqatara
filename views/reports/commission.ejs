@@ -102,8 +102,51 @@
       </div>
   
       </div>
+ 
+      <div class="col-12">
+        <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/report">
+              <i class="fa-solid fa-users-gear mr-2"></i>Salesman Collection
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/customerreport">
+              <i class="ni ni-circle-08 mr-2"></i>Customer Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/creditreport">
+              <i class="fa-solid fa-credit-card mr-2"></i>Credit Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/truckreport">
+              <i class="fa-solid fa-truck mr-2"></i>Truck Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" id="salesman-tab"  href="/commissionreport">
+              <i class="fa-solid fa-money-bill-wave mr-2"></i>Commission Report
+            </a>
+          </li>
+        </ul>
+      </div>  
+
       <div class="col">
         <div class="card">
+          <div class="card-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h3 class="mb-0 text-white"><i class="fas fa-money-bill-wave mr-2"></i>Commission Report</h3>
+              </div>
+              <div class="col text-right">
+                <button class="btn btn-sm btn-light">
+                  <i class="fas fa-file-export mr-1"></i> Export
+                </button>
+              </div>
+            </div>
+          </div>
           <style>
             .tab-button {
               padding: 10px 15px;
@@ -129,15 +172,7 @@
             }
           </style>
           
-          <div>
-            <a class="tab-button" href="/report" data-table="salesmanTable">Salesman Report</a>
-            <a class="tab-button" href="/customerreport" data-table="customerTable">Customer Report</a>
-            <a class="tab-button" href="/creditreport" data-table="creditTable">Credit Report</a>
-            <a class="tab-button " href="/truckreport" data-table="truckTable">Truck Report</a>
-            <a class="tab-button active" href="/commissionreport" data-table="truckTable">Commission Report</a>
-
-          </div>
-          <br>
+         
           <div class="table-responsive">
             <table id="reporttable" class="table table-bordered">
               <thead class="thead-light">

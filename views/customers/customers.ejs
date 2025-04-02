@@ -2,9 +2,115 @@
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
-<%- include('../includes/header.ejs') -%>
-<%- include('../components/searchbartr.ejs') -%>
-<a href="/customers/deletedcustomers" class="btn btn-primary ml-3" type="button" aria-label="Add New">Deleted Customers</a>
+<div class="header bg-primary pb-6">
+  <div class="container-fluid">
+    <div class="header-body">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0">Customer Dashboard</h6>
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+              <li class="breadcrumb-item"><a href="/dashboard"><i class="fas fa-home"></i></a></li>
+              <li class="breadcrumb-item active" aria-current="page">Customers</li>
+            </ol>
+          </nav>
+        </div>
+        <div class="col-lg-6 col-5 text-right">
+          <a href="/customers/deletedcustomers" class="btn btn-add-new bg-gradient-red">
+            <i class="fas fa-bin mr-2"></i> Deleted Customer
+          </a>
+          <a href="/customers/newcustomer" class="btn btn-add-new bg-gradient-success">
+            <i class="fas fa-plus mr-2"></i> New Customer
+          </a>
+        </div>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="row">
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+                    <i class="fa-solid fa-list"></i>
+                  </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+        
+       <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Orders</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>   
+         
+         <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Revenue</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
+                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                    <i class="fa-solid fa-credit-card"></i>
+                                    </div>
+                </div>
+              </div>
+            
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <a href="/customers/deletedcustomers" class="btn btn-primary ml-3" type="button" aria-label="Add New">Deleted Customers</a>
 <a href="/customers/newcustomer" class="btn btn-danger ml-3" type="button" aria-label="Add New">Add New</a>
 </div>
 </div>
@@ -12,7 +118,7 @@
 
 </div>
 </div>
-</div>
+</div> -->
 <div class="container-fluid mt--6">
   <style>
     .filter-box {
@@ -27,102 +133,111 @@
 
   <div class="row">
     <div class="col-12">
-
-    <div class="filter-box">
-    <h5 class="mb-3">Filter By</h5>
-    <div class="row g-3">
-        <!-- ID -->
-        <div class="col-md-3">
-            <label class="form-label">I.D</label>
-            <input type="text" class="form-control" placeholder="Search ID Here">
+   <div class="filter-section">
+        <h5 class="mb-4"><i class="fas fa-filter text-primary mr-2"></i>Filter Orders</h5>
+        <div class="row" id="cardb">
+            <!-- ID -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">I.D</label>
+                <input type="text" class="form-control" placeholder="Search ID Here">
+            </div>
+            
+            <!-- Name -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Name</label>
+                <input type="text" class="form-control" placeholder="Search Name Here">
+            </div>
+    
+            <!-- Order Status -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Status</label>
+                <select class="form-control">
+                    <option selected>Select Order status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+    
+            <!-- Customer Type -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Type</label>
+                <select class="form-control">
+                    <option selected>Select customer type</option>
+                    <option value="Regular">Regular</option>
+                    <option value="New">New</option>
+                </select>
+            </div>
+    
+            <!-- Delivery Day -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Delivery Day</label>
+                <select class="form-control">
+                    <option selected>Select a day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                </select>
+            </div>
+    
+            <!-- Bottle LendType -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Bottle LendType</label>
+                <select class="form-control">
+                    <option selected>Select Bottle LendType</option>
+                    <option value="Loan">Loan</option>
+                    <option value="Purchase">Purchase</option>
+                </select>
+            </div>
+    
+            <!-- Cooler LendType -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Cooler LendType</label>
+                <select class="form-control">
+                    <option selected>Select Cooler LendType</option>
+                    <option value="Rental">Rental</option>
+                    <option value="Owned">Owned</option>
+                </select>
+            </div>
+    
+            <!-- Route -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Route</label>
+                <select id="routeSelect" class="form-control">
+                    <option selected>Select Route</option>
+                    <option value="4278">4278</option>
+                    <option value="5283">5283</option>
+                    <option value="6390">6390</option>
+                </select>
+            </div>
+    
+            <!-- Zone -->
+            <div class="col-md-3 mb-1">
+                <label class="form-label small font-weight-bold">Zone</label>
+                <select id="zoneSelect" class="form-control">
+                    <option selected>Select Zone</option>
+                </select>
+            </div>
+    
+            <!-- Date -->
+            <div class="col-md-3 mb-1 ">
+                <label class="form-label small font-weight-bold">To</label>
+                <input type="date" class="form-control">
+            </div>
+          
+          <div class="col-md-3 mb-1  d-flex align-items-end">
+            <button class="btn btn-sm filter-btn mr-2">
+              <i class="fas fa-filter mr-1"></i> Apply
+            </button>
+            <button class="btn  btn-outline-secondary">
+              <i class="fas fa-sync-alt mr-1"></i> Reset
+            </button>
+          </div>
         </div>
-        
-        <!-- Name -->
-        <div class="col-md-3">
-            <label class="form-label">Name</label>
-            <input type="text" class="form-control" placeholder="Search Name Here">
-        </div>
-
-        <!-- Order Status -->
-        <div class="col-md-3">
-            <label class="form-label">Status</label>
-            <select class="form-control">
-                <option selected>Select Order status</option>
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-                <option value="Cancelled">Cancelled</option>
-            </select>
-        </div>
-
-        <!-- Customer Type -->
-        <div class="col-md-3">
-            <label class="form-label">Type</label>
-            <select class="form-control">
-                <option selected>Select customer type</option>
-                <option value="Regular">Regular</option>
-                <option value="New">New</option>
-            </select>
-        </div>
-
-        <!-- Delivery Day -->
-        <div class="col-md-3">
-            <label class="form-label">Delivery Day</label>
-            <select class="form-control">
-                <option selected>Select a day</option>
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-            </select>
-        </div>
-
-        <!-- Bottle LendType -->
-        <div class="col-md-3">
-            <label class="form-label">Bottle LendType</label>
-            <select class="form-control">
-                <option selected>Select Bottle LendType</option>
-                <option value="Loan">Loan</option>
-                <option value="Purchase">Purchase</option>
-            </select>
-        </div>
-
-        <!-- Cooler LendType -->
-        <div class="col-md-3">
-            <label class="form-label">Cooler LendType</label>
-            <select class="form-control">
-                <option selected>Select Cooler LendType</option>
-                <option value="Rental">Rental</option>
-                <option value="Owned">Owned</option>
-            </select>
-        </div>
-
-        <!-- Route -->
-        <div class="col-md-3">
-            <label class="form-label">Route</label>
-            <select id="routeSelect" class="form-control">
-                <option selected>Select Route</option>
-                <option value="4278">4278</option>
-                <option value="5283">5283</option>
-                <option value="6390">6390</option>
-            </select>
-        </div>
-
-        <!-- Zone -->
-        <div class="col-md-3">
-            <label class="form-label">Zone</label>
-            <select id="zoneSelect" class="form-control">
-                <option selected>Select Zone</option>
-            </select>
-        </div>
-
-        <!-- Date -->
-        <div class="col-md-3">
-            <label class="form-label">To</label>
-            <input type="date" class="form-control">
-        </div>
-    </div>
-</div>
+      </div>
+      
   
 
     </div>
@@ -130,8 +245,17 @@
     <div class="col">
       <div class="card">
         <!-- Card header -->
-        <div class="card-header border-0">
-          <h3 class="mb-0">Customer Management</h3>
+        <div class="card-header border-0 mb-2">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0 text-white"><i class="fas fa-users mr-2"></i>Customer List</h3>
+            </div>
+            <div class="col text-right">
+              <button class="btn btn-sm btn-light">
+                <i class="fas fa-file-export mr-1"></i> Export
+              </button>
+            </div>
+          </div>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
@@ -145,7 +269,7 @@
                 <th scope="col" class="sort" data-sort="completion">Recent Delivery</th>
                 <th scope="col" class="sort">Wallet Balance</th>
                 <th scope="col" class="sort" data-sort="completion">City</th>
-                <th scope="col" class="sort" data-sort="completion">Address</th>
+                <!-- <th scope="col" class="sort" data-sort="completion">Address</th> -->
                 <!-- <th scope="col" class="sort" data-sort="completion">Status</th>
                 <th scope="col" class="sort" data-sort="completion">Caption</th> -->
                 <th scope="col"></th>
@@ -185,7 +309,16 @@
       
                   // Add any additional parameters you want to send to the server here
                 },// Data source is the root of the response array
-          },
+          },   language: {
+      paginate: {
+        next: '<i class="fas fa-chevron-right"></i>',
+        previous: '<i class="fas fa-chevron-left"></i>'
+      },
+      search: "_INPUT_",
+      searchPlaceholder: "Search orders...",
+      lengthMenu: "Show _MENU_ orders",
+      info: "Showing _START_ to _END_ of _TOTAL_ orders"
+    },
           columns: [
   { 
     data: 'name', 
@@ -241,13 +374,13 @@
       return data ? data : 'N/A';
     }
   },
-  { 
-    data: 'address', 
-    title: 'Address',
-    render: function(data) {
-      return data ? data : 'N/A';
-    }
-  },
+  // { 
+  //   data: 'address', 
+  //   title: 'Address',
+  //   render: function(data) {
+  //     return data ? data : 'N/A';
+  //   }
+  // },
   // { 
   //   data: 'verified', 
   //   title: 'Status', 
@@ -271,7 +404,8 @@
           data: null,
           title: 'Actions',
           render: function(data, type, row) {
-            return `<button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">Delete</button>`;
+            return `<button class="btn btn-action btn-view edit-zone" data-id="${row.id}">More Details</button>
+            <button class="btn btn-action btn-manage edit-zone" data-id="${row.id}">Transactions</button>`;
           }
         }
 ]

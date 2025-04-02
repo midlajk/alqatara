@@ -1,40 +1,35 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
 <style>
-  /* Scoped styles for custom-nav-tabs */
+  /* Modern dashboard styling */
+  
+  body {
+    background-color: #f5f7fa;
+    color: var(--text-dark);
+  }
+
+  /* Tab navigation styling */
   .custom-nav-tabs {
     display: flex;
     gap: 10px;
-    /* Add space between tabs for clear distinction */
     padding: 0;
-    margin: 0;
+    margin: 0 0 25px 0;
     list-style: none;
+    flex-wrap: wrap;
   }
-
-  .filter-box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 10px;
-  }
-
 
   .custom-nav-tabs .nav-link {
     text-align: center;
-    padding: 10px 15px;
-    color: #000000;
-    /* Slightly darker version of #61A3C0 */
-    font-weight: bold;
-    border: 1px solid #d1d9de;
-    /* Subtle border for separation */
-    border-radius: 5px;
-    background-color: #e7e7e7;
-    /* Light background to distinguish tabs */
+    padding: 12px 20px;
+    color: var(--text-light);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
   }
 
@@ -43,19 +38,212 @@
   }
 
   .custom-nav-tabs .nav-link:hover {
-    color: #ffffff;
-    background-color: #61A3C0;
-    /* Your primary color */
+    color: white;
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
   }
 
   .custom-nav-tabs .nav-link.active {
-    color: #ffffff;
-    background-color: #4d8da9;
-    /* Slightly darker primary color */
-    border-color: #61A3C0;
+    color: white;
+    background-color: var(--primary-color);
+    box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+  }
+
+  /* Filter section styling */
+  .filter-section {
+    background: #fff;
+    padding: 20px 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+  }
+  
+  .filter-section h5 {
+    font-weight: 600;
+    color: #344767;
+    font-size: 16px;
+  }
+  
+  .filter-section .form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #637381;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .filter-section .form-control {
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    font-size: 14px;
+    box-shadow: none;
+    transition: all 0.2s;
+  }
+  
+  .filter-section .form-control:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  }
+  
+  .date-input-group {
+    position: relative;
+  }
+  
+  .date-input-group .form-control {
+    padding-right: 35px;
+  }
+  
+  .filter-btn {
+    background-color: #4361ee;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    box-shadow: 0 2px 5px rgba(67, 97, 238, 0.2);
+    transition: all 0.3s;
+  }
+  
+  .filter-btn:hover {
+    background-color: #3651d4;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+  }
+  
+  .btn-outline-secondary {
+    color: #637381;
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+  
+  .btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    color: #344767;
+  }
+
+  /* Card styling */
+  .card {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: none;
+    overflow: hidden;
+  }
+
+  /* Tab buttons */
+  .tab-button {
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    background: white;
+    font-weight: 600;
+    margin-right: 10px;
+    transition: 0.3s;
+    border-radius: var(--border-radius);
+    color: var(--text-light);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  .tab-button.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .tab-button:hover {
+    background: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  /* Table styling */
+  .table {
+    margin-bottom: 0;
+    color: var(--text-dark);
+  }
+
+  .table thead th {
+    background-color: #f8f9fa;
+    padding: 15px;
+    font-weight: 600;
+    border-bottom: 2px solid #eaeaea;
+    white-space: nowrap;
+  }
+
+  .table tbody td {
+    padding: 15px;
+    border-bottom: 1px solid #eaeaea;
+    vertical-align: middle;
+  }
+
+  .table-responsive {
+    padding: 20px;
+  }
+  
+  /* Pagination styling */
+  .dataTables_paginate .paginate_button {
+    border: none !important;
+    border-radius: var(--border-radius) !important;
+    padding: 5px 10px !important;
+  }
+
+  .dataTables_paginate .paginate_button.current {
+    background: var(--primary-color) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  /* Search box styling */
+  .dataTables_filter input {
+    border-radius: var(--border-radius);
+    border: 1px solid #e0e0e0;
+    padding: 8px 12px;
+    margin-left: 8px;
+  }
+  
+  /* Helper classes */
+  .fa-filter, .fa-sync-alt {
+    font-size: 12px;
+  }
+  
+  .text-primary {
+    color: #4361ee !important;
+  }
+  
+  .mr-2 {
+    margin-right: 0.5rem !important;
+  }
+  
+  .mr-1 {
+    margin-right: 0.25rem !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .tab-button {
+      margin-bottom: 10px;
+      width: 100%;
+      text-align: center;
+    }
+  }
+  
+  .report-table {
+    display: none;
+  }
+  
+  .report-table.active {
+    display: block;
   }
 </style>
-<%- include('../components/datefilter.ejs') -%>
 </div>
 </div>
 </div>
@@ -64,104 +252,115 @@
 <div class="container-fluid mt--6">
     <div class="row">
       <div class="col-12 mb-2">
-        <div class="filter-box">
-          <h5 class="mb-3">Filter By</h5>
+        <div class="filter-section">
+          <h5 class="mb-4"><i class="fas fa-filter text-primary mr-2"></i>Filter By</h5>
           <div class="row g-3">
-            <div class="col-md-3">
-              <label class="form-label">From</label>
-              <input type="date" class="form-control">
-          </div>
-
-          <!-- To Date -->
-          <div class="col-md-3">
-              <label class="form-label">To</label>
-              <input type="date" class="form-control">
-          </div>
-              <!-- Customer ID -->
-              <div class="col-md-3">
-                <label class="form-label">Salesman ID</label>
-                <select class="form-control">
-                    <option selected>Select a Salesman</option>
-                    <option value="1">Salesman 1</option>
-                    <option value="2">Salesman 2</option>
-                    <option value="3">Salesman 3</option>
-                </select>
+            <!-- From Date -->
+            <div class="col-md-3 mb-3">
+              <label class="form-label small font-weight-bold">From Date</label>
+              <div class="date-input-group">
+                <input type="date" class="form-control">
+              </div>
             </div>
 
-  
-              <!-- Salesman ID -->
-             
-     
-  
-              <!-- Order Status -->
-         
-              <!-- From Date -->
-
+            <!-- To Date -->
+            <div class="col-md-3 mb-3">
+              <label class="form-label small font-weight-bold">To Date</label>
+              <div class="date-input-group">
+                <input type="date" class="form-control">
+              </div>
+            </div>
+            
+            <!-- Salesman ID -->
+            <div class="col-md-3 mb-3">
+              <label class="form-label small font-weight-bold">Salesman ID</label>
+              <select class="form-control">
+                <option selected>Select a Salesman</option>
+                <option value="1">Salesman 1</option>
+                <option value="2">Salesman 2</option>
+                <option value="3">Salesman 3</option>
+              </select>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+              <button class="btn filter-btn mr-2">
+                <i class="fas fa-filter mr-1"></i> Apply
+              </button>
+              <button class="btn btn-outline-secondary">
+                <i class="fas fa-sync-alt mr-1"></i> Reset
+              </button>
+            </div>
           </div>
+        </div>
       </div>
-  
-      </div>
+        
+      <div class="col">
+        <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/report">
+              <i class="fa-solid fa-users-gear mr-2"></i>Salesman Collection
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" id="salesman-tab"  href="/customerreport">
+              <i class="ni ni-circle-08 mr-2"></i>Customer Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " id="salesman-tab"  href="/creditreport">
+              <i class="fa-solid fa-credit-card mr-2"></i>Credit Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/truckreport">
+              <i class="fa-solid fa-truck mr-2"></i>Truck Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/commissionreport">
+              <i class="fa-solid fa-money-bill-wave mr-2"></i>Commission Report
+            </a>
+          </li>
+        </ul>
+      </div>  
+
       <div class="col">
         <div class="card">
-          <style>
-            .tab-button {
-              padding: 10px 15px;
-              border: 1px solid #ccc;
-              cursor: pointer;
-              background: #e7e7e7;
-              font-weight: bold;
-              margin-right: 5px;
-              transition: 0.3s;
-            }
-          
-            .tab-button.active {
-              background: #4d8da9;
-              color: #ffffff;
-            }
-          
-            .report-table {
-              display: none;
-            }
-          
-            .report-table.active {
-              display: block;
-            }
-          </style>
-          
-          <div>
-            <a class="tab-button" href="/report" data-table="salesmanTable">Salesman Report</a>
-            <a class="tab-button active" href="/customerreport" data-table="customerTable">Customer Report</a>
-            <a class="tab-button" href="/creditreport" data-table="creditTable">Credit Report</a>
-            <a class="tab-button" href="/truckreport" data-table="truckTable">Truck Report</a>
-            <a class="tab-button" href="/commissionreport" data-table="truckTable">Commission Report</a>
-
+          <div class="card-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h3 class="mb-0 text-white"><i class="fas ni-circle-08 mr-2"></i>Customer Report</h3>
+              </div>
+              <div class="col text-right">
+                <button class="btn btn-sm btn-light">
+                  <i class="fas fa-file-export mr-1"></i> Export
+                </button>
+              </div>
+            </div>
           </div>
-          <br>
+    
           <div class="table-responsive">
             <table id="reporttable" class="table align-items-center table-flush">
               <thead class="thead-light">
                 <tr>
-                  <th scope="col" class="sort" data-sort="name"> ID</th>
+                  <th scope="col" class="sort" data-sort="name">ID</th>
                   <th scope="col" class="sort" data-sort="budget">Name</th>
                   <th scope="col" class="sort" data-sort="status">Recent Delivery</th>
                   <th scope="col" class="sort">5Gal orders</th>
                   <th scope="col" class="sort" data-sort="completion">200 ml orders</th>
                   <th scope="col" class="sort" data-sort="completion">Total Order</th>
-
                   <th scope="col" class="sort" data-sort="completion">Security Deposit</th>
                   <th scope="col" class="sort" data-sort="completion">Wallet recharge</th>
                   <th scope="col" class="sort" data-sort="completion">Pending Payment</th>
-
-
-                  <!-- <th scope="col"></th> -->
                 </tr>
               </thead>
               <tbody class="list">
-                <tr>
-
-                </tr>
+                <!-- Data will be loaded dynamically -->
               </tbody>
             </table>
+          </div>
+        </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -169,12 +368,11 @@
     <!-- Footer -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    
 <script>
-
 $(document).ready(function () {
-    $('#reporttable').DataTable({
+    const table = $('#reporttable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -192,37 +390,35 @@ $(document).ready(function () {
             { data: "totalPrice" },
             { data: "totalSecurityDeposit" },
             { data: "totalRechargeAmount" },
-
-            { data: "totalPendingPayment" },
-
-            // { data: null, render: function () {
-            //     return '<button class="btn btn-primary">View</button>';
-            // }}
-        ]
+            { data: "totalPendingPayment" }
+        ],
+        "language": {
+          "paginate": {
+            "previous": "<i class='fas fa-chevron-left'></i>",
+            "next": "<i class='fas fa-chevron-right'></i>"
+          }
+        },
     });
+    
     $('#dateForm').on('submit', function (e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    // Get selected dates
-    const fromDate = $('#fromDate').val();
-    const toDate = $('#toDate').val();
-    const download = $('#download').val();
+        // Get selected dates
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+        const download = $('#download').val();
 
-    // Reload DataTable with new parameters
-    if(download =='Yes'){
-      
-              window.location.href = `/getcutomerreporttxl?fromDate=${fromDate}&toDate=${toDate}&download=${download}`;
+        // Reload DataTable with new parameters
+        if(download == 'Yes'){
+            window.location.href = `/getcutomerreporttxl?fromDate=${fromDate}&toDate=${toDate}&download=${download}`;
+        } else {
+            table.ajax.url(`/getcutomerreport?fromDate=${fromDate}&toDate=${toDate}&download=${download}`).load();
+        }
 
-    }else{
-                table.ajax.url(`/getcutomerreport?fromDate=${fromDate}&toDate=${toDate}&download=${download}`).load();
-
-    }
-
-    // Close the modal
-    $('#dateModal').modal('hide');
-  });
+        // Close the modal
+        $('#dateModal').modal('hide');
+    });
 });
-
 </script>
 <%- include('../includes/footer.ejs') -%>
 

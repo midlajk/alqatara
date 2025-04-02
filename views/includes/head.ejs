@@ -22,6 +22,229 @@
   <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" /> -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/argon.css?v=1.2.1" type="text/css">
+
+<style>
+  :root {
+    --primary-color: #4d8da9;
+    --secondary-color: #61A3C0;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
+  }
+
+  /* Modern Card Styles */
+  .dashboard-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  .btn-manage {
+    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+    color: white;
+  }
+  .card-header {
+    border-radius: 6px 6px 0 0 !important;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  /* Status Badges */
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .badge-pending {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .badge-completed {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .badge-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .badge-in-progress {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+  
+  /* Action Buttons */
+  .btn-action {
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    min-width: 90px;
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .btn-view {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    color: white;
+  }
+  
+  .btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  /* Summary Cards */
+  .summary-card {
+    border-left: 4px solid;
+    border-radius: 8px;
+  }
+  
+  .summary-card.pending {
+    border-left-color: #ffc107;
+  }
+  
+  .summary-card.completed {
+    border-left-color: #28a745;
+  }
+  
+  .summary-card.cancelled {
+    border-left-color: #dc3545;
+  }
+  
+  .summary-card.total {
+    border-left-color: #4d8da9;
+  }
+  
+  /* Filter Section */
+  .filter-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  .filter-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(77, 141, 169, 0.2);
+  }
+
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(77, 141, 169, 0.3);
+  }
+
+  /* Responsive Table */
+  .table-responsive {
+    border-radius: 10px;
+    /* overflow: hidden; */
+  }
+  
+  /* Date Inputs */
+  .date-input-group {
+    position: relative;
+  }
+  
+  .date-input-group i {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #adb5bd;
+  }
+  .btn-add-new {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #f56036 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(245, 54, 92, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    color: white;
+  }
+
+  .btn-add-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(245, 54, 92, 0.3);
+    color: white;
+  }
+  .nav-tabs-custom {
+          border-bottom: 2px solid #dee2e6;
+        }
+        
+        .nav-tabs-custom .nav-link {
+          border: none;
+          color: #8898aa;
+          font-weight: 600;
+          padding: 1rem 1.5rem;
+          transition: all 0.3s;
+        }
+        
+        .nav-tabs-custom .nav-link.active {
+          color: #5e72e4;
+          background-color: transparent;
+          border-bottom: 3px solid #5e72e4;
+        }
+        
+        .nav-tabs-custom .nav-link:hover:not(.active) {
+          color: #5e72e4;
+          background-color: rgba(94, 114, 228, 0.1);
+        }
+        
+        .card-stats .icon-shape {
+          width: 3rem;
+          height: 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .badge-pill {
+          padding: 0.5em 1em;
+        }
+        
+        .collect-payment, .collect-customer-payment {
+          transition: all 0.2s;
+        }
+        
+        .collect-payment:hover, .collect-customer-payment:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table tbody tr {
+          transition: all 0.2s;
+        }
+        
+        .table tbody tr:hover {
+          background-color: rgba(0, 0, 0, 0.02);
+          transform: translateX(2px);
+        }
+</style>
 </head>
 
 <body>

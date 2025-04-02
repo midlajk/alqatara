@@ -17,8 +17,17 @@
     <div class="col">
       <div class="card">
         <!-- Card header -->
-        <div class="card-header border-0">
-          <h3 class="mb-0">Customer Management</h3>
+        <div class="card-header border-0 mb-2">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0 text-white"><i class="fas fa-users mr-2"></i>Customer List</h3>
+            </div>
+            <div class="col text-right">
+              <button class="btn btn-sm btn-light">
+                <i class="fas fa-file-export mr-1"></i> Export
+              </button>
+            </div>
+          </div>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
@@ -71,7 +80,16 @@
       
                   // Add any additional parameters you want to send to the server here
                 },// Data source is the root of the response array
-          },
+          },   language: {
+      paginate: {
+        next: '<i class="fas fa-chevron-right"></i>',
+        previous: '<i class="fas fa-chevron-left"></i>'
+      },
+      search: "_INPUT_",
+      searchPlaceholder: "Search orders...",
+      lengthMenu: "Show _MENU_ orders",
+      info: "Showing _START_ to _END_ of _TOTAL_ orders"
+    },
           columns: [
   { 
     data: 'name', 

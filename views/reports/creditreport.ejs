@@ -54,7 +54,6 @@
     border-color: #61A3C0;
   }
 </style>
-<%- include('../components/datefilter.ejs') -%>
 </div>
 </div>
 </div>
@@ -63,22 +62,22 @@
 <div class="container-fluid mt--6">
     <div class="row">
       <div class="col-12 mb-2">
-        <div class="filter-box">
-          <h5 class="mb-3">Filter By</h5>
+        <div class="filter-section">
+          <h5 class="mb-4"><i class="fas fa-filter text-primary mr-2"></i>Filter By</h5>
           <div class="row g-3">
-            <div class="col-md-3">
-              <label class="form-label">From</label>
+            <div class="col-md-3 mb-3">
+              <label class="form-label small font-weight-bold">From</label>
               <input type="date" class="form-control">
           </div>
 
           <!-- To Date -->
-          <div class="col-md-3">
-              <label class="form-label">To</label>
+          <div class="col-md-3 mb-3">
+              <label class="form-label small font-weight-bold">To</label>
               <input type="date" class="form-control">
           </div>
               <!-- Customer ID -->
-              <div class="col-md-3">
-                <label class="form-label">Customer ID</label>
+              <div class="col-md-3 mb-3">
+                <label class="form-label small font-weight-bold">Customer ID</label>
                 <select class="form-control">
                     <option selected>Select a Salesman</option>
                     <option value="1">Salesman 1</option>
@@ -89,8 +88,8 @@
 
   
               <!-- Salesman ID -->
-              <div class="col-md-3">
-                  <label class="form-label">Customer Name</label>
+              <div class="col-md-3 mb-3">
+                  <label class="form-label small font-weight-bold">Customer Name</label>
                   <select class="form-control">
                       <option selected>Select a Salesman</option>
                       <option value="1">Salesman 1</option>
@@ -100,8 +99,8 @@
               </div>
   
               <!-- Truck ID -->
-              <div class="col-md-3">
-                  <label class="form-label">Zone</label>
+              <div class="col-md-3 mb-3">
+                  <label class="form-label small font-weight-bold">Zone</label>
                   <select class="form-control">
                       <option selected>Select a Truck</option>
                       <option value="101">Truck 101</option>
@@ -109,8 +108,8 @@
                       <option value="103">Truck 103</option>
                   </select>
               </div>
-              <div class="col-md-3">
-                <label class="form-label">Over 30 Days</label>
+              <div class="col-md-3 mb-3">
+                <label class="form-label small font-weight-bold">Over 30 Days</label>
                 <select class="form-control">
                     <option selected>Select a Mode of Payment</option>
                     <option value="Cash">Cash</option>
@@ -119,8 +118,8 @@
                 </select>
             </div>
               <!-- Mode of Payment -->
-              <div class="col-md-3">
-                  <label class="form-label">Customer Type</label>
+              <div class="col-md-3 mb-3">
+                  <label class="form-label small font-weight-bold">Customer Type</label>
                   <select class="form-control">
                       <option selected>Select a Mode of Payment</option>
                       <option value="Cash">Cash</option>
@@ -128,13 +127,15 @@
                       <option value="Online">Online Transfer</option>
                   </select>
               </div>
-              <div class="col-md-3">
-                <label class="form-label">Credit Recieved</label>
-                <h2>
-
-                </h2>
+         
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+              <button class="btn filter-btn mr-2">
+                <i class="fas fa-filter mr-1"></i> Apply
+              </button>
+              <button class="btn btn-outline-secondary">
+                <i class="fas fa-sync-alt mr-1"></i> Reset
+              </button>
             </div>
-  
               <!-- Order Status -->
          
               <!-- From Date -->
@@ -143,8 +144,52 @@
       </div>
   
       </div>
+
+   
+      <div class="col">
+        <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/report">
+              <i class="fa-solid fa-users-gear mr-2"></i>Salesman Collection
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/customerreport">
+              <i class="ni ni-circle-08 mr-2"></i>Customer Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" id="salesman-tab"  href="/creditreport">
+              <i class="fa-solid fa-credit-card mr-2"></i>Credit Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/truckreport">
+              <i class="fa-solid fa-truck mr-2"></i>Truck Report
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="salesman-tab"  href="/commissionreport">
+              <i class="fa-solid fa-money-bill-wave mr-2"></i>Commission Report
+            </a>
+          </li>
+        </ul>
+      </div>  
+
       <div class="col">
         <div class="card">
+          <div class="card-header">
+            <div class="row align-items-center">
+              <div class="col">
+                <h3 class="mb-0 text-white"><i class="fas fa-credit-card mr-2"></i>Credit Report</h3>
+              </div>
+              <div class="col text-right">
+                <button class="btn btn-sm btn-light">
+                  <i class="fas fa-file-export mr-1"></i> Export
+                </button>
+              </div>
+            </div>
+          </div>
           <style>
             .tab-button {
               padding: 10px 15px;
@@ -169,16 +214,7 @@
               display: block;
             }
           </style>
-          
-          <div>
-            <a class="tab-button" href="/report" data-table="salesmanTable">Salesman Report</a>
-            <a class="tab-button" href="/customerreport" data-table="customerTable">Customer Report</a>
-            <a class="tab-button active" href="/creditreport" data-table="creditTable">Credit Report</a>
-            <a class="tab-button" href="/truckreport" data-table="truckTable">Truck Report</a>
-            <a class="tab-button" href="/commissionreport" data-table="truckTable">Commission Report</a>
-
-          </div>
-          <br>
+    
           <div class="table-responsive">
             <table id="reporttable" class="table align-items-center table-flush">
               <thead class="thead-light">

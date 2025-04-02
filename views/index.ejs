@@ -3,253 +3,427 @@
 <%- include('./includes/navigation.ejs') -%>
 
 <%- include('./includes/header.ejs') -%>
+<style>
+  :root {
+    --primary: #4d8da9;
+    --primary-light: #61A3C0;
+    --success: #1cc88a;
+    --success-dark: #17a673;
+    --danger: #e74a3b;
+    --warning: #f6c23e;
+    --info: #36b9cc;
+    --light: #f8f9fc;
+    --dark: #5a5c69;
+    --gray: #e9ecef;
+  }
 
+  .dashboard-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-header-custom {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: none;
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .metric-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  .metric-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .trend-up {
+    color: var(--success);
+  }
+
+  .trend-down {
+    color: var(--danger);
+  }
+
+  .trend-neutral {
+    color: var(--warning);
+  }
+
+  .filter-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+  }
+
+  .date-filter {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  .date-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.75rem;
+    border: 1px solid var(--gray);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    background: white;
+    transition: all 0.3s;
+  }
+
+  .date-input:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(77, 141, 169, 0.25);
+  }
+
+  .date-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    background: transparent;
+  }
+
+  .date-input svg {
+    width: 20px;
+    height: 20px;
+    margin-left: 8px;
+    color: var(--primary);
+  }
+
+  .filter-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+  }
+
+  .filter-btn:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+  }
+
+  .chart-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    height: 100%;
+  }
+
+  .summary-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .summary-table th {
+    background: var(--primary);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .summary-table td {
+    padding: 1rem;
+    text-align: center;
+    background: white;
+    border-bottom: 1px solid var(--gray);
+  }
+
+  .summary-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .summary-table .editable {
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .summary-table .editable:hover {
+    background: rgba(77, 141, 169, 0.1);
+  }
+
+  .summary-table .editable:after {
+    content: "✏️";
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .summary-table .editable:hover:after {
+    opacity: 1;
+  }
+
+  .quick-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s;
+    text-decoration: none !important;
+  }
+
+  .quick-action-btn i {
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .date-filter {
+      flex-direction: column;
+    }
+    
+    .metric-value {
+      font-size: 1.5rem;
+    }
+    
+    .card-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+    }
+  }
+  .quick-action-container {
+    display: grid;
+    gap: 12px; /* Adjust spacing between buttons */
+    width: 100%; /* Ensure full width */
+    max-width: 400px; /* Adjust max width as needed */
+    margin: auto; /* Center align */
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.quick-action-btn i {
+    margin-right: 8px; /* Add space between icon and text */
+}
+
+.quick-action-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+</style>
 
 
 <%- include('./components/figurecards.ejs') -%>
+
 
 </div>
 </div>
 </div>
 <div class="container-fluid mt--6">
-<div class="row mb-2">
-  <div class="col-12">
-
-  <div class="filter-container">
-    <div class="row">
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
-  <style>
-      .chart-container {
-          width: 450px;
-          margin: auto;
-          padding: 20px;
-       
-      }
-  </style>
-  <div class="col-xl-4">
-      <div class="filter-container">
-        <div class="chart-container">
-            <canvas id="monitorChart"></canvas>
+  <div class="row">
+    <!-- Sales Performance Chart -->
+    <div class="col-xl-8 mb-4">
+      <div class="chart-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Sales Performance</h5>
+          <div class="btn-group btn-group-sm">
+            <button type="button" class="btn btn-outline-primary active" data-period="week">Week</button>
+            <button type="button" class="btn btn-outline-primary" data-period="month">Month</button>
+            <button type="button" class="btn btn-outline-primary" data-period="quarter">Quarter</button>
+          </div>
         </div>
+        <canvas id="salesChart" height="300"></canvas>
+      </div>
     </div>
-    
- </div>
- <script>
-  var ctx = document.getElementById('monitorChart').getContext('2d');
 
-  var monitorChart = new Chart(ctx, {
-      type: 'pie',
-      data: {
-          labels: ['CPU Usage', 'Memory', 'Disk Space', 'Network', 'Temperature'],
-          datasets: [{
-              data: [20, 30, 15, 25, 10], // Values for each element
-              backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#8E44AD'],
-              hoverBackgroundColor: ['#FF4765', '#2A92D9', '#E7B53F', '#3E9C40', '#732D91'],
-              borderWidth: 2,
-              borderColor: '#fff',
-              hoverOffset: 12 // Smooth hover effect
-          }]
-      },
-      options: {
-          responsive: true,
-          plugins: {
-              legend: {
-                  position: 'bottom',
-                  labels: {
-                      font: {
-                          size: 14
-                      },
-                      color: '#333'
-                  }
-              }
-          }
-      }
-  });
-</script>
- <div class="col-xl-4">
-  <div class="filter-container">
-    <div class="chart-container">
-        <canvas id="monitorChartb"></canvas>
+    <!-- Delivery Distribution -->
+     <div class="col-xl-4 mb-4">
+      <div class="chart-container">
+        <h5 class="mb-3">Quick Actions</h5>
+       
+    <div class="quick-action-container">
+      <a href="/orders/neworder" class="quick-action-btn bg-gradient-primary text-white">
+        <i class="fas fa-plus-circle"></i> Create New Order
+      </a>
+      <a href="/customers/newcustomer" class="quick-action-btn bg-gradient-success text-white">
+        <i class="fas fa-user-plus"></i> Add New Customer
+      </a>
+      <a href="/utilities" class="quick-action-btn bg-gradient-info text-white">
+        <i class="fas fa-truck-loading"></i> Stock Transaction
+      </a>
+      <a href="/reports" class="quick-action-btn bg-gradient-warning text-white">
+        <i class="fas fa-file-alt"></i> Generate Reports
+      </a>
     </div>
-</div>
+      </div>
+    </div>
+  </div>
 
-</div>
-<div class="col-xl-4">
-  <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-        th {
-            background: #1f4e75;
-            color: white;
-        }
-        td {
-            background: #f8f9fa;
-        }
-        .editable {
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .editable:hover {
-            background: #e3f2fd;
-        }
-  </style>
-  <div class="filter-container">
-    <h4 class="mb-3">Performance Summary</h4>
-    <table id="data-table">
-        <thead>
-            <tr>
+
+  <div class="row">
+    <!-- Quick Actions -->
+    <div class="col-xl-4 mb-4">
+      <div class="chart-container">
+        <h5 class="mb-3">Delivery Distribution</h5>
+        <canvas id="deliveryChart" height="300"></canvas>
+      </div>
+    </div>
+
+    <!-- Performance Summary -->
+    <div class="col-xl-8 mb-4">
+      <div class="chart-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Performance Summary</h5>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="summaryDropdown" data-bs-toggle="dropdown">
+              Last 3 Months
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" data-period="3">Last 3 Months</a></li>
+              <li><a class="dropdown-item" href="#" data-period="6">Last 6 Months</a></li>
+              <li><a class="dropdown-item" href="#" data-period="12">Last 12 Months</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="summary-table">
+            <thead>
+              <tr>
                 <th>Description</th>
                 <th class="editable" data-column="1">Jan</th>
                 <th class="editable" data-column="2">Feb</th>
                 <th class="editable" data-column="3">Mar</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>Revenue</td><td class="editable" data-row="1">XXXXX</td><td class="editable" data-row="2">XXXXX</td><td class="editable" data-row="3">XXXXX</td></tr>
-            <tr><td>Bottles Sold</td><td class="editable" data-row="4">XXXXX</td><td class="editable" data-row="5">XXXXX</td><td class="editable" data-row="6">XXXXX</td></tr>
-            <tr><td>Customers Created</td><td class="editable" data-row="7">XXXXX</td><td class="editable" data-row="8">XXXXX</td><td class="editable" data-row="9">XXXXX</td></tr>
-            <tr><td>Customers Deleted</td><td class="editable" data-row="10">XXXXX</td><td class="editable" data-row="11">XXXXX</td><td class="editable" data-row="12">XXXXX</td></tr>
-            <tr><td>Bottles Out</td><td class="editable" data-row="13">XXXXX</td><td class="editable" data-row="14">XXXXX</td><td class="editable" data-row="15">XXXXX</td></tr>
-            <tr><td>Dispenser Out</td><td class="editable" data-row="16">XXXXX</td><td class="editable" data-row="17">XXXXX</td><td class="editable" data-row="18">XXXXX</td></tr>
-            <tr><td>Add Customers</td><td class="editable" data-row="19">XXXXX</td><td class="editable" data-row="20">XXXXX</td><td class="editable" data-row="21">XXXXX</td></tr>
-        </tbody>
-    </table>
-</div>
-
-</div>
-    <script>
-      var ctx = document.getElementById('monitorChartb').getContext('2d');
-  
-      var monitorChart = new Chart(ctx, {
-          type: 'pie',
-          data: {
-              labels: ['CPU Usage', 'Memory', 'Disk Space', 'Network', 'Temperature'],
-              datasets: [{
-                  data: [20, 30, 15, 25, 10], // Values for each element
-                  backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50', '#8E44AD'],
-                  hoverBackgroundColor: ['#FF4765', '#2A92D9', '#E7B53F', '#3E9C40', '#732D91'],
-                  borderWidth: 2,
-                  borderColor: '#fff',
-                  hoverOffset: 12 // Smooth hover effect
-              }]
-          },
-          options: {
-              responsive: true,
-              plugins: {
-                  legend: {
-                      position: 'bottom',
-                      labels: {
-                          font: {
-                              size: 14
-                          },
-                          color: '#333'
-                      }
-                  }
-              }
-          }
-      });
-  </script>
-</div>
-</div>
-</div>
-</div>
-
-  <div class="row">
-    <!-- ...1 -->
-
-   
-<!-- </div>
-      </div> -->
-
-
-    <div class="col-xl-7">
-      <div class="filter-container">
-
-        <div class="table-responsive">
-          <table id="reporttable" class="table align-items-center table-flush">
-            <thead class="thead-light">
-              <tr>
-                <th scope="col" class="sort" data-sort="name">ID</th>
-                <th scope="col" class="sort" data-sort="budget">Name</th>
-                <th scope="col" class="sort" data-sort="status"> Security Deposit</th>
-                <th scope="col" class="sort" data-sort="completion">Wallet Recharge</th>
-                <th scope="col" class="sort" data-sort="completion">Delivery Collection</th>
-                <th scope="col">Total Collection</th>
               </tr>
             </thead>
-            <tbody class="list">
-              <tr>
-
-              </tr>
+            <tbody>
+              <tr><td>Revenue</td><td class="editable" data-row="1">XXXXX</td><td class="editable" data-row="2">XXXXX</td><td class="editable" data-row="3">XXXXX</td></tr>
+              <tr><td>Bottles Sold</td><td class="editable" data-row="4">XXXXX</td><td class="editable" data-row="5">XXXXX</td><td class="editable" data-row="6">XXXXX</td></tr>
+              <tr><td>Customers Created</td><td class="editable" data-row="7">XXXXX</td><td class="editable" data-row="8">XXXXX</td><td class="editable" data-row="9">XXXXX</td></tr>
+              <tr><td>Customers Deleted</td><td class="editable" data-row="10">XXXXX</td><td class="editable" data-row="11">XXXXX</td><td class="editable" data-row="12">XXXXX</td></tr>
+              <tr><td>Bottles Out</td><td class="editable" data-row="13">XXXXX</td><td class="editable" data-row="14">XXXXX</td><td class="editable" data-row="15">XXXXX</td></tr>
+              <tr><td>Dispenser Out</td><td class="editable" data-row="16">XXXXX</td><td class="editable" data-row="17">XXXXX</td><td class="editable" data-row="18">XXXXX</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <!-- Recent Activity -->
+    <div class="col-xl-6 mb-4">
+      <div class="chart-container">
+        <h5 class="mb-3">Recent Activity</h5>
+        <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">New order created</h6>
+              <small class="text-muted">5 mins ago</small>
+            </div>
+            <p class="mb-1">Order #ORD-1005 for 10 bottles</p>
+            <small class="text-muted">Customer: John Doe</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Payment received</h6>
+              <small class="text-muted">1 hour ago</small>
+            </div>
+            <p class="mb-1">AED 250 for order #ORD-1004</p>
+            <small class="text-muted">Mode: Cash</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">New customer registered</h6>
+              <small class="text-muted">3 hours ago</small>
+            </div>
+            <p class="mb-1">Sarah Johnson - Zone B</p>
+            <small class="text-muted">Credit customer</small>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">Stock updated</h6>
+              <small class="text-muted">5 hours ago</small>
+            </div>
+            <p class="mb-1">Added 50 bottles to TRK-005</p>
+            <small class="text-muted">By: Admin</small>
+          </a>
+        </div>
+      </div>
     </div>
 
-
+    <!-- Salesman Report -->
+    <div class="col-xl-6 mb-4">
+      <div class="chart-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Salesman Performance</h5>
+          <a href="/getsalesmanreport" class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-download mr-1"></i> Export
+          </a>
         </div>
+        <div class="table-responsive">
+          <table id="salesmanTable" class="table table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Deposits</th>
+                <th>Wallet</th>
+                <th>Collection</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Will be populated dynamically -->
+            </tbody>
+          </table>
         </div>
-
-          <!-- ...1 -->
-
-      <div class="col-xl-5">
-        <div class="filter-container">
-
-          <div class="card bg-default mt-1">
-              <div class="card-header bg-transparent">
-                  <div class="row align-items-center">
-                      <div class="col">
-                          <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-                          <h5 class="h3 text-white mb-0">Sales value</h5>
-                      </div>
-                      <!-- <div class="col">
-                          <ul class="nav nav-pills justify-content-end">
-                              <li class="nav-item mr-2 mr-md-0" data-toggle="chart"
-                                  data-target="#chart-sales-dark"
-                                  data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}'
-                                  data-prefix="$" data-suffix="k">
-                                  <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab">
-                                      <span class="d-none d-md-block">Month</span>
-                                      <span class="d-md-none">M</span>
-                                  </a>
-                              </li>
-                              <li class="nav-item" data-toggle="chart" data-target="#chart-sales-dark"
-                                  data-update='{"data":{"datasets":[{"data":[0, 20, 5, 25, 10, 30, 15, 40, 40]}]}}'
-                                  data-prefix="$" data-suffix="k">
-                                  <a href="#" class="nav-link py-2 px-3" data-toggle="tab">
-                                      <span class="d-none d-md-block">Week</span>
-                                      <span class="d-md-none">W</span>
-                                  </a>
-                              </li>
-                          </ul>
-                      </div> -->
-                  </div>
-              </div>
-              <div class="card-body">
-                  <!-- Chart -->
-                  <div class="chart">
-                      <!-- Chart wrapper -->
-                      <canvas id="chart-sales-dark" class="chart-canvas"></canvas>
-                  </div>
-              </div>
-          </div>
-          </div>
       </div>
-
-          <!-- ...2 -->
-
-
-                <!-- ...2 -->
-
+    </div>
   </div>
+
   <script src="/assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
 <script src="/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
    <!-- Footer -->

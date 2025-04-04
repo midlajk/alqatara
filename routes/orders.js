@@ -11,6 +11,11 @@ router.get('/getorders',setCustomHeader('orders'),apiprev.Getapiprev, ordersapi.
 router.post('/orders/neworder',setCustomHeader('orders'),WritePrivilage, ordersapi.neworder);
 
 router.get('/editorder/:id',setCustomHeader('orders'),authMiddleware, ordersapi.editorderpage);
+router.get('/vieworder/:orderId',  ordersapi.vieworder);
+router.get('/getorderdeliverysummery',setCustomHeader('orders'),apiprev.Getapiprev, ordersapi.getorderdeliverysummery);
+
+
+
 
 router.post('/updateorder',setCustomHeader('orders'),WritePrivilage, ordersapi.updateOrder);
 router.get('/orderhistory/:id',setCustomHeader('orders'),authMiddleware, ordersapi.orderhistory);

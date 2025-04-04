@@ -1,6 +1,164 @@
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
+<style>
+  /* Modern Dashboard Styles */
+  :root {
+    --primary-color: #4d8da9;
+    --secondary-color: #61A3C0;
+    --success-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
+  }
 
+
+  /* Action Buttons */
+
+  .btn-summary {
+    background: linear-gradient(135deg, var(--success-color) 0%, #13855c 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(28, 200, 138, 0.2);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    color: white;
+  }
+
+  .btn-summary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(28, 200, 138, 0.3);
+    color: white;
+  }
+
+  /* Table Styles */
+
+ 
+
+
+
+
+  /* Modal Styles */
+  .modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-title {
+    font-weight: 600;
+  }
+
+  /* Summary Modal Specific */
+  .modal-dialog-slideout {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    width: 500px;
+    max-width: 100vw;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-out;
+  }
+  
+  .modal-dialog-slideout.show {
+    transform: translateX(0);
+  }
+  
+  .modal-dialog-slideout .modal-content {
+    height: 100vh;
+    overflow-y: auto;
+    border-radius: 0;
+    border: none;
+  }
+  
+  .product-card {
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+    background: white;
+  }
+  
+  .product-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+  }
+  
+  .product-name {
+    font-weight: 600;
+    color: #4e73df;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .product-stats {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .stat-item {
+    text-align: center;
+    flex: 1;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+    color: #858796;
+    text-transform: uppercase;
+  }
+  
+  .text-delivered {
+    color: var(--success-color);
+  }
+  
+  .text-loaded {
+    color: var(--info-color);
+  }
+  
+  .text-returned {
+    color: var(--danger-color);
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .action-buttons {
+      flex-direction: column;
+    }
+    
+    .btn-action {
+      width: 100%;
+    }
+    
+    .tab-navigation {
+      flex-direction: column;
+    }
+    
+    .tab-button {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+  }
+</style>
 
 
 <div class="header bg-primary pb-6">
@@ -17,6 +175,9 @@
           </nav>
         </div>
         <div class="col-lg-6 col-5 text-right">
+          <button class="btn btn-summary" id="showSumBtn">
+            <i class="fas fa-chart-bar mr-2"></i> Order Summary
+          </button>
           <a href="/orders/neworder" class="btn btn-add-new">
             <i class="fas fa-plus mr-2"></i> New Order
           </a>
@@ -252,44 +413,21 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>5 Gallon Bottle</td>
-                <td>SOLD</td>
-
-                <td>50</td>
-                <td>$5.00</td>
-                <td>$250.00</td>
-              </tr>
-              <tr>
-                <td>200ml Bottle</td>
-                <td>SOLD</td>
-
-                <td>200</td>
-                <td>$0.50</td>
-                <td>$100.00</td>
-              </tr>
-              <tr>
-                <td>Water Dispenser</td>
-                <td>SOLD</td>
-
-                <td>5</td>
-                <td>$80.00</td>
-                <td>$400.00</td>
-              </tr>
+          
        
               <tr>
                 <td colspan="4" class="text-right font-weight-bold">Total</td>
-                <td>$800.00</td>
+                <td></td>
              
               </tr>
               <tr>
                 <td colspan="4" class="text-right font-weight-bold">Amount Paid</td>
-                <td>$800.00</td>
+                <td></td>
                
               </tr>
               <tr>
                 <td colspan="4" class="text-right font-weight-bold">Balance Payment</td>
-                <td>$800.00</td>
+                <td></td>
               </tr>
             </tbody>
           </table>
@@ -298,13 +436,13 @@
         <div class="row mt-4">
           <div class="col-md-6">
             <h6 class="font-weight-bold">Delivery Notes</h6>
-            <p>Leave packages at front desk if no one is home. Customer requested morning delivery.</p>
+            <p></p>
           </div>
           <div class="col-md-6">
             <h6 class="font-weight-bold">Payment Information</h6>
-            <p>Status: <span class="badge badge-success">Paid</span><br>
-            Method: Credit Card<br>
-            Transaction ID: TXN-987654</p>
+            <p>Status: <span class="badge badge-success"></span><br>
+            Method: <br>
+            Transaction ID:</p>
           </div>
         </div>
       </div>
@@ -315,6 +453,36 @@
     </div>
   </div>
 </div>
+
+
+
+<div class="modal fade" id="productSummaryModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-slideout" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title text-white">
+          <i class="fas fa-chart-pie mr-2"></i>Product Delivery Details
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <div class="input-group">
+            <input type="text" class="form-control" id="productSearch" placeholder="Search products...">
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row" id="productCardsContainer">
+          <!-- Product cards will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
 
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>
@@ -417,7 +585,7 @@ $(document).ready(function() {
         render: function(data, type, row) {
           return `
             <button class="btn btn-action btn-view" data-id="${row._id}">View</button>
-                        <button class="btn btn-action btn-manage edit-zone" data-id="${row._id}">Edit</button>
+                        <button class="btn btn-action btn-manage edit-zone" data-id="${row.id}">Edit</button>
 
           `;
         }
@@ -444,9 +612,136 @@ $(document).ready(function() {
 
   
   // Show order details modal when view button is clicked
-  $('#ordertable tbody').on('click', '.btn-view', function () {
+  // $('#ordertable tbody').on('click', '.btn-view', function () {
+  //   $('#orderDetailsModal').modal('show');
+  // });
+
+
+  $('#ordertable tbody').on('click', '.btn-view', function() {
+    var orderId = $(this).data('id');
+    
+    // Show loading state
+    $('#orderDetailsModal .modal-body').html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-3x"></i><p class="mt-2">Loading order details...</p></div>');
     $('#orderDetailsModal').modal('show');
-  });
+    
+    // Fetch order details from backend
+    $.ajax({
+      url: '/vieworder/' + orderId,
+      method: 'GET',
+      success: function(response) {
+        if(response.success && response.order) {
+          populateOrderModal(response.order);
+        } else {
+          $('#orderDetailsModal .modal-body').html('<div class="alert alert-danger">Error loading order details</div>');
+        }
+      },
+      error: function() {
+        $('#orderDetailsModal .modal-body').html('<div class="alert alert-danger">Error loading order details</div>');
+      }
+    });
+  })
+
+  function populateOrderModal(order) {
+    // Format dates
+    const orderDate = new Date(order.createdAt).toLocaleDateString();
+    const deliveryDate = order.delivered_at ? new Date(order.delivered_at).toLocaleDateString() : 'Not delivered yet';
+    
+    // Calculate balance
+    const balance = order.totalPrice - (order.creditAmountPaid || 0);
+    
+    // Build products table rows
+    let productsRows = '';
+    if(order.order && order.order.length > 0) {
+      order.order.forEach(item => {
+        productsRows += `
+          <tr>
+            <td>${item.productname || 'N/A'}</td>
+            <td>${item.lendtype || 'N/A'}</td>
+            <td>${item.quantity || 0}</td>
+            <td>$${(item.price || 0)}</td>
+            <td>$${(item.quantity * item.price || 0).toFixed(2)}</td>
+          </tr>
+        `;
+      });
+    } else {
+      productsRows = '<tr><td colspan="5" class="text-center">No products in this order</td></tr>';
+    }
+    
+    // Build payment status badge
+    let paymentStatus = '';
+    if(order.isCreditCustomerPaid) {
+      paymentStatus = '<span class="badge badge-success">Paid</span>';
+    } else if(order.isCredit) {
+      paymentStatus = '<span class="badge badge-warning">Credit</span>';
+    } else {
+      paymentStatus = '<span class="badge badge-danger">Unpaid</span>';
+    }
+    
+    // Update modal content
+    $('#orderDetailsModalLabel').text(`Order Details - ${order.id}`);
+    $('#orderDetailsModal .modal-body').html(`
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h6 class="font-weight-bold">Customer Information</h6>
+          <p>${order.name || 'N/A'}<br>
+          ${order.customerId || 'N/A'}<br>
+          ${order.area || 'N/A'}, ${order.city || 'N/A'}<br>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <h6 class="font-weight-bold">Order Information</h6>
+          <p>Order Date: ${orderDate}<br>
+          Delivery Date: ${deliveryDate}<br>
+          Truck: ${order.truckId || 'N/A'}<br>
+          Sales Rep: ${order.salesmanId || 'N/A'}</p>
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <tr>
+              <th>Product</th>
+              <th>Lend Type</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${productsRows}
+            <tr>
+              <td colspan="4" class="text-right font-weight-bold">Subtotal</td>
+              <td>$${(order.totalPrice || 0).toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td colspan="4" class="text-right font-weight-bold">Amount Paid</td>
+              <td>$${(order.creditAmountPaid || 0).toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td colspan="4" class="text-right font-weight-bold">Balance</td>
+              <td>$${balance.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h6 class="font-weight-bold">Delivery Notes</h6>
+          <p>${order.notes || 'No notes available'}</p>
+        </div>
+        <div class="col-md-6">
+          <h6 class="font-weight-bold">Payment Information</h6>
+          <p>Status: ${paymentStatus}<br>
+          Method: ${order.modeOfPayment || 'N/A'}<br>
+          </p>
+        </div>
+      </div>
+    `);
+  }
+
+
   $('#printInvoice').click(function() {
     // Implement print functionality
     window.print();
@@ -527,4 +822,78 @@ $(document).ready(function() {
     }
   });
 });
+</script>
+
+
+
+<script>
+
+$('#showSumBtn').click(function() {
+      // Show loading state
+      $('#productCardsContainer').html(`
+        <div class="col-12 text-center py-5">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p>Loading product data...</p>
+        </div>
+      `);
+      
+      // Fetch product summary data
+      $.ajax({
+        url: '/getorderdeliverysummery',
+        method: 'GET',
+        success: function(response) {
+          if (response.success && response.data && response.data.length > 0) {
+            renderProductCards(response.data);
+          } else {
+            $('#productCardsContainer').html(`
+              <div class="col-12 text-center py-5">
+                <i class="fas fa-box-open fa-2x mb-3"></i>
+                <p>No product data available</p>
+              </div>
+            `);
+          }
+        },
+        error: function() {
+          $('#productCardsContainer').html(`
+            <div class="col-12 text-center py-5">
+              <i class="fas fa-exclamation-triangle fa-2x mb-3 text-danger"></i>
+              <p>Error loading product data</p>
+            </div>
+          `);
+        }
+      });
+      
+      $('#productSummaryModal').modal('show');
+    });
+    
+    function renderProductCards(products) {
+      console.log(products)
+      let html = '';
+      
+      products.forEach(product => {
+        html += `
+          <div class="col-md-12 product-card">
+            <div class="product-name">
+              <i class="fas fa-box mr-2"></i>${product.productName}
+            </div>
+            <div class="product-stats">
+              <div class="stat-item">
+                <div class="stat-value text-loaded">${product.totalorder || 0}</div>
+                <div class="stat-label">Number Of Orders</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value text-delivered">${product.totalDelivered || 0}</div>
+                <div class="stat-label">Delivered</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value text-returned">${product.totalReturned || 0}</div>
+                <div class="stat-label">Returned</div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      $('#productCardsContainer').html(html);
+    }
 </script>

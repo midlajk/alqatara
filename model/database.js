@@ -193,6 +193,12 @@ const employeeSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
+  
+  // noOf200mlBottles: { type: Number, default: 0 },
+  // noOf5galBottles: { type: Number, default: 0 },
+  // // noOfCoolers: { type: Number, default: 0 },
+  // // priceFor200mlBottles: { type: Number, default: 0 },
+  // priceFor5galBottles: { type: Number, default: 0 },
   id: { type: String,unique: true},
   name: { type: String, required: true },
   area: { type: String,},
@@ -202,20 +208,28 @@ const orderSchema = new mongoose.Schema({
   truckId: { type: String , required: true },
   updatedAt: { type: Date, default: Date.now },
   status: { type: String, default: 'PENDING' },
-  noOf200mlBottles: { type: Number, default: 0 },
-  noOf5galBottles: { type: Number, default: 0 },
   isCreditCustomerOrder: { type: Boolean, default: false },
   isCreditCustomerPaid: { type: Boolean, default: false },
-  priceFor200mlBottles: { type: Number, default: 0 },
-  priceFor5galBottles: { type: Number, default: 0 },
   totalPrice: { type: Number, default: 0 },
   delivered_at: { type: Date },
   modeOfPayment: { type: String },
   createdBy: { type: String },
   assistants: { type: [String], default: [] },
-  noOfCoolers: { type: Number, default: 0 },
   creditAmountPaid: { type: Number, default: 0 },
-  isCredit: { type: Boolean, default: false }
+  isCredit: { type: Boolean, default: false },
+  city: { type:String},
+  notes:{ type:String},
+  order:[{
+    productid: { type: String },
+    productname: { type:String}, 
+    quantity: { type: Number },
+    price:{ type:String}, 
+    total: { type: Date }, // If product is returned
+    itemtype: { type:String}, // If product is damaged
+    lendtype: { type:String}, // If product is damaged
+
+  }]
+
 });
 orderSchema.pre('save', async function (next) {
   if (!this.id) {

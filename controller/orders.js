@@ -10,6 +10,7 @@ const axios = require('axios');
 require("dotenv").config();
 const smssecret = process.env.SMS_SECRET; // Access secret key
 const createError = require('http-errors');
+const Product = mongoose.model('Product');
 
 exports.getorders = async (req, res) => {
     try {
@@ -63,50 +64,107 @@ exports.getorders = async (req, res) => {
   
 
 //   app.post('/addtruck', async (req, res) => {
-  exports.neworder = async (req, res, next) => {
+
+
+  exports.neworder = async (req, res) => {
     try {
-      // Update the customer's lastOrderedAt field to the current date and time
-      const customerUpdate = await Customer.findOneAndUpdate(
-        { id: req.body.customerId }, // Filter to find the customer by ID
-        { $set: { lastOrderedAt: new Date() } }, // Update operation
-        {
-          new: true, // Return the updated document
-          runValidators: true, // Ensure the update follows schema rules
-        }
-      );
+      const {
+        name, // Customer name
+        customerId,
+        area, // Delivery zone
+        truckId,
+        notes, // Delivery notes
+        products, // Array of products from the form
+        salesmanId, // You might get this from the session
+        city, // You might want to add this to your form or get it from customer data
+      } = req.body;
+      // Calculate total price
+      let totalPrice = 0;
+      
+      // Transform products array to match the schema
+      const orderItems = products.map(product => {
+        // Convert price to number and calculate total for this item
+        const price = parseFloat(product.price);
+        const quantity = parseInt(product.quantity);
+        totalPrice += price * quantity;
+        
+        return {
+          productname: product.name,
+          productid: product.productid,
+          quantity: quantity,
+          price: product.price,
+          itemtype: product.type, // "Lend" or "Return"
+          lendtype: product.type === "Lend" ? "New" : "Return", // Default value based on type
+        };
+      });
   
-      // Check if the customer was found and updated
-      if (!customerUpdate) {
-        return next(createError(404, 'Customer not found'));
-      }
+      // Create new order
+      const newOrder = new Order({
+        name,
+        customerId,
+        area,
+        truckId,
+        salesmanId: salesmanId || req.session.userId, // Get from session if not provided
+        status: 'PENDING',
+        totalPrice,
+        createdBy: req.session.userId, // Assuming you store user ID in session
+        city,
+        notes, // You may want to store notes in a separate field if needed
+        order: orderItems,
+      });
   
-      // Create and save the new order
-      const order = new Order(req.body);
-      await order.save();
+      // Save order to database
+      await newOrder.save();
   
-      // Redirect to the orders page after successful creation
+      // Redirect to order details or list page
       res.redirect('/orders');
     } catch (error) {
-      // Handle any errors that occur during the process
-      return next(createError(400, error.message));
+      console.error('Error creating order:', error);
+      res.status(500).render('error', { 
+        message: 'Failed to create order',
+        error: process.env.NODE_ENV === 'development' ? error : {}
+      });
     }
   };
+
+
+  exports.editorderpage = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const order = await Order.findOne({id:id}).lean();
+      
+      if (!order) {
+        return res.status(404).render('error', { 
+          title: 'Order Not Found',
+          message: 'The requested order does not exist'
+        });
+      }
+      const payments = await CreditOrderHistory.find({orderId:id}).lean();
+      // Format data for the view
+      const viewData = {
+        title: 'Al Qattara',
+        route: 'Orders',
+        sub: 'Edit Orders',
+        order: {
+          ...order,
+          formattedDate: new Date(order.createdAt).toLocaleDateString(),
+          products: order.order || [],
+           payments: payments  // Using 'order' array from schema
+        },
+       // You might want to add payments data if available
+
+      };
   
-
-
-
-
-
-exports.editorderpage = async (req, res) => {
-
-  const id = req.params.id
-  const order = await Order.findById(id)
-  res.render('order/updateorder',  { title: 'Al Qattara',route:'Orders',sub :'Edit Orders' ,order:order});
-
-
+      res.render('order/updateorder', viewData);
   
-
-};
+    } catch (error) {
+      console.error('Error fetching order:', error);
+      res.status(500).render('error', {
+        title: 'Server Error',
+        message: 'An error occurred while fetching the order details'
+      });
+    }
+  };
 
 exports.updateOrder = async (req, res) => {
   try {
@@ -217,8 +275,10 @@ exports.orderhistorydata = async (req, res) => {
 };
 
 exports.deleteorder = async (req, res) => {
+  console.log('ssd')
   try {
     const { id } = req.body;
+    console.log(req.body)
     await Order.findByIdAndDelete(id); // Delete order from DB
     res.json({ success: true });
 } catch (error) {
@@ -295,7 +355,6 @@ exports.updateOrderStatus = async (req, res) => {
             type: 'text'
         }
     });
-    console.log(response)
     }
 
     res.redirect("/orderhistory/" + _id);
@@ -310,8 +369,7 @@ exports.updateOrderStatus = async (req, res) => {
 
 exports.addpayments = async (req, res) => {
   try {
-      const { orderId, paymentDate, modeOfPayment, amountpaid } = req.body;
-
+      const { orderId, paymentDate, modeOfPayment, amountpaid,salesmanid } = req.body;
       // Find the order by ID
       const order = await Order.findOne({id:orderId});
       if (!order) {
@@ -330,6 +388,7 @@ exports.addpayments = async (req, res) => {
       // Save the new payment in CreditOrderHistory
       const payment = new CreditOrderHistory({
           orderId: orderId,
+          salesmanid:salesmanid,
           createdAt: new Date(),
           updatedAt: new Date(paymentDate),
           modeOfPayment: modeOfPayment,
@@ -353,7 +412,7 @@ exports.addpayments = async (req, res) => {
 
       res.json({ success: true, message: "Payment added successfully", payment });
   } catch (error) {
-      console.log("Error adding payment:", error);
+    console.log(error)
       res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -681,7 +740,6 @@ exports.orderdetails = async (req, res) => {
   
       if (creditAmountPaid > 0) {
         const order = await Order.findOne({ id: orderid});
-        console.log(orderid)
   
         if (!order) {
           return res.status(404).json({ error: "Order not found" });
@@ -730,7 +788,6 @@ exports.orderdetails = async (req, res) => {
       const endOfDay = new Date();
       endOfDay.setHours(23, 59, 59, 999);
       const salesDat = await CreditOrderHistory.find({salesmanid:salesmanId})
-      console.log(salesDat)
       const salesData = await CreditOrderHistory.aggregate([
         {
           $match: {
@@ -746,7 +803,6 @@ exports.orderdetails = async (req, res) => {
           }
         }
       ]);
-  console.log(salesData)
       // Initialize result object
       let result = {
         Cash: 0,
@@ -767,3 +823,165 @@ exports.orderdetails = async (req, res) => {
     }
   };
   
+
+  exports.vieworder = async (req, res) => {
+    try {
+      const orderId = req.params.orderId;
+  
+      // Validate order ID format if needed (e.g., for MongoDB ObjectId)
+      if (!mongoose.Types.ObjectId.isValid(orderId)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid order ID format'
+        });
+      }
+  
+      const order = await Order.findById(orderId)
+        .lean() // Convert to plain JavaScript object
+        .exec();
+  
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found'
+        });
+      }
+  
+      // Calculate any derived fields
+      const balance = order.totalPrice - (order.creditAmountPaid || 0);
+      
+      // Format the response
+      const response = {
+        success: true,
+        order: {
+          ...order,
+          balance: balance,
+          // Add any other calculated fields
+        }
+      };
+  
+      res.json(response);
+  
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      
+      // Handle specific errors
+      if (error.name === 'CastError') {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid order ID'
+        });
+      }
+  
+      res.status(500).json({
+        success: false,
+        message: 'Server error while fetching order details',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+  };
+
+
+
+
+
+
+  exports.getorderdeliverysummery = async (req, res) => {
+    try {
+      const { truckId, fromDate, toDate } = req.query;
+      
+      // Convert dates to proper Date objects
+      const startDate = fromDate ? new Date(fromDate) : new Date(0); // Beginning of time if no date
+      const endDate = toDate ? new Date(toDate) : new Date(); // Now if no date
+      
+      // Aggregation pipeline to calculate product summaries
+      const productSummaries = await Order.aggregate([
+        // Match documents for the specific truck and date range
+        
+        // Unwind the productDetails array to process each product separately
+        { $unwind: "$order" },
+        // Group by product and calculate sums
+        {
+          $group: {
+            _id: {
+              productId: "$order.productid",
+              productName: "$order.productname"
+            },
+            // totalLoaded: {
+            //   $sum: {
+            //     $cond: [
+            //         { $eq: ["$order.inwardoutward", "outward"] },
+            //         "$order.quantity",
+            //         0
+            //     ]
+            // }
+            //     // $sum: "$productDetails.quantity"
+  
+            // },
+            totalDelivered: {
+              $sum: {
+                $cond: [
+                    { $eq: ["$order.inwardoutward", "outward"] },
+                    "$order.quantity",
+                    0
+                ]
+            }
+                // $sum: "$productDetails.quantity"
+  
+            },
+            totalorder: {
+                $sum: "$order.quantity"
+                
+            },
+            totalReturned: {
+  
+              $sum: "$order.quantity"
+  
+              
+            }
+          }
+        },
+        // Project to reshape the output
+        {
+          $project: {
+            _id: 0,
+            productId: "$_id.productId",
+            productName: "$_id.productName",
+            totalorder: 1,
+            totalDelivered: 1,
+            totalReturned: 1
+          }
+        },
+        // Sort by product name
+        { $sort: { productName: 1 } }
+      ]);
+      // Get all products to ensure we show all even if no activity
+      const allProducts = await Product.find({}, 'productid name type');
+      
+      // Merge with product data to include all products
+      const mergedData = allProducts.map(product => {
+        const summary = productSummaries.find(p => p.productId == product._id.toString()) || {};
+        return {
+          productId: product.productid,
+          productName: product.name,
+          productType: product.type,
+          totalorder: summary.totalorder ,
+          totalDelivered: summary.totalDelivered ,
+          totalReturned: summary.totalReturned 
+        };
+      });
+      // console.log(mergedData)
+  
+      res.json({
+        success: true,
+        data: mergedData
+      });
+  
+    } catch (err) {
+      console.error('Error fetching product summary:', err);
+      res.status(500).json({ 
+        success: false,
+        error: 'Failed to fetch product summary'
+      });
+    }
+  };

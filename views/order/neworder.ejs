@@ -250,11 +250,11 @@
           <h3 class="text-white"><i class="fas fa-file-invoice"></i> Order Information</h3>
         </div>
         <div class="card-body">
-          <form action="/orders/neworder" method="POST" id="orderForm">
+          <form  id="orderForm">
             <!-- Customer Information Section -->
             <div class="mb-3">
               <h5 class="section-title"><i class="fas fa-user-tag"></i> Customer Information</h5>
-              <div class="row">
+              <div class="row" id="cardb">
                 <div class="col-md-6 mb-4">
                   <label for="customerName" class="form-label"><i class="fas fa-user"></i> Customer Name</label>
                   <select class="customer-name-js form-control" id="customerName" name="name" required></select>
@@ -294,9 +294,7 @@
                       <td data-label="Product">
                         <select class="form-control" name="products[0][name]" required>
                           <option value="" disabled selected>Select Product</option>
-                          <option value="5 Gallon Bottle">5 Gallon Bottle</option>
-                          <option value="200ml Bottle">200ml Bottle</option>
-                          <option value="Water Dispenser">Water Dispenser</option>
+                      
                         </select>
                       </td>
                       <td data-label="Quantity">
@@ -341,7 +339,7 @@
             
             <!-- Submit Button -->
             <div class="text-center mt-5">
-              <button type="submit" class="btn btn-submit">
+              <button  class="btn btn-submit">
                 <i class="fas fa-check-circle"></i> CREATE ORDER
               </button>
             </div>
@@ -355,9 +353,13 @@
 <%- include('../includes/footer.ejs') -%>
 
 <!-- JavaScript Libraries -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Include Select2 CSS -->
+
+<!-- Include Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 
 <script>
 $(document).ready(function() {
@@ -366,6 +368,7 @@ $(document).ready(function() {
     theme: 'bootstrap4',
     placeholder: "Search customer name...",
     allowClear: true,
+    dropdownParent: $("#cardb"),
     ajax: {
       url: "/customersee",
       dataType: "json",
@@ -458,17 +461,74 @@ $(document).ready(function() {
     }
   });
 
+
+});
+</script>
+<script>
+$(document).ready(function() {
+  // Initialize all Select2 dropdowns
+  
+  // Initialize Select2 for product selection
+  function initializeProductSelect2(element) {
+   $(element).select2({
+  theme: 'bootstrap4',
+  placeholder: "Search product...",
+  allowClear: true,
+  ajax: {
+    url: "/getproductsnames", // Your product API endpoint
+    dataType: "json",
+    delay: 250,
+    data: function(params) {
+      return {
+        q: params.term || "" // Changed from 'search' to 'q' to match backend
+      };
+    },
+    processResults: function(data) {
+      // Check the structure of your response
+      if (data.results) {
+        // If your backend already returns { results: [...] }
+        return data;
+      } else {
+        // If your backend returns an array of products directly
+        return {
+          results: data.map(function(item) {
+            return {
+              id: item._id || item.id, // Handle both MongoDB _id and regular id
+              text: item.name || item.text, // Handle both name and text
+              price: item.price || 0
+            };
+          }),
+        };
+      }
+    },
+    cache: true
+  }
+}).on('select2:select', function(e) {
+  // When a product is selected, populate the price field
+  const data = e.params.data;
+  const row = $(this).closest('tr');
+       
+  // Set price from data if available
+  if (data.price) {
+    row.find('input[name$="[price]"]').val(data.price);
+  }
+});
+  }
+
+  // Initialize Select2 for the first product row
+  initializeProductSelect2($('#productsTable tbody tr:first-child select[name$="[name]"]'));
+  
+  // Enable the first remove button
+  $('.remove-product').prop('disabled', false);
+
   // Add product row
   let productCount = 1;
   $('#addProduct').click(function() {
     const newRow = `
       <tr>
         <td data-label="Product">
-          <select class="form-control" name="products[${productCount}][name]" required>
-            <option value="" disabled selected>Select Product</option>
-            <option value="5 Gallon Bottle">5 Gallon Bottle</option>
-            <option value="200ml Bottle">200ml Bottle</option>
-            <option value="Water Dispenser">Water Dispenser</option>
+          <select class="form-control product-select" name="products[${productCount}][name]" required>
+            <option value="" disabled selected>Search Product</option>
           </select>
         </td>
         <td data-label="Quantity">
@@ -496,39 +556,191 @@ $(document).ready(function() {
       </tr>
     `;
     $('#productsTable tbody').append(newRow);
-    productCount++;
     
-    // Enable remove buttons if more than one row
-    if($('#productsTable tbody tr').length > 1) {
-      $('.remove-product').prop('disabled', false);
-    }
+    // Initialize Select2 for the new row
+    initializeProductSelect2($('#productsTable tbody tr:last-child select[name$="[name]"]'));
+    
+    productCount++;
   });
 
-  // Remove product row
+  // Remove product row - allow removing any row, including the last one
   $(document).on('click', '.remove-product', function() {
-    if($('#productsTable tbody tr').length > 1) {
-      $(this).closest('tr').remove();
-      productCount--;
-      
-      // Disable remove button if only one row left
-      if($('#productsTable tbody tr').length === 1) {
-        $('.remove-product:first').prop('disabled', true);
-      }
+    $(this).closest('tr').remove();
+    
+    // Add an empty row if all rows were removed
+    if($('#productsTable tbody tr').length === 0) {
+      addEmptyRow();
     }
+    
+    // Reindex the products to maintain proper naming
+    reindexProducts();
   });
+  
+  // Function to add an empty row when all rows are deleted
+  function addEmptyRow() {
+    const emptyRow = `
+      <tr>
+        <td data-label="Product">
+          <select class="form-control product-select" name="products[0][name]" required>
+            <option value="" disabled selected>Search Product</option>
+          </select>
+        </td>
+        <td data-label="Quantity">
+          <input type="number" class="form-control" name="products[0][quantity]" min="1" value="1" required>
+        </td>
+        <td data-label="Type">
+          <select class="form-control" name="products[0][type]" required>
+            <option value="Lend">Lend</option>
+            <option value="Return">Return</option>
+          </select>
+        </td>
+        <td data-label="Unit Price">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <input type="number" class="form-control" name="products[0][price]" min="0" step="0.01" required>
+          </div>
+        </td>
+        <td data-label="Action">
+          <button type="button" class="btn-remove remove-product">
+            <i class="fas fa-times"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+    $('#productsTable tbody').append(emptyRow);
+    initializeProductSelect2($('#productsTable tbody tr:last-child select[name$="[name]"]'));
+    productCount = 1;
+  }
+  
+  // Function to reindex product rows after removal
+  function reindexProducts() {
+    $('#productsTable tbody tr').each(function(index) {
+      $(this).find('select[name$="[name]"]').attr('name', 'products[' + index + '][name]');
+      $(this).find('input[name$="[quantity]"]').attr('name', 'products[' + index + '][quantity]');
+      $(this).find('select[name$="[type]"]').attr('name', 'products[' + index + '][type]');
+      $(this).find('input[name$="[price]"]').attr('name', 'products[' + index + '][price]');
+    });
+    
+    // Update product count to match the number of rows
+    productCount = $('#productsTable tbody tr').length;
+  }
 
-  // Form submission handler
   $('#orderForm').submit(function(e) {
-    // Validate at least one product has been selected
-    const firstProduct = $('select[name="products[0][name]"]').val();
-    if (!firstProduct) {
-      e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
+    
+    // Check if at least one product is selected
+    let validProductSelected = false;
+    
+    $('select[name$="[name]"]').each(function() {
+      if($(this).val()) {
+        validProductSelected = true;
+        return false; // Break out of the loop once we find a valid product
+      }
+    });
+    
+    if(!validProductSelected) {
       alert('Please select at least one product');
       return false;
     }
-    return true;
-  });
-});
-</script>
+    
+    // Prepare products array
+    let products = [];
+    $('#productsTable tbody tr').each(function() {
+      const row = $(this);
+      const productid = row.find('select[name$="[name]"]').val();
+      var productName = row.find("option:selected").text(); // Get selected text
 
+      
+      // Only include products that have been selected
+      if (productName) {
+        products.push({
+          name: productName,
+          productid:productid ,
+          quantity: row.find('input[name$="[quantity]"]').val(),
+          type: row.find('select[name$="[type]"]').val(),
+          price: row.find('input[name$="[price]"]').val().replace('$', '') // Remove dollar sign if present
+        });
+      }
+    });
+    
+    // Create form data object
+    const formData = {
+      name: $('#customerName').val(),
+      customerId: $('#customerCode').val(),
+      area: $('#zone').val(),
+      truckId: $('#truckId').val(),
+      notes: $('#notes').val(),
+      products: products  // Add our properly formatted products array
+    };
+    
+    // Show loading indicator
+    const submitBtn = $('#submitBtn');
+    const originalBtnText = submitBtn.html();
+    submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
+    
+    // Submit form via AJAX
+    $.ajax({
+      url: $('#orderForm').attr('action'),
+      type: 'POST',
+      data: JSON.stringify(formData),
+      contentType: 'application/json',
+      success: function(response) {
+        // First verify if the response contains a valid orderId
+        if (response && response.orderId) {
+          // Check if orderId appears valid before redirecting
+          // You might want to adjust this validation based on your expected format
+          const orderId = response.orderId.toString();
+          
+          // Option 1: Redirect to orders list with success message and highlight
+          window.location.href = '/orders?success=true' ;
+          
+          // Option 2 (Alternative): Try to validate order exists first
+          // Uncomment this section if you prefer to check order existence first
+          /*
+          $.ajax({
+            url: '/api/orders/validate/' + orderId,
+            type: 'GET',
+            success: function() {
+              // Order exists, safe to redirect
+              window.location.href = '/orders/' + orderId;
+            },
+            error: function() {
+              // Order doesn't exist or other error, go to list view
+              window.location.href = '/orders?success=true';
+            }
+          });
+          */
+        } else {
+          // No orderId in response, go to orders list
+          window.location.href = '/orders?success=true';
+        }
+      },
+      error: function(xhr) {
+        // Reset button state
+        submitBtn.html(originalBtnText).prop('disabled', false);
+        
+        // Show error message
+        let errorMessage = 'An error occurred while creating the order.';
+        if (xhr.responseJSON && xhr.responseJSON.error) {
+          errorMessage = xhr.responseJSON.error;
+        }
+        
+        // Create a dismissible error alert
+        const errorAlert = `
+          <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            ${errorMessage}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        `;
+        
+        // Insert the error alert before the form
+        $('#orderForm').before(errorAlert);
+      }
+    });
+  });
+});</script>
 <%- include('../includes/end.ejs') -%>

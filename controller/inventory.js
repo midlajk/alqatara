@@ -368,3 +368,156 @@ exports.getsumstockhistory = async (req, res) => {
         });
     }
 };
+
+
+exports.getsumstockhistory = async (req, res) => {
+    try {
+        const { fromDate, toDate, city, truck, product } = req.query;
+        
+        // Date handling
+        const startDate = fromDate ? new Date(fromDate) : new Date();
+        startDate.setHours(0, 0, 0, 0);
+        
+        const endDate = toDate ? new Date(toDate) : new Date();
+        endDate.setHours(23, 59, 59, 999);
+
+        // Base match stage with date range
+        const matchStage = {
+            date: { $gte: startDate, $lte: endDate }
+        };
+        
+        // Add optional filters
+        if (city) matchStage.city = city;
+        if (truck) matchStage.truckId = truck;
+        
+        // For product filter, we'll match after unwinding
+        const productMatchStage = {};
+        if (product) productMatchStage['productDetails.productid'] = product;
+
+        const pipeline = [
+            { $match: matchStage }, // Apply date/city/truck filters first
+            { $unwind: "$productDetails" },
+            ...(product ? [{ $match: productMatchStage }] : []), // Apply product filter after unwind if needed
+            {
+                $group: {
+                    _id: null,
+                    firstDocument: { 
+                        $first: {
+                            previousStock: "$productDetails.previousStock",
+                            previousDamage: "$productDetails.previousDamage",
+                            previousDiscard: "$productDetails.previousDiscard"
+                        }
+                    },
+                    stockInward: { 
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$productDetails.inwardoutward", "inward"] },
+                                "$productDetails.quantity",
+                                0
+                            ]
+                        }
+                    },
+                    stockOutward: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$productDetails.inwardoutward", "outward"] },
+                                "$productDetails.quantity",
+                                0
+                            ]
+                        }
+                    },
+                    damagedItems: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$productDetails.itemtype", "Damaged"] },
+                                "$productDetails.quantity",
+                                0
+                            ]
+                        }
+                    },
+                    disposedStock: {
+                        $sum: {
+                            $cond: [
+                                { $eq: ["$productDetails.itemtype", "Discarded"] },
+                                "$productDetails.quantity",
+                                0
+                            ]
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    firstDocument: 1,
+                    stockInward: 1,
+                    stockOutward: 1,
+                    damagedItems: 1,
+                    disposedStock: 1
+                }
+            }
+        ];
+
+        const results = await Stockdelivery.aggregate(pipeline);
+        console.log(results)
+        const stats = results[0] || {
+            firstDocument: {
+                previousStock: 0,
+                previousDamage: 0,
+                previousDiscard: 0
+            },
+            stockInward: 0,
+            stockOutward: 0,
+            damagedItems: 0,
+            disposedStock: 0
+        };
+
+        res.json({
+            success: true,
+            data: stats
+        });
+
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Internal Server Error',
+            message: error.message 
+        });
+    }
+};
+
+
+
+exports.getproductsnames = async (req, res) => {
+        try {
+            const searchTerm = req.query.q || '';
+            
+            // Finding products that match the search term in their name
+            const products = await Product.find(
+              { name: { $regex: searchTerm, $options: 'i' } },
+              '_id name price' // Only return these fields
+            )
+            .limit(20); // Limit results for performance
+            
+            // Format data for Select2
+            const results = products.map(product => ({
+              id: product._id,
+              text: product.name,
+              price: product.price
+            }));
+            console.log(results)
+            
+            // Return in Select2 expected format
+            res.json({
+              results: results,
+              pagination: {
+                more: false // Set to true if you implement pagination
+              }
+            });
+            
+          } catch (error) {
+            console.error('Error searching products:', error);
+            res.status(500).json({ error: 'An error occurred while searching products' });
+          }
+  
+};

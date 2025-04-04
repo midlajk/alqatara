@@ -569,7 +569,6 @@ exports.getProductHistorySummary = async (req, res) => {
 exports.getalltruckProductHistorySummary = async (req, res) => {
   try {
     const { truckId, fromDate, toDate } = req.query;
-    console.log(req.query)
     
     // Convert dates to proper Date objects
     const startDate = fromDate ? new Date(fromDate) : new Date(0); // Beginning of time if no date

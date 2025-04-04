@@ -77,6 +77,7 @@ exports.getcustomer = async (req, res) => {
 
 
   exports.customerids = async (req, res) => {
+    console.log('hcgfh')
     try {
         const search = req.query.search || ""; // Search input from frontend
         const customerId = req.query.customerId || ""; // If customerId is provided

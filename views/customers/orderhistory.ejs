@@ -138,13 +138,13 @@
   <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
    
     <li class="nav-item">
-      <a class="nav-link" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
+      <a class="nav-link active" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
         <i class="fa-solid fa-list"></i>
         Order History
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link active" id="salesman-tab"  href="/creditpayment/<%=id%>">
+      <a class="nav-link" id="salesman-tab"  href="/creditpayment/<%=id%>">
         <i class="fa-solid fa-money-bill-wave"></i>
                 Payments History
       </a>
@@ -160,7 +160,7 @@
       <div class="card">
         <!-- Card header -->
         <div class="card-header border-0">
-          <h3 class="mb-0 text-white">Payment History of user1</h3>
+          <h3 class="mb-0 text-white">Order History of user1</h3>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
@@ -168,14 +168,14 @@
             <thead class="thead-light">
               <tr>
                 <th scope="col" class="sort" data-sort="name">Order Id</th>
-                <th scope="col" class="sort" data-sort="budget">Salesman ID</th>
-                <th scope="col" class="sort" data-sort="status">Total Credit</th>
-                <th scope="col" class="sort">Credit Recieved</th>
-                <th scope="col" class="sort" data-sort="completion">Credit Balance</th>
-                <th scope="col" class="sort">Last Recieved</th>
-                <th scope="col" class="sort" data-sort="completion">Pay Credit</th>
-                <!-- <th scope="col" class="sort" data-sort="completion">Status</th>
-                <th scope="col" class="sort" data-sort="completion">Caption</th> -->
+                <th scope="col" class="sort" data-sort="completion">Truck</th>
+                <th scope="col" class="sort" data-sort="completion">Salesman</th>
+                <th scope="col" class="sort" data-sort="completion">Date</th>
+                <th scope="col" class="sort" data-sort="budget">Order</th>
+                <th scope="col" class="sort" data-sort="status">Order Value</th>
+                <th scope="col" class="sort">Payment Recieved</th>
+                <th scope="col" class="sort" data-sort="completion">Balance Payment</th>
+
               </tr>
             </thead>
             <tbody class="list">

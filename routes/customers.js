@@ -22,9 +22,17 @@ router.get('/getdeletedcustomers',setCustomHeader('customers'),apiprev.Getapipre
 
 
 router.get('/creditpayment/:id', setCustomHeader('customers'),authMiddleware, function(req, res, next) {
-    res.render('customers/creditpayment', { title: 'Al Qattara',route:'Customer',sub :'Credit Payment' });
+    res.render('customers/creditpayment', { title: 'Al Qattara',route:'Customer',sub :'Payment History',id:req.params.id });
   });
   
+router.get('/customerorderhistory/:id', setCustomHeader('customers'),authMiddleware, function(req, res, next) {
+  res.render('customers/orderhistory', { title: 'Al Qattara',route:'Customer',sub :'Order History',id:req.params.id });
+});
+
+router.get('/customerassethistory/:id', setCustomHeader('customers'),authMiddleware, function(req, res, next) {
+  res.render('customers/assethistory', { title: 'Al Qattara',route:'Customer',sub :'Asset History',id:req.params.id });
+});
+
 
 //mobile api 
 router.get('/customersee', customerapi.customerids);

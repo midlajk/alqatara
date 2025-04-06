@@ -1,4 +1,3 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
@@ -17,83 +16,214 @@
           <div class="card">
             <!-- Card header -->
             <div class="card-header">
-              <h3 class="mb-0">Personal Information</h3>
+              <h3 class="mb-0  text-white">Customer Information</h3>
             </div>
             <!-- Card body -->
             <div class="card-body" id="cardb">
               <form class="needs-validation" action="/addCustomer" method="POST" novalidate>
+                
+                <!-- Personal Information Section -->
+                <h4 class="mt-1 mb-3">Personal Information</h4>
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
-                    <label class="form-control-label" for="name">Full Name</label>
+                    <label class="form-control-label" for="name">Full Name <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name" required>
-                    <div class="valid-feedback">
-                      Looks good!
+                    <div class="invalid-feedback">
+                      Please provide a name.
                     </div>
                   </div>
                   <div class="col-md-4 mb-3">
-                    <label class="form-control-label" for="mobileNumber">Mobile Number</label>
+                    <label class="form-control-label" for="mobileNumber">Mobile Number <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="Enter mobile number" required>
-                    <div class="valid-feedback">
-                      Looks good!
+                    <div class="invalid-feedback">
+                      Please provide a mobile number.
                     </div>
                   </div>
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="mobileNumber2">Alternate Mobile Number</label>
                     <input type="text" class="form-control" id="mobileNumber2" name="mobileNumber2" placeholder="Enter alternate number">
-                    <div class="invalid-feedback">
-                      Please provide an alternate number.
-                    </div>
                   </div>
                 </div>
-      
-                <h4 class="mt-3 mb-3">Address Details</h4>
-      
-                <div class="row mt-3">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="zone">Zone</label>
-                      <select class="zone-js form-control" name="zoneId" id="zoneId" required></select>
-                      <!-- <input class="form-control" id="zone" name="zone" placeholder="Zone" type="text" required> -->
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="address">Address</label>
-                      <input class="form-control" id="address" name="address" placeholder="Address" type="text" required>
-                    </div>
-                  </div>
-                </div>
-      
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="apartmentNumber">Apartment/House No:</label>
-                      <input class="form-control" id="apartmentNumber" name="apartmentNumber" placeholder="Apartment/House No" type="text">
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="route">Route</label>
-                      <select class="items-js form-control" name="routeId" id="routeId" required></select>
 
-                      <!-- <input class="form-control" id="route" name="route" placeholder="Route" type="text" required> -->
+                <div class="form-row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-control-label" for="uid">Customer ID (UID) <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="uid" name="uid" placeholder="Enter unique ID" required>
+                    <div class="invalid-feedback">
+                      Please provide a unique ID.
                     </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-control-label" for="language">Preferred Language</label>
+                    <select class="form-control" id="language" name="language">
+                      <option value="">Select language</option>
+                      <option value="English">English</option>
+                      <option value="Arabic">Arabic</option>
+                      <option value="Hindi">Hindi</option>
+                      <option value="Urdu">Urdu</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-control-label" for="createdByEmployee">Created By</label>
+                    <input type="text" class="form-control" id="createdByEmployee" name="createdByEmployee" placeholder="Employee name">
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="col-md-4 mb-3">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input type="checkbox" class="custom-control-input" id="isCompany" name="isCompany">
+                      <label class="custom-control-label" for="isCompany">Is Company</label>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input type="checkbox" class="custom-control-input" id="isCredit" name="isCredit">
+                      <label class="custom-control-label" for="isCredit">Credit Customer</label>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input type="checkbox" class="custom-control-input" id="verified" name="verified">
+                      <label class="custom-control-label" for="verified">Verified Customer</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Company Information (conditionally shown) -->
+                <div id="companyInfo" style="display: none;">
+                  <h4 class="mt-4 mb-3">Company Information</h4>
+                  <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-control-label" for="trnNumber">TRN Number</label>
+                      <input type="text" class="form-control" id="trnNumber" name="trnNumber" placeholder="Enter TRN number">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-control-label" for="contractDate">Contract Date</label>
+                      <input type="date" class="form-control" id="contractDate" name="contractDate">
+                    </div>
+                  </div>
+                </div>
+      
+                <!-- Address Details Section -->
+                <h4 class="mt-4 mb-3">Address Details</h4>
+                <div class="form-row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-control-label" for="zoneId">Zone <span class="text-danger">*</span></label>
+                    <select class="zone-js form-control" name="zoneId" id="zoneId" required></select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-control-label" for="routeId">Route <span class="text-danger">*</span></label>
+                    <select class="items-js form-control" name="routeId" id="routeId" required></select>
+                  </div>
+                </div>
+      
+                <div class="form-row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-control-label" for="address">Address <span class="text-danger">*</span></label>
+                    <input class="form-control" id="address" name="address" placeholder="Enter street address" type="text" required>
+                    <div class="invalid-feedback">
+                      Please provide an address.
+                    </div>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="apartmentNumber">Apartment/House No</label>
+                    <input class="form-control" id="apartmentNumber" name="apartmentNumber" placeholder="Enter apartment/house no" type="text">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="location">Location</label>
+                    <input class="form-control" id="location" name="location" placeholder="Enter location details" type="text">
                   </div>
                 </div>
       
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
-                    <label class="form-control-label" for="city">City</label>
-                    <!-- <input type="text" class="form-control" id="city" name="city" placeholder="City" required> -->
-
+                    <label class="form-control-label" for="city">City <span class="text-danger">*</span></label>
                     <select class="city-js form-control" name="city" id="city" required></select>
-
                   </div>
-                  
+                  <div class="col-md-4 mb-3">
+                    <label class="form-control-label" for="deliveryDay">Delivery Day</label>
+                    <select class="form-control" id="deliveryDay" name="deliveryDay">
+                      <option value="">Select delivery day</option>
+                      <option value="Monday">Monday</option>
+                      <option value="Tuesday">Tuesday</option>
+                      <option value="Wednesday">Wednesday</option>
+                      <option value="Thursday">Thursday</option>
+                      <option value="Friday">Friday</option>
+                      <option value="Saturday">Saturday</option>
+                      <option value="Sunday">Sunday</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-control-label" for="representativeId">Representative</label>
+                    <input class="form-control" id="representativeId" name="representativeId" placeholder="Enter representative ID" type="text">
+                  </div>
                 </div>
-      
+
+                <!-- Bottle and Cooler Information -->
+                <h4 class="mt-4 mb-3">Product Details</h4>
+                <div class="form-row">
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="haveCooler">Has Cooler</label>
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" id="haveCooler" name="haveCooler">
+                      <label class="custom-control-label" for="haveCooler">Yes</label>
+                    </div>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="noOfCoolers">Number of Coolers</label>
+                    <input type="number" class="form-control" id="noOfCoolers" name="noOfCoolers" min="0" value="0">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="coolerLendType">Cooler Lend Type</label>
+                    <select class="form-control" id="coolerLendType" name="coolerLendType">
+                      <option value="">Select type</option>
+                      <option value="Rental">Rental</option>
+                      <option value="Purchase">Purchase</option>
+                      <option value="Free">Free</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="coolerSecurityDeposit">Cooler Security Deposit</label>
+                    <input type="number" class="form-control" id="coolerSecurityDeposit" name="coolerSecurityDeposit" min="0" step="0.01" value="0">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="noOf5galBottles">Number of 5gal Bottles</label>
+                    <input type="number" class="form-control" id="noOf5galBottles" name="noOf5galBottles" min="0" value="0">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="priceForA5galBottle">Price per 5gal Bottle</label>
+                    <input type="number" class="form-control" id="priceForA5galBottle" name="priceForA5galBottle" min="0" step="0.01">
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="bottleLendType">Bottle Lend Type</label>
+                    <select class="form-control" id="bottleLendType" name="bottleLendType">
+                      <option value="">Select type</option>
+                      <option value="Rental">Rental</option>
+                      <option value="Purchase">Purchase</option>
+                      <option value="Free">Free</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <label class="form-control-label" for="bottleSecurityDeposit">Bottle Security Deposit</label>
+                    <input type="number" class="form-control" id="bottleSecurityDeposit" name="bottleSecurityDeposit" min="0" step="0.01" value="0">
+                  </div>
+                </div>
+
+                <!-- Financial Information -->
+                <h4 class="mt-4 mb-3">Financial Information</h4>
+                <div class="form-row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-control-label" for="walletBalance">Wallet Balance</label>
+                    <input type="number" class="form-control" id="walletBalance" name="walletBalance" min="0" step="0.01" value="0">
+                  </div>
+                </div>
+
                 <!-- Submit Button -->
-                <div>
+                <div class="mt-4">
                   <button type="submit" class="btn btn-success">Add New Customer</button>
                   <a href="/" class="btn btn-danger">Cancel</a>
                 </div>
@@ -110,68 +240,102 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
       <script>
         $(document).ready(function () {
-          // Initialize Select2 for the element with the correct ID or class
+          // Show/hide company information based on the checkbox
+          $('#isCompany').change(function() {
+            if(this.checked) {
+              $('#companyInfo').show();
+            } else {
+              $('#companyInfo').hide();
+            }
+          });
+
+          // Show/hide cooler fields based on haveCooler checkbox
+          $('#haveCooler').change(function() {
+            if(this.checked) {
+              $('#noOfCoolers').prop('disabled', false);
+              $('#coolerLendType').prop('disabled', false);
+              $('#coolerSecurityDeposit').prop('disabled', false);
+            } else {
+              $('#noOfCoolers').prop('disabled', true).val(0);
+              $('#coolerLendType').prop('disabled', true).val('');
+              $('#coolerSecurityDeposit').prop('disabled', true).val(0);
+            }
+          });
+
+          // Initialize validation
+          (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+              // Fetch all the forms we want to apply custom Bootstrap validation styles to
+              var forms = document.getElementsByClassName('needs-validation');
+              // Loop over them and prevent submission
+              var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                  if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  form.classList.add('was-validated');
+                }, false);
+              });
+            }, false);
+          })();
+
+          // Initialize Select2 for zone
           $('.zone-js').select2({
             dropdownParent: $("#cardb"),
-  ajax: {
-    url: '/zoneids', // Backend endpoint
-    dataType: 'json',
-    delay: 250, // Debounce for performance
-    processResults: function (data) {
-      return {
-        results: data.map(function (item) {
-          return { id: item.id, text: item.id }; // Customize text display
-        }),
-      };
-    },
-  
-  },
-});
-        });
-      </script>   
-          <script>
-            $(document).ready(function () {
-              // Initialize Select2 for the element with the correct ID or class
-              $('.items-js').select2({
-                dropdownParent: $("#cardb"),
-      ajax: {
-        url: '/routeids', // Backend endpoint
-        dataType: 'json',
-        delay: 250, // Debounce for performance
-        processResults: function (data) {
-          return {
-            results: data.map(function (item) {
-              return { id: item.id, text: item.id }; // Customize text display
-            }),
-          };
-        },
-      
-      },
-    });
-            });
-          </script>   
-      
-      <script>
-        $(document).ready(function () {
-          // Initialize Select2 for the element with the correct ID or class
+            placeholder: "Select a zone",
+            ajax: {
+              url: '/zoneids', // Backend endpoint
+              dataType: 'json',
+              delay: 250, // Debounce for performance
+              processResults: function (data) {
+                return {
+                  results: data.map(function (item) {
+                    return { id: item.id, text: item.id }; // Customize text display
+                  }),
+                };
+              },
+            },
+          });
+
+          // Initialize Select2 for route
+          $('.items-js').select2({
+            dropdownParent: $("#cardb"),
+            placeholder: "Select a route",
+            ajax: {
+              url: '/routeids', // Backend endpoint
+              dataType: 'json',
+              delay: 250, // Debounce for performance
+              processResults: function (data) {
+                return {
+                  results: data.map(function (item) {
+                    return { id: item.id, text: item.id }; // Customize text display
+                  }),
+                };
+              },
+            },
+          });
+
+          // Initialize Select2 for city
           $('.city-js').select2({
             dropdownParent: $("#cardb"),
-  ajax: {
-    url: '/citynames', // Backend endpoint
-    dataType: 'json',
-    delay: 250, // Debounce for performance
-    processResults: function (data) {
-      return {
-        results: data.map(function (item) {
-          return { id: item.city, text: item.city }; // Customize text display
-        }),
-      };
-    },
-  
-  },
-});
+            placeholder: "Select a city",
+            ajax: {
+              url: '/citynames', // Backend endpoint
+              dataType: 'json',
+              delay: 250, // Debounce for performance
+              processResults: function (data) {
+                return {
+                  results: data.map(function (item) {
+                    return { id: item.city, text: item.city }; // Customize text display
+                  }),
+                };
+              },
+            },
+          });
         });
-      </script> 
+      </script>   
 <%- include('../includes/footer.ejs') -%>
 
 <%- include('../includes/end.ejs') -%>

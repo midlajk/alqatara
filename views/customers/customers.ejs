@@ -26,10 +26,9 @@
       </div>
       
       <!-- Summary Cards -->
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-xl-3 col-md-6">
           <div class="card card-stats">
-            <!-- Card body -->
             <div class="card-body">
               <div class="row">
                 <div class="col">
@@ -49,7 +48,7 @@
         
        <div class="col-xl-3 col-md-6">
           <div class="card card-stats">
-            <!-- Card body -->
+  
             <div class="card-body">
               <div class="row">
                 <div class="col">
@@ -69,7 +68,6 @@
          
          <div class="col-xl-3 col-md-6">
           <div class="card card-stats">
-            <!-- Card body -->
             <div class="card-body">
               <div class="row">
                 <div class="col">
@@ -88,7 +86,6 @@
         </div>
         <div class="col-xl-3 col-md-6">
           <div class="card card-stats">
-            <!-- Card body -->
             <div class="card-body">
               <div class="row">
                 <div class="col">
@@ -106,6 +103,7 @@
           </div>
         </div> 
       </div>
+     -->
     </div>
   </div>
 </div>
@@ -287,6 +285,75 @@
       </div>
     </div>
   </div>
+
+
+  <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderDetailsModalLabel">Customer Information</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h6 class="font-weight-bold">Customer Information</h6>
+              <p>John Smith<br>
+              123 Main Street<br>
+              New York, NY 10001<br>
+              Phone: (555) 123-4567</p>
+            </div>
+            <div class="col-md-6">
+              <h6 class="font-weight-bold">Delivery Information</h6>
+              <p>Order Date: May 15, 2023<br>
+              Delivery Date: May 16, 2023<br>
+              Truck: TRK-005<br>
+              Sales Rep: SR-008</p>
+            </div>
+          </div>
+          <h6 class="font-weight-bold">Asset In Hand Information</h6>
+
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="thead-light">
+                <tr>
+                  <th>Product</th>
+                  <th>Lend Type</th>
+                  <th>Quantity</th>
+            
+                </tr>
+              </thead>
+              <tbody>
+            
+         
+           
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <h6 class="font-weight-bold">Delivery Notes</h6>
+              <p></p>
+            </div>
+            <div class="col-md-6">
+              <h6 class="font-weight-bold">Payment Information</h6>
+              <p>Status: <span class="badge badge-success"></span><br>
+              Method: <br>
+              Transaction ID:</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a href="/customerassethistory/216821" class="btn btn-primary" id="printInvoice">View Asset History</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
     <!-- Footer -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -405,13 +472,18 @@
           title: 'Actions',
           render: function(data, type, row) {
             return `<button class="btn btn-action btn-view edit-zone" data-id="${row.id}">More Details</button>
-            <button class="btn btn-action btn-manage edit-zone" data-id="${row.id}">Transactions</button>`;
+            <a class="btn btn-action btn-manage edit-zone" href="/customerorderhistory/${row.id}">Transactions</a>`;
           }
         }
 ]
 
 });
-
+$('#customertable tbody').on('click', '.btn-view', function() {
+    
+    // Show loading state
+    $('#orderDetailsModal').modal('show');
+    
+})
   // Handle Delete Button Click
   $('#customertable').on('click', '.delete-btn', function () {
       var customerId = $(this).data('id');

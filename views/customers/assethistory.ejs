@@ -54,10 +54,9 @@
 
     </div>
     <div class="col-12">
-    <div class="row">    
+    <!-- <div class="row">    
       <div class="col-xl-3 col-md-6">
             <div class="card card-stats">
-              <!-- Card body -->
               <div class="card-body">
                 <div class="row">
                   <div class="col">
@@ -76,7 +75,6 @@
           </div>
         <div class="col-xl-3 col-md-6">
           <div class="card card-stats">
-            <!-- Card body -->
             <div class="card-body">
               <div class="row">
                 <div class="col">
@@ -95,7 +93,6 @@
         </div>
         <div class="col-xl-3 col-md-6">
             <div class="card card-stats">
-              <!-- Card body -->
               <div class="card-body">
                 <div class="row">
                   <div class="col">
@@ -115,7 +112,6 @@
        
           <div class="col-xl-3 col-md-6">
             <div class="card card-stats">
-              <!-- Card body -->
               <div class="card-body">
                 <div class="row">
                   <div class="col">
@@ -132,7 +128,7 @@
               </div>
             </div>
           </div>
-    </div>
+    </div> -->
 </div>
 <div class="col-12">
   <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
@@ -144,13 +140,13 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link active" id="salesman-tab"  href="/creditpayment/<%=id%>">
+      <a class="nav-link" id="salesman-tab"  href="/creditpayment/<%=id%>">
         <i class="fa-solid fa-money-bill-wave"></i>
                 Payments History
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link " id="salesman-tab"  href="/customerassethistory/<%=id%>">
+      <a class="nav-link active" id="salesman-tab"  href="/customerassethistory/<%=id%>">
         <i class="fa-solid fa-boxes-stacked"></i>        Asset History
       </a>
     </li>
@@ -160,7 +156,7 @@
       <div class="card">
         <!-- Card header -->
         <div class="card-header border-0">
-          <h3 class="mb-0 text-white">Payment History of user1</h3>
+          <h3 class="mb-0 text-white">Asset History  user1</h3>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
@@ -168,12 +164,12 @@
             <thead class="thead-light">
               <tr>
                 <th scope="col" class="sort" data-sort="name">Order Id</th>
-                <th scope="col" class="sort" data-sort="budget">Salesman ID</th>
-                <th scope="col" class="sort" data-sort="status">Total Credit</th>
-                <th scope="col" class="sort">Credit Recieved</th>
-                <th scope="col" class="sort" data-sort="completion">Credit Balance</th>
-                <th scope="col" class="sort">Last Recieved</th>
-                <th scope="col" class="sort" data-sort="completion">Pay Credit</th>
+                <th scope="col" class="sort" data-sort="budget">Date</th>
+                <th scope="col" class="sort" data-sort="status">Asset</th>
+                <th scope="col" class="sort">Qty</th>
+                <th scope="col" class="sort" data-sort="completion">Truck</th>
+                <th scope="col" class="sort">Salesman</th>
+                <th scope="col" class="sort" data-sort="completion"> Create Return</th>
                 <!-- <th scope="col" class="sort" data-sort="completion">Status</th>
                 <th scope="col" class="sort" data-sort="completion">Caption</th> -->
               </tr>

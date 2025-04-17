@@ -24,7 +24,6 @@ const Previlagewritemiddle = async (req, res, next) => {
             const allowedRoutes = prev.readwrite;
             // Extract route name from URL path (remove leading `/`)
 
-        console.log(prev)
 
             if (!allowedRoutes.includes(customKey)) {
                 return next(createError(400, 'No previlage.'));

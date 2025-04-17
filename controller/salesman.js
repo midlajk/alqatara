@@ -59,16 +59,38 @@ exports.getsalesman = async (req, res) => {
 
 //   app.post('/addtruck', async (req, res) => {
     exports.newsalesman = async (req, res) => {
- 
       try {
-        const salesman = new Salesman(req.body);
-        await salesman.save();
-        res.redirect('/salesman');
-    } catch (error) {
-      return next(createError(400, error));
+        const { id, name, password, city, commissionschmes } = req.body;
+        
+        // Validate input
+        if (!id || !name || !password || !city) {
+            return res.status(400).send('Missing required fields');
+        }
+        
+        // Check if salesman already exists
+        const existingSalesman = await Salesman.findOne({ id });
+        if (existingSalesman) {
+            return res.status(400).send('Salesperson with this ID already exists');
+        }
+        
+        // Create new salesman
+        const newSalesman = new Salesman({
+            id,
+            name,
+            password, // Note: You should hash this password before saving
+            city,
+            commissionschmes: Array.isArray(commissionschmes) ? commissionschmes : [commissionschmes]
+        });
+        
+        await newSalesman.save();
+        res.redirect('/schemes'); // Redirect to salespeople list
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
     }
  
-  };
+  
 
     
   exports.salesmanids = async (req, res) => {
@@ -183,5 +205,39 @@ exports.salesmanlogintoken = async (req, res) => {
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+exports.updatesalesman = async (req, res) => {
+  try {
+    const { name, password, city, commissionschmes } = req.body;
+    
+    // Find existing salesman
+    const salesman = await Salesman.findOne({ id: req.params.id });
+    if (!salesman) {
+      return res.status(404).send('Salesperson not found');
+    }
+    
+    // Update only the intended fields
+    if (name) salesman.name = name;
+    if (city) salesman.city = city;
+    if (commissionschmes) {
+      salesman.commissionschmes = Array.isArray(commissionschmes) 
+        ? commissionschmes 
+        : [commissionschmes];
+    }
+    salesman.updatedAt = Date.now();
+    
+    // Only update password if provided (and hash it)
+    if (password && password.trim() !== '') {
+      salesman.password = await bcrypt.hash(password, 10);
+    }
+    
+    // Save only the modified fields (avoid modifying deposits)
+    await salesman.save({ validateModifiedOnly: true });
+    
+    res.redirect('/salesman');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
   }
 };

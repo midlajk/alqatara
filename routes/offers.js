@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const walletclass = require('../controller/wallet');
+const offerclass = require('../controller/offers');
 const authMiddleware = require('../middleware/auth');
 const setCustomHeader = require('../middleware/customkeyadd');
 const apiprev = require('../middleware/apiprevilage');
@@ -22,7 +22,15 @@ router.get('/offers', setCustomHeader('wallet'),authMiddleware, function(req, re
     res.render('offers/newcommission', { title: 'Al Qattara' ,route:'Offers',sub :'Recharge Wallet'});
   });
 
-router.post('/addwalletmoney',setCustomHeader('wallet'),WritePrivilage, walletclass.addwalletmoney);
+router.post('/addoffer',setCustomHeader('wallet'),WritePrivilage, offerclass.addOffer);
+router.get('/offerlist',setCustomHeader('wallet'),WritePrivilage, offerclass.getAllOffers);
+router.post('/delete-offer',setCustomHeader('wallet'),WritePrivilage, offerclass.deleteOffer);
+
+router.get('/commissionschemes',  offerclass.commissionnames)
+
+router.post('/addcommission',setCustomHeader('wallet'),WritePrivilage, offerclass.addcommission);
+router.get('/commissionlist',setCustomHeader('wallet'),WritePrivilage, offerclass.getAllCommission);
+router.post('/deletecommission',setCustomHeader('wallet'),WritePrivilage, offerclass.deleteCommission);
 
 
 module.exports = router;

@@ -81,7 +81,7 @@ router.get('/salesman', setCustomHeader('salesman'),authMiddleware, function(req
 });
 
 router.get('/addnewsalesman', setCustomHeader('salesman'),authMiddleware, function(req, res, next) {
-  res.render('salesman/newsalesman', { title: 'Al Qattara' ,route:'Salesman',sub :'Register Salesman'});
+  res.render('salesman/newsalesman', { title: 'Al Qattara' ,route:'Salesman',sub :'Register Salesman',salesman:null});
 });
 
 // router.get('/cities', setCustomHeader('cities'),authMiddleware, function(req, res, next) {

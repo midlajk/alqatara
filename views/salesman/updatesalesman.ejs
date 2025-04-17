@@ -1,0 +1,111 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Salesperson Registration</h3>
+                </div>
+                <!-- Card body -->
+                <div class="card-body" id="cardb">
+                    <form class="needs-validation" action="/addsalesman" method="POST" novalidate>
+                        <div class="form-group row">
+                            <label for="example-text-input"
+                                class="col-md-2 col-form-label form-control-label">Salesperson ID</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text"
+                                    placeholder="Unique identifier for the salesperson" name="id" id="example-text-input">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-search-input"
+                                class="col-md-2 col-form-label form-control-label">Salesperson Name</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="search" placeholder="Full name of the salesperson"
+                                    id="example-search-input" name="name">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-email-input"
+                                class="col-md-2 col-form-label form-control-label">Salesperson Password</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="email"
+                                    placeholder="Secure password for the salesperson’s login"
+                                    id="example-email-input" name="password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-url-input"
+                                class="col-md-2 col-form-label form-control-label">City
+                            </label>
+                            <div class="col-md-10">
+                                <select class="city-js form-control" name="city" id="city" required></select>
+
+                                <!-- <input class="form-control" type="url"
+                                    placeholder="City or location of the salesperson" name="city" id="example-url-input"> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="example-url-input"
+                                class="col-md-2 col-form-label form-control-label">Commissions
+                            </label>
+                            <div class="col-md-10">
+                                <select class="city-js form-control" name="commissions" id="commissions" required></select>
+
+                                <!-- <input class="form-control" type="url"
+                                    placeholder="City or location of the salesperson" name="city" id="example-url-input"> -->
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Register</button>
+                        <button type="button" class="btn btn-danger">Cancel</button>
+                     </form>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Include Select2 CSS -->
+    
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+      
+    <!-- Footer -->
+    <script>
+        $(document).ready(function () {
+          // Initialize Select2 for the element with the correct ID or class
+          $('.city-js').select2({
+            dropdownParent: $("#cardb"),
+  ajax: {
+    url: '/citynames', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.city, text: item.city }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+        });
+      </script> 
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>

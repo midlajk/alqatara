@@ -1,103 +1,112 @@
 <%- include('../includes/head.ejs') -%>
-<%- include('../includes/navigation.ejs') -%>
+  <%- include('../includes/navigation.ejs') -%>
 
-<%- include('../includes/header.ejs') -%>
-<%- include('../components/searchbartr.ejs') -%>
+    <%- include('../includes/header.ejs') -%>
+      <%- include('../components/searchbartr.ejs') -%>
 
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="container-fluid mt--6">
-    <div class="row">
-        <div class="col">
-            <div class="card">
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="container-fluid mt--6">
+          <div class="row">
+            <div class="col">
+              <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0">Add New Offer</h3>
+                  <h3 class="mb-0 text-white">Add New Offer</h3>
                 </div>
                 <!-- Card body -->
+                <!-- Card body -->
                 <div class="card-body" id="cardb">
-                    <form id="addTruckForm" action="/addtrucks" method="POST">
-                        
-                        <div class="form-group row">
-                            <label for="city" class="col-md-2 col-form-label form-control-label">Amount</label>
-                            <div class="col-md-10">
-                              <input class="form-control" type="text" placeholder="Enter Item Description" id="truck-id" name="truckId" required>
-
-                                <!-- <input class="form-control" type="text" placeholder="Select or enter the city"  required> -->
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Paid Coupons</label>
-                            <div class="col-md-10">
-                              <input class="form-control" type="text" placeholder="Enter Item Description" id="truck-id" name="truckId" required>
-
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                          <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Free Coupons</label>
-                          <div class="col-md-10">
-                            <input class="form-control" type="text" placeholder="Enter Item Description" id="truck-id" name="truckId" required>
-
-                          </div>
+                  <form id="addCouponForm" action="/addoffer" method="POST">
+                    <div class="form-group row">
+                      <label for="code" class="col-md-2 col-form-label form-control-label">Offer Code</label>
+                      <div class="col-md-10">
+                        <input class="form-control" type="text" placeholder="Coupon Code" id="code" name="code"
+                          required>
                       </div>
-                        <div>
-                            <button type="submit" class="btn btn-success">Add Offer</button>
-                            <!-- <button type="reset" class="btn btn-danger">Cancel</button> -->
-                        </div>
-                    </form>
+                    </div>
+                    <div class="form-group row">
+                      <label for="amount" class="col-md-2 col-form-label form-control-label">Amount</label>
+                      <div class="col-md-10">
+                        <input class="form-control" type="number" placeholder="Coupon Amount" id="amount" name="amount"
+                          required>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="items" class="col-md-2 col-form-label form-control-label">Items</label>
+                      <div class="col-md-10">
+                        <select class="form-control" id="items" name="items[]" multiple="multiple" required></select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="paidcoupon" class="col-md-2 col-form-label form-control-label">Paid Coupons</label>
+                      <div class="col-md-10">
+                        <input class="form-control" type="number" placeholder="Number of paid coupons" id="paidcoupon"
+                          name="paidcoupon" required>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="freecopon" class="col-md-2 col-form-label form-control-label">Free Coupons</label>
+                      <div class="col-md-10">
+                        <input class="form-control" type="number" placeholder="Number of free coupons" id="freecopon"
+                          name="freecopon" required>
+                      </div>
+                    </div>
+                    <div>
+                      <button type="submit" class="btn btn-success">Add Offer</button>
+                    </div>
+                  </form>
                 </div>
-            </div>
-            <!-- Footer -->
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+              </div>
+              <!-- Footer -->
+              <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-            <!-- Include Select2 CSS -->
-            
-            <!-- Include Select2 JS -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-            
-                      <script>
-                        $(document).ready(function () {
-                          // Initialize Select2 for the element with the correct ID or class
-                          $('.city-js').select2({
-                            dropdownParent: $("#cardb"),
-                  ajax: {
-                    url: '/citynames', // Backend endpoint
-                    dataType: 'json',
-                    delay: 250, // Debounce for performance
-                    processResults: function (data) {
-                      return {
-                        results: data.map(function (item) {
-                          return { id: item.city, text: item.city }; // Customize text display
-                        }),
-                      };
-                    },
-                  
-                  },
-                });
-                        });
-                      </script>  
-                         <script>
-                            $(document).ready(function () {
-                              // Initialize Select2 for the element with the correct ID or class
-                              $('.items-js').select2({
-                                dropdownParent: $("#cardb"),
-                      ajax: {
-                        url: '/routeids', // Backend endpoint
-                        dataType: 'json',
-                        delay: 250, // Debounce for performance
-                        processResults: function (data) {
+              <!-- Include Select2 CSS -->
+
+              <!-- Include Select2 JS -->
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+              <script>
+                $(document).ready(function () {
+                  $('#items').select2({
+                    placeholder: "Search product...",
+                    allowClear: true,
+                    ajax: {
+                      url: "/getproductsnames", // Your product API endpoint
+                      dataType: "json",
+                      delay: 250,
+                      data: function (params) {
+                        return {
+                          q: params.term || "" // Changed from 'search' to 'q' to match backend
+                        };
+                      },
+                      processResults: function (data) {
+                        // Check the structure of your response
+                        if (data.results) {
+                          // If your backend already returns { results: [...] }
+                          return data;
+                        } else {
+                          // If your backend returns an array of products directly
                           return {
-                            results: data.map(function (item) {
-                              return { id: item.id, text: item.id }; // Customize text display
+                            results: data.results.map(function (item) {
+                              return {
+                                id: item.name, // This will be the value (product._id)
+                                text: item.name, // Display text (name + price)
+
+                              };
                             }),
                           };
-                        },
-                      
+
+
+                        }
                       },
-                    });
-                            });
-                          </script>   
-<%- include('../includes/footer.ejs') -%>
-<%- include('../includes/end.ejs') -%>
+                      cache: true
+                    }
+                  })
+                });
+              </script>
+
+              <%- include('../includes/footer.ejs') -%>
+                <%- include('../includes/end.ejs') -%>

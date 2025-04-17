@@ -1,4 +1,3 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
@@ -6,95 +5,144 @@
 <%- include('../components/searchbartr.ejs') -%>
 
 </div>
+</div>
+</div>
+</div>
+</div>
 
-</div>
-</div>
-</div>
-</div>
 <div class="container-fluid mt--6">
     <div class="row">
         <div class="col">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="mb-0">Salesperson Registration</h3>
+                    <h3 class="mb-0"><%= salesman ? 'Update Salesperson' : 'Salesperson Registration' %></h3>
                 </div>
                 <!-- Card body -->
                 <div class="card-body" id="cardb">
-                    <form class="needs-validation" action="/addsalesman" method="POST" novalidate>
+                    <form class="needs-validation" action="<%= salesman ? '/updatesalesman/' + salesman.id : '/addsalesman' %>" method="POST" novalidate>
                         <div class="form-group row">
-                            <label for="example-text-input"
-                                class="col-md-2 col-form-label form-control-label">Salesperson ID</label>
+                            <label for="salesperson-id" class="col-md-2 col-form-label form-control-label">Salesperson ID</label>
                             <div class="col-md-10">
                                 <input class="form-control" type="text"
-                                    placeholder="Unique identifier for the salesperson" name="id" id="example-text-input">
+                                    placeholder="Unique identifier for the salesperson" 
+                                    name="id" id="salesperson-id"
+                                    value="<%= salesman ? salesman.id : '' %>"
+                                    <%= salesman ? 'readonly' : '' %>>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="example-search-input"
-                                class="col-md-2 col-form-label form-control-label">Salesperson Name</label>
+                            <label for="salesperson-name" class="col-md-2 col-form-label form-control-label">Salesperson Name</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="search" placeholder="Full name of the salesperson"
-                                    id="example-search-input" name="name">
+                                <input class="form-control" type="text" placeholder="Full name of the salesperson"
+                                    id="salesperson-name" name="name"
+                                    value="<%= salesman ? salesman.name : '' %>" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="example-email-input"
-                                class="col-md-2 col-form-label form-control-label">Salesperson Password</label>
+                            <label for="salesperson-password" class="col-md-2 col-form-label form-control-label">Password</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="email"
-                                    placeholder="Secure password for the salesperson’s login"
-                                    id="example-email-input" name="password">
+                                <input class="form-control" type="password"
+                                    placeholder="<%= salesman ? 'Leave blank to keep current password' : 'Secure password for login' %>"
+                                    id="salesperson-password" name="password">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="example-url-input"
-                                class="col-md-2 col-form-label form-control-label">City
-                            </label>
+                            <label for="city" class="col-md-2 col-form-label form-control-label">City</label>
                             <div class="col-md-10">
-                                <select class="city-js form-control" name="city" id="city" required></select>
-
-                                <!-- <input class="form-control" type="url"
-                                    placeholder="City or location of the salesperson" name="city" id="example-url-input"> -->
+                                <select class="city-js form-control" name="city" id="city" required>
+                                    <% if (salesman) { %>
+                                        <option value="<%= salesman.city %>" selected><%= salesman.city %></option>
+                                    <% } %>
+                                </select>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success">Register</button>
-                        <button type="button" class="btn btn-danger">Cancel</button>
-                     </form>
+                        <div class="form-group row">
+                            <label for="commissions" class="col-md-2 col-form-label form-control-label">Commission Schemes</label>
+                            <div class="col-md-10">
+                                <select class="commissions-js form-control" name="commissionschmes" id="commissions" multiple="multiple" required>
+                                    <% if (salesman && salesman.commissionschmes) { %>
+                                        <% salesman.commissionschmes.forEach(function(scheme) { %>
+                                            <option value="<%= scheme %>" selected><%= scheme %></option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-10 offset-md-2">
+                                <button type="submit" class="btn btn-success">
+                                    <%= salesman ? 'Update' : 'Register' %>
+                                </button>
+                                <a href="/salespeople" class="btn btn-danger">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-               
             </div>
         </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-    <!-- Include Select2 CSS -->
-    
-    <!-- Include Select2 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
       
-    <!-- Footer -->
     <script>
         $(document).ready(function () {
-          // Initialize Select2 for the element with the correct ID or class
-          $('.city-js').select2({
-            dropdownParent: $("#cardb"),
-  ajax: {
-    url: '/citynames', // Backend endpoint
-    dataType: 'json',
-    delay: 250, // Debounce for performance
-    processResults: function (data) {
-      return {
-        results: data.map(function (item) {
-          return { id: item.city, text: item.city }; // Customize text display
-        }),
-      };
-    },
-  
-  },
-});
-        });
-      </script> 
-<%- include('../includes/footer.ejs') -%>
+            // Initialize Select2 for city
+            $('.city-js').select2({
+                dropdownParent: $("#cardb"),
+                ajax: {
+                    url: '/citynames',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function (item) {
+                                return { id: item.city, text: item.city };
+                            }),
+                        };
+                    },
+                },
+                allowClear: true,
+                placeholder: 'Select a city'
+            });
 
+            // Initialize Select2 for commission schemes
+            $('.commissions-js').select2({
+                dropdownParent: $("#cardb"),
+                ajax: {
+                    url: '/commissionschemes',
+                    dataType: 'json',
+                    delay: 250,
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function (item) {
+                                return { id: item.code, text: item.code };
+                            }),
+                        };
+                    },
+                },
+                multiple: true,
+                placeholder: 'Select commission schemes'
+            });
+
+            // Form validation
+            // (function() {
+            //     'use strict';
+            //     window.addEventListener('load', function() {
+            //         var forms = document.getElementsByClassName('needs-validation');
+            //         var validation = Array.prototype.filter.call(forms, function(form) {
+            //             form.addEventListener('submit', function(event) {
+            //                 if (form.checkValidity() === false) {
+            //                     event.preventDefault();
+            //                     event.stopPropagation();
+            //                 }
+            //                 form.classList.add('was-validated');
+            //             }, false);
+            //         });
+            //     }, false);
+            // })();
+        });
+    </script> 
+
+<%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

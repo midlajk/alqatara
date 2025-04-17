@@ -262,16 +262,17 @@ const salesmanSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   city: { type: String, required: true },
+  commissionschmes:[String],
   tok:String,
   collectedBottleSecurityDeposits: { type: [{
-    date: { type: Date, required: true },
-    amount: { type: Number, required: true },
-    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true }
+    date: { type: Date},
+    amount: { type: Number },
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer'}
   }]},
   collectedCoolerSecurityDeposits: { type: [{
-    date: { type: Date, required: true },
-    amount: { type: Number, required: true },
-    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true }
+    date: { type: Date},
+    amount: { type: Number },
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }
   }]}
   });
   salesmanSchema.pre("save", async function (next) {
@@ -434,7 +435,24 @@ const stockAdditionSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   reason: { type: String } // (e.g., "stock purchase", "return", etc.)
 });
+const couponSchema = new mongoose.Schema({
+  code: { type: String },
+  amount: { type: Number },
+  creationdate: { type: Date, default: Date.now },
+  items: { type: [String] } ,
+  paidcoupon:{ type: Number },
+  freecopon:{ type: Number },
+  // (e.g., "stock purchase", "return", etc.)
+});
 
+const commissionSchema = new mongoose.Schema({
+  code: { type: String },
+  achievement: { type: Number },
+  creationdate: { type: Date, default: Date.now },
+  benifit:{ type: String },
+  increment:{ type: Number },
+  // (e.g., "stock purchase", "return", etc.)
+});
 // const StockAddition = mongoose.model('StockAddition', stockAdditionSchema);
 
 
@@ -461,7 +479,9 @@ const stockAdditionSchema = new mongoose.Schema({
     PrevilageClass:mongoose.model('PrevilageClass', PrevilageClassSchema),
     Product:mongoose.model('Product', productSchema),
     Stockdelivery:mongoose.model('Stockdelivery', stockdelivery),
-    StockAddition:mongoose.model('StockAddition', stockAdditionSchema)
+    StockAddition:mongoose.model('StockAddition', stockAdditionSchema),
+    CouponSchema:mongoose.model('CouponSchema',couponSchema),
+    CommissionSchema:mongoose.model('CommissionSchema',commissionSchema)
 
   };
   

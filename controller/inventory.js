@@ -501,11 +501,10 @@ exports.getproductsnames = async (req, res) => {
             
             // Format data for Select2
             const results = products.map(product => ({
-              id: product._id,
+              id: product.name, //// need to change to _id if neccessary 
               text: product.name,
               price: product.price
             }));
-            console.log(results)
             
             // Return in Select2 expected format
             res.json({

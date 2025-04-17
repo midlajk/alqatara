@@ -29,6 +29,8 @@
                   <th scope="col" class="sort" data-sort="name">Full Name</th>
                   <th scope="col" class="sort" data-sort="budget">id</th>
                   <th scope="col" class="sort" data-sort="status">City</th>
+                  <th scope="col" class="sort" data-sort="status">Commission Schemes</th>
+
                   <th scope="col" class="sort" data-sort="status">Created</th>
 
                   <th scope="col"></th>
@@ -107,6 +109,8 @@
             }, 
               { data: 'id', title: 'Salesman ID' }, // Customer ID (assuming 'uid' is the customer ID)
   { data: 'city', title: 'City' }, // Contact (assuming 'mobileNumber' is the primary contact)
+  { data: 'commissionschmes', title: 'Commission Schemes' }, // Contact (assuming 'mobileNumber' is the primary contact)
+
   { 
     data: 'createdAt', 
     title: 'Registered On', 
@@ -121,7 +125,7 @@
         render: function(data, type, row) {
           return `
             
-                        <button class="btn btn-action btn-manage edit-zone" data-id="${row._id}">Edit</button>
+                        <a class="btn btn-action btn-manage edit-zone" href="/updatesalesman/${row._id}">Edit</a>
 
           `;
         }

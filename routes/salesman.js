@@ -4,6 +4,10 @@ const salesmanapiapi = require('../controller/salesman');
 // const authMiddleware = require('../middleware/authcheck.js');
 const setCustomHeader = require('../middleware/customkeyadd');
 
+require('../model/database')
+const mongoose = require('mongoose');
+const Salesman = mongoose.model('Salesman')
+
 const apiprev = require('../middleware/apiprevilage');
 const WritePrivilage = require('../middleware/previlagewrite');
 const authMiddleware = require('../middleware/auth');
@@ -12,6 +16,16 @@ router.get('/getsalesman',setCustomHeader('salesman'),apiprev.Getapiprev, salesm
 router.post('/addsalesman',setCustomHeader('salesman'),WritePrivilage, salesmanapiapi.newsalesman);
 router.get('/salesmanids', salesmanapiapi.salesmanids);
 
+
+
+router.get('/updatesalesman/:id', setCustomHeader('salesman'),authMiddleware, async function(req, res, next) {
+   
+    const salesman = await Salesman.findById(req.params.id)
+
+    res.render('salesman/newsalesman', { title: 'Al Qattara' ,route:'Salesman',sub :'Update Salesman',salesman:salesman});
+  });
+
+  router.post('/updatesalesman/:id', setCustomHeader('salesman'),WritePrivilage, salesmanapiapi.updatesalesman);
 
 
 ////Mobile app 

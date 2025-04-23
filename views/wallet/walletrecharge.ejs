@@ -49,7 +49,8 @@
                             <label for="quantity5gal"
                                 class="col-md-2 col-form-label form-control-label">Wallet Recharge</label>
                             <div class="col-md-10">
-                                <input class="form-control" name="walletrecharge" type="number" placeholder="Choose Coupon" id="walletrecharge">
+                                <select class="offer-js form-control" id="offer" name="offer" required></select>
+
                             </div>
                         </div>
                         <div class="form-group row">
@@ -200,6 +201,45 @@
     // });
 });
 
+
+
       </script>
+
+<script>
+    $(document).ready(function () {
+      $('.offer-js').select2({
+        dropdownParent: $("#cardb"),
+        placeholder: "Select Coupon Code",
+        ajax: {
+          url: '/offercodes', // Backend endpoint
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              search: params.term,
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(function (item) {
+                return {
+                  id: item._id,         // Use _id as the value
+                  text: item.code,      // Show the code in dropdown
+                  amount: item.amount,  // Include amount for later use
+                };
+              }),
+            };
+          },
+        }
+      });
+  
+      // When an item is selected, update the amount input
+      $('.offer-js').on('select2:select', function (e) {
+        const selectedData = e.params.data;
+        $('#walletrecharge').val(selectedData.amount); // Set the amount to the input
+      });
+    });
+  </script>
+  
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

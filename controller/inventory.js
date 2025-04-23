@@ -23,16 +23,22 @@ exports.updatestockinventory = async (req, res) => {
             }
 
             let previousStock = product.currentStock;
+            let previousoldstock = product.oldStock;
+
             let previousDamage = product.damagedStock || 0;
             let previousDiscard = product.discardedStock || 0;
 
             // Update stock based on type and quantity
             if (element.quantity > 0) {
-                if (element.itemtype !== 'Damaged') {
-                    product.currentStock += parseInt(element.quantity);
-                } else {
+                if (element.itemtype === 'Damaged') {
                     product.damagedStock = parseInt(product.damagedStock || 0) + parseInt(element.quantity);
+                } else if (element.itemtype == 'New') {
+                    product.currentStock = parseInt(product.currentStock || 0) + parseInt(element.quantity);
+                } else {
+                    product.currentStock = parseInt(product.currentStock || 0) + parseInt(element.quantity);
+                    product.previousoldstock = parseInt(product.previousoldstock || 0) + Math.abs(element.quantity);
                 }
+                
             } else {
                 product.discardedStock = parseInt(product.discardedStock || 0) + Math.abs(element.quantity);
             }
@@ -78,7 +84,7 @@ exports.addOrUpdateProduct = async (req, res) => {
             { productid }, // Find product by ID
             {   productid,
                 name,
-                type,
+                type:type||'New',
                 priority,
                 description,
                 updatedAt: Date.now()
@@ -94,55 +100,107 @@ exports.addOrUpdateProduct = async (req, res) => {
     }
 };
 
-exports.getProducts = async (req, res) => {
-  try {
-      const { draw, start, length, search } = req.query;
+// exports.getProducts = async (req, res) => {
+//   try {
+//       const { draw, start, length, search } = req.query;
 
-      // Pagination and filtering logic
-      const page = Math.ceil(start / length);
-      const limit = length;
-      const skip = page * limit;
+//       // Pagination and filtering logic
+//       const page = Math.ceil(start / length);
+//       const limit = length;
+//       const skip = page * limit;
 
-      let filter = {};
-      if (search && search.value) {
-          filter = {
-              $or: [
-                  { name: { $regex: search.value, $options: 'i' } },
-                  { type: { $regex: search.value, $options: 'i' } },
-                  { description: { $regex: search.value, $options: 'i' } }
-              ]
-          };
-      }
+//       let filter = {};
+//       if (search && search.value) {
+//           filter = {
+//               $or: [
+//                   { name: { $regex: search.value, $options: 'i' } },
+//                   { type: { $regex: search.value, $options: 'i' } },
+//                   { description: { $regex: search.value, $options: 'i' } }
+//               ]
+//           };
+//       }
 
-      // Fetch total count of documents that match the filter
-      const totalRecords = await Product.countDocuments(filter);
+//       // Fetch total count of documents that match the filter
+//       const totalRecords = await Product.countDocuments(filter);
 
-      // Fetch paginated data
-      const products = await Product.find(filter)
-          .skip(skip)
-          .limit(limit)
-          .sort({ createdAt: -1 }); // You can change this to any sorting criterion you prefer
+//       // Fetch paginated data
+//       const products = await Product.find(filter)
+//           .skip(skip)
+//           .limit(limit)
+//           .sort({ createdAt: -1 }); // You can change this to any sorting criterion you prefer
 
-      // Send the data along with pagination info
-      res.status(200).json({
-          draw: draw,
-          recordsTotal: totalRecords,
-          recordsFiltered: totalRecords,
-          data: products
-      });
-  } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
+//       // Send the data along with pagination info
+//       res.status(200).json({
+//           draw: draw,
+//           recordsTotal: totalRecords,
+//           recordsFiltered: totalRecords,
+//           data: products
+//       });
+//   } catch (error) {
+//       console.log(error);
+//       res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
 
 // Route to get products for Select2
 // router.get('/products', async (req, res) => {
-  exports.getProductnames = async (req, res) => {
+ 
+    exports.getProducts = async (req, res) => {
+        try {
+            const { draw, start, length, search } = req.query;
+    
+            const page = Math.ceil(start / length);
+            const limit = length;
+            const skip = page * limit;
+    
+            let filter = {};
+            if (search && search.value) {
+                filter = {
+                    $or: [
+                        { name: { $regex: search.value, $options: 'i' } },
+                        { description: { $regex: search.value, $options: 'i' } }
+                    ]
+                };
+            }
+    
+            const totalRecords = await Product.countDocuments(filter);
+            const products = await Product.find(filter)
+                .skip(skip)
+                .limit(limit)
+                .sort({ createdAt: -1 });
+    
+            const flatData = products.map(product => {
+                const totalStock = product.stock.reduce((acc, entry) => {
+                    acc += entry.currentStock || 0;
+                    return acc;
+                }, 0);
+    
+                return {
+                    ...product.toObject(),
+                    totalStock,
+                    stockByCity: product.stock
+                };
+            });
+    
+            res.status(200).json({
+                draw,
+                recordsTotal: totalRecords,
+                recordsFiltered: totalRecords,
+                data: flatData
+            });
+    
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    };
+    
+ 
+ 
+    exports.getProductnames = async (req, res) => {
   try {
       // Fetch product data from the database
       const products = await Product.find({}, 'productid name').limit(50); // Adjust limit based on your needs
-console.log(products)
       // Map products to the format that Select2 expects
       const results = products.map(product => ({
           id: product.productid,
@@ -520,3 +578,20 @@ exports.getproductsnames = async (req, res) => {
           }
   
 };
+
+exports.deleteproduct = async (req, res) => {
+
+    //////////Need to do operation /////////
+    try {
+      const { id } = req.body;
+      const deletedRoute = await Product.findByIdAndDelete(id);
+      if (!deletedRoute) {
+        return res.status(404).json({ success: false, message: 'Route not found' });
+      }
+      res.json({ success: true, message: 'Route deleted successfully' });
+    } catch (error) {
+      console.error("Error deleting route:", error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  
+  };

@@ -11,6 +11,8 @@ const apiprev = require('../middleware/apiprevilage');
 const WritePrivilage = require('../middleware/previlagewrite');
 
 router.get('/getrecharges',setCustomHeader('wallet'),apiprev.Getapiprev, walletclass.getrecharges);
+router.get('/recharges/:rechargeId/coupons',setCustomHeader('wallet'),apiprev.Getapiprev, walletclass.getCouponsByRecharge);
+router.get('/downloadcoupon/:downloadid',setCustomHeader('wallet'),apiprev.Getapiprev, walletclass.downloadcoupon);
 
 
 router.get('/addwalletrecharge', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {

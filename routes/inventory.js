@@ -33,6 +33,9 @@ router.get('/stockhistory/:id', setCustomHeader('utilities'),authMiddleware, asy
 });
 router.post('/updatestock', setCustomHeader('utilities'),authMiddleware, inventory.updatestockinventory);
 router.post('/addnewproduct', setCustomHeader('utilities'),authMiddleware, inventory.addOrUpdateProduct);
+router.post('/delete-product',setCustomHeader('utilities'),apiprev.Postapiprev, inventory.deleteproduct);
+
+
 router.get('/getinventory', inventory.getProducts);
 router.get('/productids', inventory.getProductnames);
 router.get('/getStockhistory', inventory.getStockhistory);

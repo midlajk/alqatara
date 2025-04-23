@@ -14,6 +14,7 @@ router.get('/offers', setCustomHeader('wallet'),authMiddleware, function(req, re
   router.get('/newoffer', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {
     res.render('offers/newoffer', { title: 'Al Qattara' ,route:'Offers',sub :'Recharge Wallet'});
   });
+
   router.get('/salesmancommission', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {
     res.render('offers/salesmancommission', { title: 'Al Qattara' ,route:'Offers',sub :'Recharge Wallet'});
   });
@@ -25,6 +26,7 @@ router.get('/offers', setCustomHeader('wallet'),authMiddleware, function(req, re
 router.post('/addoffer',setCustomHeader('wallet'),WritePrivilage, offerclass.addOffer);
 router.get('/offerlist',setCustomHeader('wallet'),WritePrivilage, offerclass.getAllOffers);
 router.post('/delete-offer',setCustomHeader('wallet'),WritePrivilage, offerclass.deleteOffer);
+router.get('/offercodes',setCustomHeader('wallet'),WritePrivilage, offerclass.offerlist);
 
 router.get('/commissionschemes',  offerclass.commissionnames)
 

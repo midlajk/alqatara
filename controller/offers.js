@@ -88,7 +88,19 @@ const createError = require('http-errors');
             res.status(500).json({ error: 'Server error' });
         }
       };
-
+      exports.offerlist= async (req, res) => {
+        try {
+          const search = req.query.search || '';
+          const regex = new RegExp(search, 'i');
+      
+          const coupons = await CouponSchema.find({ code: { $regex: regex } }).limit(10);
+      
+          res.json(coupons);
+        } catch (err) {
+          console.error(err);
+          res.status(500).send('Error fetching coupons');
+        }
+      };
       exports.deleteOffer= async (req, res) => {
         try {
           const { id } = req.body;
@@ -198,4 +210,4 @@ const createError = require('http-errors');
             res.status(500).json([]);
         }
     };
-    
+  

@@ -397,17 +397,24 @@ const citySchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
   productid: { type: String, required: true, unique: true }, // Ensure uniqueness
   name: { type: String, required: true },
-  type: { type: String },
   priority: { type: String },
   baseprice: { type: Number },
   description: { type: String },
-  currentStock: { type: Number, default: 0 },
-  damagedStock: { type: Number, default: 0 }, // Track damaged products
-  discardedStock: { type: Number, default: 0 }, // Track damaged products
-
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+  stock:[{
+    type: { type: String },
+    currentStock: { type: Number, default: 0 },
+    oldStock: { type: Number, default: 0 }, // Track damaged products
+    damagedStock: { type: Number, default: 0 }, // Track damaged products
+    discardedStock: { type: Number, default: 0 },
+    city:{ type: String },
+
+  }]
+  // Track damaged products
+  
 });
+
 const stockdelivery = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   truckId: { type: String, required: true },

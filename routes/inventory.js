@@ -41,6 +41,7 @@ router.get('/productids', inventory.getProductnames);
 router.get('/getStockhistory', inventory.getStockhistory);
 router.get('/stockhistory-stats', inventory.getsumstockhistory);
 router.get('/getproductsnames', inventory.getproductsnames);
+router.get('/exportStockHistory', inventory.exportStockHistory);
 
 
 

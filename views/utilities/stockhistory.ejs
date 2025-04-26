@@ -103,7 +103,6 @@
   }
 
   .date-input span {
-    margin-right: 10px;
     font-weight: 500;
     color: var(--dark-color);
   }
@@ -373,13 +372,14 @@
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header bg-white border-0">
+        <div class="card-header bg-white border-0 mb-2">
           <div class="row align-items-center">
             <div class="col">
-              <h3 class="mb-0"><i class="fas fa-history mr-2"></i>Stock Transaction History</h3>
+              <h3 class="mb-0 text-white"><i class="fas fa-history mr-2"></i>Stock Transaction History</h3>
             </div>
             <div class="col text-right">
-              <button class="btn btn-sm btn-outline-primary">
+              
+              <button id="exportBtn" class="btn btn-sm btn-outline-primary">
                 <i class="fas fa-download mr-2"></i>Export
               </button>
             </div>
@@ -416,6 +416,7 @@
 <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
+  let city = '<%=city%>'||'ALL'
   $(document).ready(function () {
     // Initialize DataTable
     var datatable = $('#stockTable').DataTable({
@@ -444,7 +445,7 @@
             ...d,
             fromDate: fromDate,
             toDate: toDate,
-            city: $('#citySelect').val(),
+            city: city,
             product: '<%=id%>',
             truck:truck
           };
@@ -500,13 +501,33 @@
       updateDashboardStats(
         $('#fromDate').val(),
         $('#toDate').val(),
-        $('#citySelect').val(),
+        city,
         $('#truck').val()
       );
     });
 
     // Initial load of dashboard stats
-    updateDashboardStats(today, today, $('#citySelect').val(), $('#truck').val());
+    updateDashboardStats(today, today, city, $('#truck').val());
+
+    // Add this to your existing script
+$(document).on('click', '#exportBtn', function() {
+    // Get current filter values
+    const fromDate = $('#fromDate').val();
+    const toDate = $('#toDate').val();
+    const truck = $('#truck').val();
+    const searchValue = $('#stockTable_filter input').val();
+    
+    // Create download URL with all filters
+    let exportUrl = `/exportStockHistory?fromDate=${fromDate}&toDate=${toDate}&city=${city}&product=<%=id%>&truck=${truck}`;
+    
+    // Add search value if exists
+    if (searchValue) {
+        exportUrl += `&search[value]=${encodeURIComponent(searchValue)}`;
+    }
+    
+    // Trigger download
+    window.location.href = exportUrl;
+});
   });
 
   // Function to fetch and update dashboard stats
@@ -627,10 +648,12 @@
         }
     });
 }</script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script>
   $(document).ready(function () {
+
+
+    
     // Initialize Select2 for the element with the correct ID or class
     $('.truck-js').select2({
       dropdownParent: $("#cardb"),
@@ -645,17 +668,7 @@ return {
 };
 },
 processResults: function (data) {
-// return {
-//   results: data.map(function (item) {
 
-
-//     let cityOptions = [{ id: "All", text: "All" }];
-//                 cityOptions = cityOptions.concat(data.map(item => ({ id: item.city, text: item.city })));
-
-//                 return { results: cityOptions };
-//     return { id: item.id, text: item.id }; // Customize text display
-//   }),
-// };
 let truckoption = [{ id: "Production", text: "Production", }];
 truckoption = truckoption.concat(data.map(item => ({ id: item.id, text: item.id })));
 

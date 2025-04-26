@@ -400,24 +400,24 @@
         },
         { data: 'description', render: data => data || 'N/A' },
         { 
-          data: 'currentStock', 
+          data: 'totalStock', 
           render: function(data) {
             if (!data) return 'N/A';
             const stockClass = data <= 0 ? 'danger-stock' : (data < 10 ? 'warning-stock' : 'positive-stock');
             return `<span class="${stockClass}">${data}</span>`;
           }
         },
-        { data: 'currentStock', render: data => data || 'N/A' },
+        { data: 'totalOld', render: data => data || 'N/A' },
 
         { 
-          data: 'damagedStock', 
+          data: 'totalDamaged', 
           render: function(data) {
             if (!data) return 'N/A';
             return `<span class="danger-stock">${data}</span>`;
           }
         },
         { 
-          data: 'discardedStock', 
+          data: 'totalDiscarded', 
           render: function(data) {
             if (!data) return 'N/A';
             return `<span class="danger-stock">${data}</span>`;
@@ -442,29 +442,33 @@
       ]
     });
     $(document).on('click', '.delete', function () {
-      var id = $(this).data('id');
-      
-      if (confirm("Are you sure you want to delete this Product?")) {
-        $.ajax({
-          url: '/delete-product',  // Backend endpoint to handle deletion
-          method: 'POST',
-          data: { id: id },
-          success: function (response) {
-            if (response.success) {
-              alert("Route deleted successfully!");
-              // Reload the DataTable to reflect the deletion without resetting pagination
-              datatable.ajax.reload(null, false);
-            } else {
-              alert("Error: " + response.message);
-            }
-          },
-          error: function (error) {
-            console.error("Error deleting route:", error);
-            alert("An error occurred while deleting the route.");
-          }
-        });
+  var id = $(this).data('id');
+
+  if (confirm("Are you sure you want to delete this Product?")) {
+    $.ajax({
+      url: '/delete-product',  // Backend endpoint to handle deletion
+      method: 'POST',
+      data: { id: id },
+      success: function (response) {
+        if (response.success) {
+          alert("Product deleted successfully!");
+          // Reload the DataTable to reflect the deletion without resetting pagination
+          datatable.ajax.reload(null, false);
+        } else {
+          alert("Error: " + response.message);
+        }
+      },
+      error: function (xhr) {
+        let errMsg = "An error occurred while deleting the product.";
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errMsg = xhr.responseJSON.message;
+        }
+        alert("Error: " + errMsg);
       }
     });
+  }
+});
+
     // Set default dates to today
     const today = new Date().toISOString().split('T')[0];
     $('#fromDate').val(today);

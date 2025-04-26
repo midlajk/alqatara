@@ -160,12 +160,12 @@
         <div class="p-1">
           <p class="text-muted small">Select City</p>
           <div class="btn-group w-100">
-            <button class="btn btn-sm btn-dark ">ALL</button>
-            <button class="btn btn-sm btn-primary">Al-ain</button>
-            <button class="btn btn-sm btn-dark">Abu Dhabi</button>
+            <button class="btn btn-sm btn-primary city-btn" data-city="ALL">ALL</button>
+            <button class="btn btn-sm btn-dark city-btn" data-city="AL_AIN">AL_AIN</button>
+            <button class="btn btn-sm btn-dark city-btn" data-city="ABU_DHABI">ABU_DHABI</button>
           </div>
       
-          <button class="btn btn-block btn-dark mt-3">
+          <button class="btn btn-block btn-dark mt-3" onclick="handleLogout()">
             <i class="ni ni-user-run"></i> Log out
           </button>
         </div>
@@ -276,3 +276,62 @@
         </div>
       </div>
     </nav>
+
+
+    <script>
+      // Set initial active city (you can set this dynamically from server-side)
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get current city from server-side variable or default to 'ALL'
+        const currentCity = '<%= city || "ALL" %>';
+        setActiveCity(currentCity);
+      });
+    
+      // Add click handlers to city buttons
+      document.querySelectorAll('.city-btn').forEach(button => {
+        button.addEventListener('click', function() {
+          const selectedCity = this.getAttribute('data-city');
+          updateCity(selectedCity);
+        });
+      });
+    
+      function updateCity(city) {
+        // Send request to backend
+        fetch('/update-city', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ city: city })
+        })
+        .then(response => {
+          if (response.ok) {
+            // Update UI on success
+            setActiveCity(city);
+            window.location.reload()
+
+            // Optionally reload the page to reflect changes
+            // window.location.reload();
+          } else {
+            console.error('Failed to update city');
+          }
+        })
+        .catch(error => {
+          console.error('Error updating city:', error);
+        });
+      }
+    
+      function setActiveCity(city) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.city-btn').forEach(btn => {
+          btn.classList.remove('btn-primary');
+          btn.classList.add('btn-dark');
+        });
+        
+        // Find and activate the selected city button
+        const activeBtn = document.querySelector(`.city-btn[data-city="${city}"]`);
+        if (activeBtn) {
+          activeBtn.classList.remove('btn-dark');
+          activeBtn.classList.add('btn-primary');
+        }
+      }
+    </script>

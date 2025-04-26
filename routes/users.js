@@ -18,7 +18,6 @@ router.post('/login', async (req, res) => {
 
     // Check if the user exists
     const user = await Employee.findOne({ email });
-    console.log(user)
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }

@@ -30,7 +30,7 @@ exports.getcustomer = async (req, res) => {
       }
 
       // Apply city filter if session city exists and is not "All"
-      if (req.session.city && req.session.city !== 'All') {
+      if (req.session.city && req.session.city !== 'ALL') {
           query.city = { $regex: `^${req.session.city}$`, $options: 'i' }; // Case-insensitive match for exact city name
       }
       console.log(req.session.city)

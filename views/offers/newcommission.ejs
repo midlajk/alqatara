@@ -27,6 +27,16 @@
                             <!-- <input class="form-control" type="text" placeholder="Select or enter the city"  required> -->
                         </div>
                     </div>
+                    <div class="form-group row">
+                      <label for="max-stock-5gallon" class="col-md-2 col-form-label form-control-label">Products</label>
+                      <div class="col-md-10">
+                        <select class="form-control" name="products" id="products" multiple="multiple" >
+                          <option value="ALL">ALL</option>
+                        </select> 
+
+                      </div>
+                  </div>
+
                         <div class="form-group row">
                             <label for="truck-id" class="col-md-2 col-form-label form-control-label">Benifit</label>
                             <div class="col-md-10">
@@ -67,9 +77,68 @@
             
             <!-- Include Select2 JS -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-            
-                     
-            
+            <script>
+              $(document).ready(function () {
+                $('#products').select2({
+                  placeholder: "Search product...",
+                  allowClear: true,
+                  ajax: {
+                    url: "/getproductsnames",
+                    dataType: "json",
+                    delay: 250,
+                    data: function (params) {
+                      return {
+                        q: params.term || ""
+                      };
+                    },
+                    processResults: function (data) {
+                      let results = [];
+              
+                      if (data.results) {
+                        results = data.results;
+                      } else if (Array.isArray(data.results)) {
+                        results = data.results.map(function (item) {
+                          return {
+                            id: item.name,
+                            text: item.name
+                          };
+                        });
+                      }
+              
+                      // Add 'All Products' option at the top
+                      results.unshift({
+                        id: 'all',
+                        text: 'All Products'
+                      });
+              
+                      return {
+                        results: results
+                      };
+                    },
+                    cache: true
+                  }
+                });
+              
+                // Handle selection changes
+                $('#products').on('select2:select', function (e) {
+                  const selectedId = e.params.data.id;
+                  const selectedValues = $(this).val();
+              
+                  if (selectedId === 'all') {
+                    // If 'All Products' is selected, clear other selections
+                    $(this).val(['all']).trigger('change');
+                  } else {
+                    // If any other product is selected, remove 'All Products' if it's selected
+                    const filteredValues = selectedValues.filter(function(value) {
+                      return value !== 'all';
+                    });
+                    $(this).val(filteredValues).trigger('change');
+                  }
+                });
+              });
+              </script>
+              
+              
                         
 <%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

@@ -35,6 +35,7 @@ router.post('/login', async (req, res) => {
       previlage:user.designation
     };
     req.session.logged = true
+    req.session.city = 'ALL'
 
       if(user.designation){
         const prev = await PrevilageClass.findOne({className:req.session.user.previlage})

@@ -30,6 +30,8 @@ router.post('/closeTruckStock', setCustomHeader('utilities'),apiprev.Postapiprev
 
 router.get('/truckhistory/:id', setCustomHeader('utilities'),authMiddleware, utilitiesApis.truckhistorypage);
 router.get('/gettruchhistory', setCustomHeader('utilities'),apiprev.Getapiprev, utilitiesApis.gettruckhistory);
+router.get('/printtruckdetail/:id', setCustomHeader('utilities'),apiprev.Getapiprev, utilitiesApis.printTruckstock);
+
 //views //////
 
 router.get('/updatetruckstock/:id', setCustomHeader('utilities'),authMiddleware, async function(req, res, next) {

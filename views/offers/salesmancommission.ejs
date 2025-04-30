@@ -76,6 +76,7 @@
                     <th scope="col" class="sort" data-sort="status">Benifit</th>
                     <th scope="col" class="sort" data-sort="status">Criteria greater than</th>
                     <th scope="col" class="sort" data-sort="status">Increment</th>
+                    <th scope="col" class="sort" data-sort="status">Products</th>
 
                     <!-- <th scope="col" class="sort">Coupons</th>
                     <th scope="col" class="sort">Free Coupons</th> -->
@@ -144,7 +145,15 @@
                       return data || '0';
                   }
               },
-             
+              { 
+  data: 'products',
+  render: function(data, type, row) {
+    if (Array.isArray(data)) {
+      return data.length > 0 ? data.join(', ') : 'No Products';
+    }
+    return 'No Products';
+  }
+},
               { 
                   data: 'creationdate',
                   render: function(data, type, row) {

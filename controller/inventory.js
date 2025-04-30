@@ -694,7 +694,6 @@ exports.exportStockHistory = async (req, res) => {
 
    
         const data = await Stockdelivery.aggregate(pipeline);
-        console.log(data)
 
         // Format data for CSV/Excel
         const formattedData = data.map(item => ({

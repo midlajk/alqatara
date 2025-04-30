@@ -409,6 +409,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <a href="#" id="printbutton" class="btn btn-success">Print</a>
+
       </div>
     </div>
   </div>
@@ -616,6 +618,9 @@
     
     // Function to display stock details
     function displayStockDetails(truckData) {
+      const url = `/printtruckdetail/${truckData.id}`;
+  // Set it on the Print link:
+      $('#printbutton').attr('href', url);
       $('#truckIdDisplay').text(truckData.id || 'N/A');
       $('#salesmanIdDisplay').text(truckData.salesmanId || 'N/A');
       $('#updatedAtDisplay').text(truckData.updatedAt ? 

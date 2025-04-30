@@ -9,6 +9,8 @@ const fs = require('fs');
 const path = require('path');
 const ExcelJS = require("exceljs");
 const createError = require('http-errors');
+const Order = mongoose.model('Order')
+const CommissionSchema = mongoose.model('CommissionSchema')
 
 exports.customerreport = async (req, res) => {
     res.render('reports/customerreport', { title: 'Al Qattara' ,route:'Reports',sub :'Customer Report'});
@@ -654,3 +656,102 @@ exports.getcreditreport = async (req, res) => {
 //       res.status(500).json({ success: false, error: 'Failed to delete' });
 //   }
 // });
+
+exports.commissionreport = async (req, res) => {
+
+  try {
+    const { from, to, salesmanId } = req.query;
+    
+    // Build date filter
+    const dateFilter = {};
+    if (from) dateFilter.$gte = new Date(from);
+    if (to) dateFilter.$lte = new Date(to);
+    
+    // Build query filter
+    const queryFilter = { status: 'DELIVERED' };
+    if (Object.keys(dateFilter).length > 0) {
+      queryFilter.delivered_at = dateFilter;
+    }
+    if (salesmanId) {
+      queryFilter.salesmanId = salesmanId;
+    }
+    
+    // Get all salesmen (for dropdown)
+    const salesmen = await Salesman.find({}, 'id name');
+    
+    // Get delivered orders in the date range
+    const orders = await Order.find(queryFilter).populate('customerId', 'name');
+    
+    // Get all commission schemes
+    const commissionSchemes = await CommissionSchema.find({});
+    
+    // Calculate commissions
+    const commissionData = [];
+    
+    // Group orders by salesman
+    const ordersBySalesman = {};
+    orders.forEach(order => {
+      if (!ordersBySalesman[order.salesmanId]) {
+        ordersBySalesman[order.salesmanId] = [];
+      }
+      ordersBySalesman[order.salesmanId].push(order);
+    });
+    
+    // Process each salesman's orders
+    for (const [salesmanId, salesmanOrders] of Object.entries(ordersBySalesman)) {
+      const salesman = await Salesman.findById(salesmanId);
+      if (!salesman) continue;
+      
+      // Get salesman's commission schemes
+      const salesmanSchemes = commissionSchemes.filter(scheme => 
+        salesman.commissionschmes.includes(scheme.code)
+      );
+      
+      // Calculate total sales
+      const totalSales = salesmanOrders.reduce((sum, order) => 
+        sum + order.totalPrice, 0);
+      
+      // Apply each commission scheme
+      for (const scheme of salesmanSchemes) {
+        const achievement = (totalSales / scheme.achievement) * 100;
+        let baseCommission = 0;
+        let incrementalBonus = 0;
+        
+        // Calculate base commission
+        if (achievement >= 100) {
+          baseCommission = totalSales * (parseFloat(scheme.benifit) / 100);
+        }
+        
+        // Calculate incremental bonus
+        if (scheme.increment && achievement > 100) {
+          const overAchievement = achievement - 100;
+          incrementalBonus = totalSales * (parseFloat(scheme.increment) / 100) * (overAchievement / 100);
+        }
+        
+        commissionData.push({
+          salesmanId: salesman.id,
+          salesmanName: salesman.name,
+          schemeCode: scheme.code,
+          totalSales,
+          achievement,
+          baseCommission,
+          incrementalBonus,
+          totalCommission: baseCommission + incrementalBonus
+        });
+      }
+    }
+    
+    res.render('reports/commission', { title: 'Al Qattara' ,route:'Reports',sub :'Commission Report',
+      salesmen,
+      commissionData,
+      fromDate: from || '',
+      toDate: to || '',
+      selectedSalesman: salesmanId || ''
+    });
+    
+  } catch (error) {
+    console.error('Error generating commission report:', error);
+    res.status(500).send('Error generating report');
+  }
+
+}

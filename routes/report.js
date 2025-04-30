@@ -17,9 +17,7 @@ router.get('/individualsalesmanreport/:id', setCustomHeader('wallet'),authMiddle
   });
 
 
-router.get('/commissionreport', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {
-  res.render('reports/commission', { title: 'Al Qattara' ,route:'Reports',sub :'Commission Report'});
-});
+router.get('/commissionreport', setCustomHeader('wallet'),authMiddleware,reportclass.commissionreport )
 ////////////api call 
 router.get('/getsalesmanreport',setCustomHeader('reports'),apiprev.Getapiprev, reportclass.getsalesmanreport);
 

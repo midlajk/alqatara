@@ -14,7 +14,7 @@
       <div class="col">
           <div class="card" id="cardb">
               <div class="card-header">
-                  <h3 class="mb-0">Manage Truck Stock</h3>
+                  <h3 class="mb-0 text-white">Manage Truck Stock</h3>
               </div>
               
               <!-- Stock Entry Form -->
@@ -38,6 +38,21 @@
                             </select>
                           </div>
                       </div>
+                      <div class="form-group row">
+                        <label class="col-md-2 col-form-label form-control-label">Store</label>
+                        <div class="col-md-10">
+                          <select class="form-control" name="store" id="store" required>
+                            <% if(city=='ALL'){%>
+                            <option value="AL_AIN">Al Ain</option>
+                            <option value="ABU_DHABI">Abu Dhabi</option>
+                            <%}else{%>
+                                <option value="<%=city%>"><%=city%></option>
+
+                                <%}%>
+                          
+                          </select>
+                        </div>
+                    </div>
                       
                       <div class="form-group row">
                           <label class="col-md-2 col-form-label form-control-label">Action</label>
@@ -145,7 +160,8 @@ $(document).ready(function() {
           itemStatus: $("select[name='itemStatus']").val(),
           quantity: parseInt($("input[name='quantity']").val()),
           city: $("input[name='city']").val(),
-          doneby: user// Replace with actual user
+          doneby: user,// Replace with actual user,
+          store:$("#store").val(),
       };
       
       try {
@@ -161,8 +177,11 @@ $(document).ready(function() {
               this.reset();
           }
       } catch (error) {
-          console.error("Error:", error);
-          alert("Error updating stock");
+        if (error.responseJSON && error.responseJSON.error) {
+        alert("Error: " + error.responseJSON.error); // Show server-sent error
+    } else {
+        alert("An unexpected error occurred.");
+    }
       }
   });
   
@@ -233,7 +252,7 @@ function updateStockTable(productDetails = []) {
             };
         }
         
-        if (item.inwardoutward === 'inward') {
+        if (item.inwardoutward === 'outward') {
             summary[item.productname].added += item.quantity || 0;
         } else {
             summary[item.productname].returned += item.quantity || 0;

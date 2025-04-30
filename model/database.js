@@ -316,6 +316,7 @@ const salesmanSchema = new mongoose.Schema({
       delivered:Number
     }]
     }, { timestamps: true });
+    
   const truckHistorySchema = new mongoose.Schema({
     id: { type: String, },
     truckCreatedAt: { type: Date, required: true },
@@ -433,6 +434,8 @@ const stockdelivery = new mongoose.Schema({
     previousStock: { type: Number },
     previousDamage: { type: Number },
     previousDiscard: { type: Number },
+    previousoldStock: { type: Number },
+
   }],
   status: { type: String }, // Total products loaded onto the truck
   createdAt: { type: Date, default: Date.now },
@@ -460,6 +463,7 @@ const commissionSchema = new mongoose.Schema({
   creationdate: { type: Date, default: Date.now },
   benifit:{ type: String },
   increment:{ type: Number },
+  products:{ type: [String] } ,
   // (e.g., "stock purchase", "return", etc.)
 });
 // const StockAddition = mongoose.model('StockAddition', stockAdditionSchema);

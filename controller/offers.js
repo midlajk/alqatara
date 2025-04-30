@@ -117,31 +117,43 @@ const createError = require('http-errors');
       };
 
 
-      exports.addcommission= async (req, res) => {
+
+      exports.addcommission = async (req, res) => {
         try {
           // Extract data from the form
-          const { commissioncode, benifit, achievement, increment } = req.body;
-          
+          const { commissioncode, benifit, achievement, increment, products } = req.body;
+      
+          // Handle products: if no products selected, default to empty array
+          let selectedProducts = [];
+          if (products) {
+            if (Array.isArray(products)) {
+              selectedProducts = products;
+            } else {
+              // If only one product selected, it comes as a string
+              selectedProducts = [products];
+            }
+          }
+      
           // Create a new commission document
           const newCommission = new CommissionSchema({
             code: commissioncode,
             achievement: parseFloat(achievement),
             benifit: benifit,
-            increment: parseFloat(increment)
+            increment: parseFloat(increment),
+            products: selectedProducts
           });
-          
+      
           // Save the commission to the database
           await newCommission.save();
-          
+      
           // Redirect with success message
-        //   req.flash('success', 'Commission added successfully!');
-          res.redirect('/salesmancommission'); // Redirect to a page that lists all commissions
+          res.redirect('/salesmancommission');
         } catch (error) {
           console.error('Error adding commission:', error);
-        //   req.flash('error', 'Failed to add commission');
           res.redirect('/salesmancommission');
         }
       };
+      
       
       exports.getAllCommission = async (req, res) => {
         try {

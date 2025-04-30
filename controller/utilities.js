@@ -5,6 +5,7 @@ const Truck = mongoose.model('Truck');
 const TruckHistory = mongoose.model('TruckHistory')
 const Product = mongoose.model('Product');
 const Stockdelivery = mongoose.model('Stockdelivery');
+const PDFDocument = require('pdfkit');
 
 const createError = require('http-errors');
 
@@ -27,7 +28,7 @@ exports.gettrucks = async (req, res) => {
       }
 
       // Apply city filter if session city exists and is not "All"
-      if (req.session.city && req.session.city !== 'All') {
+      if (req.session.city && req.session.city !== 'ALL') {
           query.city = { $regex: `^${req.session.city}$`, $options: 'i' }; // Case-insensitive match for exact city name
       }
       // Get filtered data and total count
@@ -206,10 +207,24 @@ exports.gettruckhistory = async (req, res) => {
     const skip = parseInt(start, 10) || 0;
     
     // Date handling
-    const startDate = fromDate ? new Date(fromDate) : new Date(0); // Beginning of time if no date
-    const endDate = toDate ? new Date(toDate) : new Date(); // Now if no date
+    let startDate, endDate;
+
+    if (fromDate) {
+      startDate = new Date(fromDate);
+    } else {
+      startDate = new Date();            // now
+      startDate.setDate(startDate.getDate() - 7);
+    }
     startDate.setHours(0, 0, 0, 0);
+
+    // 2) If toDate is missing or invalid, default to today at 23:59:59.999
+    if (toDate) {
+      endDate = new Date(toDate);
+    } else {
+      endDate = new Date();
+    }
     endDate.setHours(23, 59, 59, 999);
+
 
     // Build query with all filters
     const query = {
@@ -276,106 +291,252 @@ function getPreviousStock(truck, productName) {
   return 0;
 }
 
+function summarizeDetails(details, productId) {
+  let totalInward   = 0;
+  let totalOutward  = 0;
+  let totalDelivered = 0;
 
+  details.forEach(d => {
+    if (d.productid !== productId) return;
+    if (d.inwardoutward === 'inward')   totalInward   += d.quantity;
+    if (d.inwardoutward === 'outward')  totalOutward  += d.quantity;
+    if (typeof d.delivered === 'number') totalDelivered += d.delivered;
+  });
+
+  return { totalInward, totalOutward, totalDelivered };
+}
+
+// exports.UpdateTruckStrocks = async (req, res) => {
+//   try {
+//     const { truckId, productName, actionType, itemStatus, quantity, city, doneby, productId } = req.body;
+    
+//     // Validate input
+//     if (!truckId || !productName || !actionType || !quantity || quantity <= 0) {
+//       return res.status(400).json({ 
+//         success: false, 
+//         error: "Invalid input data" 
+//       });
+//     }
+
+//     // Find truck - use findOne instead of find
+//     const truck = await Truck.findOne({ id: truckId });
+//     if (!truck) {
+//       return res.status(404).json({ success: false, error: "Truck not found" });
+//     }
+    
+//     // Find product
+//     const product = await Product.findOne({ productid: productId });
+//     if (!product) {
+//       return res.status(404).json({ 
+//         success: false, 
+//         error: `Product ${productName} not found in inventory` 
+//       });
+//     }
+
+//     // Get previous stock values
+//     const previousStock = product.currentStock || 0;
+//     const previousDamage = product.damagedStock || 0;
+//     const previousDiscard = product.discardedStock || 0;
+    
+//     // Create new product detail
+//     const productDetail = {
+//       productid: productId,
+//       productname: productName,
+//       quantity: quantity,
+//       inwardoutward: actionType,
+//       time: new Date(),
+//       itemtype: itemStatus,
+//       doneby: doneby,
+//       city: city,
+//       previousStock: previousStock,
+//       previousDamage: previousDamage,
+//       previousDiscard: previousDiscard
+//     };
+    
+//     // Initialize productDetails array if it doesn't exist
+//     if (!truck.productDetails) {
+//       truck.productDetails = [];
+//     }
+    
+//     // Update truck's productDetails
+//     truck.productDetails.push(productDetail);
+    
+//     // Update product inventory based on action
+//     if (actionType === 'outward') {
+//       product.currentStock -= quantity; // Remove from inventory
+
+//     } else {
+//       // For outward movement
+//       // product.currentStock += quantity; // Return to inventory
+      
+//       if (itemStatus === 'Damaged') {
+//         product.damagedStock += quantity;
+//       } else{
+//         product.currentStock += quantity; // Return to inventory
+
+//       }
+//       // else if (itemStatus === 'Old') {
+//       //   product.discardedStock += quantity;
+//       // }
+//     }
+    
+//     // Save both documents
+//     await Promise.all([
+//       truck.save(),
+//       product.save()
+//     ]);
+//     console.log(truck)
+//     res.json({ 
+//       success: true, 
+//       data: {
+//         truck: truck,
+//         product: product
+//       } 
+//     });
+    
+//   } catch (error) {
+//     console.log('Error updating truck stock:', error);
+//     res.status(500).json({ 
+//       success: false, 
+//       error: 'Internal Server Error',
+//       message: error.message 
+//     });
+//   }
+// };
+///apis 
 exports.UpdateTruckStrocks = async (req, res) => {
   try {
-    const { truckId, productName, actionType, itemStatus, quantity, city, doneby, productId } = req.body;
-    
+    const { truckId, productName, actionType, itemStatus, quantity, city, doneby, productId, store } = req.body;
+
     // Validate input
     if (!truckId || !productName || !actionType || !quantity || quantity <= 0) {
-      return res.status(400).json({ 
-        success: false, 
-        error: "Invalid input data" 
-      });
+      return res.status(400).json({ success: false, error: "Invalid input data" });
     }
 
-    // Find truck - use findOne instead of find
     const truck = await Truck.findOne({ id: truckId });
     if (!truck) {
       return res.status(404).json({ success: false, error: "Truck not found" });
     }
-    
-    // Find product
+
     const product = await Product.findOne({ productid: productId });
     if (!product) {
-      return res.status(404).json({ 
-        success: false, 
-        error: `Product ${productName} not found in inventory` 
-      });
+      return res.status(404).json({ success: false, error: `Product ${productName} not found in inventory` });
     }
-    console.log('her2')
 
-    // Get previous stock values
-    const previousStock = product.currentStock || 0;
-    const previousDamage = product.damagedStock || 0;
-    const previousDiscard = product.discardedStock || 0;
+    // Find stock for the given city
+    console.log(store)
+    let cityStock = product.stock.find(s => s.city === store);
+    if (!cityStock) {
+      return res.status(400).json({ success: false, error: `No stock data found for ${store} city.` });
+    }
+
+    let previousStock = cityStock.currentStock;
+    let previousDamage = cityStock.damagedStock;
+    let previousDiscard = cityStock.discardedStock;
+    let previousoldStock = cityStock.oldStock;
+
+    const qty = quantity; // cleaner name
+
+    if (actionType === 'outward') {
+      // Check if enough stock is available for outward
+      if (itemStatus === 'Damaged' && cityStock.damagedStock < qty) {
+        return res.status(400).json({ success: false, error: `Insufficient damaged stock for ${productName} in ${store}.` });
+      }
+      if (itemStatus === 'New' && cityStock.currentStock < qty) {
+        return res.status(400).json({ success: false, error: `Insufficient new stock for ${productName} in ${store}.` });
+      }
+      if (itemStatus == 'Old' && cityStock.oldStock < qty) {
+        return res.status(400).json({ success: false, error: `Insufficient old stock for ${productName} in ${store}.` });
+      }
+
+      // Now deduct
+      if (qty > 0) {
+        if (itemStatus === 'Damaged') {
+          cityStock.damagedStock -= qty;
+        } else if (itemStatus === 'New') {
+          cityStock.currentStock -= qty;
+        } else {
+          cityStock.oldStock -= qty;
+          cityStock.currentStock -= qty;
+        }
+      }
+    } else if (actionType === 'inward') {
+      // Increase based on item type
+      const { totalInward, totalOutward, totalDelivered } =
+      summarizeDetails(truck.productDetails, productId);
+      const available = totalOutward-totalInward  - totalDelivered;
+      if (available < quantity) {
+        return res.status(400).json({
+          success: false,
+          error: `Cannot Return ${quantity} units. Only ${available} remaining on truck.`
+        });
+      }
     
-    // Create new product detail
+
+      if (qty > 0) {
+        if (itemStatus === 'Damaged') {
+          cityStock.damagedStock += qty;
+        } else if (itemStatus === 'New') {
+          cityStock.currentStock += qty;
+        } else {
+          cityStock.oldStock += qty;
+          cityStock.currentStock += qty;
+        }
+      } 
+    }
+
+    // Save product first
+    await product.save();
+
+    // Save to truck movement
     const productDetail = {
       productid: productId,
       productname: productName,
-      quantity: quantity,
+      quantity: qty,
       inwardoutward: actionType,
       time: new Date(),
       itemtype: itemStatus,
       doneby: doneby,
-      city: city,
-      previousStock: previousStock,
-      previousDamage: previousDamage,
-      previousDiscard: previousDiscard
+      city: store,
+      previousStock,
+      previousDamage,
+      previousDiscard,
+      previousoldStock,
     };
-    
-    // Initialize productDetails array if it doesn't exist
+
     if (!truck.productDetails) {
       truck.productDetails = [];
     }
-    
-    // Update truck's productDetails
     truck.productDetails.push(productDetail);
-    
-    // Update product inventory based on action
-    if (actionType === 'outward') {
-      product.currentStock -= quantity; // Remove from inventory
 
-    } else {
-      // For outward movement
-      // product.currentStock += quantity; // Return to inventory
-      
-      if (itemStatus === 'Damaged') {
-        product.damagedStock += quantity;
-      } else{
-        product.currentStock += quantity; // Return to inventory
+    await truck.save();
 
-      }
-      // else if (itemStatus === 'Old') {
-      //   product.discardedStock += quantity;
-      // }
-    }
-    
-    // Save both documents
-    await Promise.all([
-      truck.save(),
-      product.save()
-    ]);
-    console.log(truck)
-    res.json({ 
-      success: true, 
-      data: {
-        truck: truck,
-        product: product
-      } 
+    // Create stock delivery monitoring
+    const stockDelivery = new Stockdelivery({
+      truckId: truck.id,
+      city: store,
+      date: new Date(),
+      productDetails: [productDetail],
+      status: 'completed'
     });
-    
+
+    await stockDelivery.save();
+
+    res.json({
+      success: true,
+      data: {
+        truck,
+        product,
+        stockDelivery
+      }
+    });
+
   } catch (error) {
     console.log('Error updating truck stock:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Internal Server Error',
-      message: error.message 
-    });
+    res.status(500).json({ success: false, error: 'Internal Server Error', message: error.message });
   }
 };
-///apis 
+
 
 exports.truckdetails = async (req, res) => {
   
@@ -405,25 +566,7 @@ exports.closeTruckStock = async (req, res) => {
     }
 
     // 2. Create stock delivery record
-    const stockDelivery = new Stockdelivery({
-      truckId: truck.id,
-      city: truck.city,
-      date:new Date(),
-      productDetails: truck.productDetails.map(detail => ({
-        productid: detail.productid,
-        productname: detail.productname,
-        quantity: detail.quantity,
-        inwardoutward: detail.inwardoutward,
-        time: detail.time,
-        itemtype: detail.itemtype,
-        doneby: detail.doneby,
-        city: detail.city,
-        previousStock: detail.previousStock,
-        previousDamage: detail.previousDamage,
-        previousDiscard: detail.previousDiscard
-      })),
-      status: 'completed'
-    });
+
 
     // 3. Create truck history record
     const truckHistory = new TruckHistory({
@@ -447,7 +590,7 @@ exports.closeTruckStock = async (req, res) => {
 
     // 5. Save all changes in a transaction
     await Promise.all([
-      stockDelivery.save(),
+      // stockDelivery.save(),
       truckHistory.save(),
       truck.save()
     ]);
@@ -457,7 +600,7 @@ exports.closeTruckStock = async (req, res) => {
       success: true,
       message: "Stock successfully closed and archived",
       data: {
-        stockDeliveryId: stockDelivery._id,
+        // stockDeliveryId: stockDelivery._id,
         truckHistoryId: truckHistory._id
       }
     });
@@ -733,5 +876,215 @@ exports.updateapi = async (req, res) => {
   } catch (err) {
     console.error("Error updating truck:", err);
     res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+};
+
+
+
+
+
+exports.printTruckstock = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const truck = await Truck.findOne({ id })
+      .lean();
+    
+    if (!truck) {
+      return res.status(404).send('Truck not found');
+    }
+    
+    truck.productDetails = Array.isArray(truck.productDetails)
+      ? truck.productDetails
+      : [];
+    
+    // Set the response headers to serve a PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="truck_${truck.id}_report.pdf"`
+    );
+    
+    // Create a new PDF document with better margins
+    const doc = new PDFDocument({ 
+      margin: 50, 
+      size: 'A4',
+      bufferPages: true // Enable page numbering
+    });
+    
+    doc.pipe(res);
+    
+    // Add company logo if available
+    // doc.image('path/to/logo.png', 50, 45, { width: 150 });
+    
+    // Background color for header
+    doc.rect(0, 0, doc.page.width, 120).fill('#f6f6f6');
+    
+    // --- HEADER SECTION ---
+    doc
+      .fontSize(24)
+      .fillColor('#003366')
+      .text(`TRUCK REPORT`, 50, 50, { align: 'center' })
+      .fontSize(18)
+      .text(`ID: ${truck.id}`, 50, 80, { align: 'center' })
+      .moveDown(2);
+    
+    // --- TRUCK INFORMATION BOX ---
+    const infoBoxY = 140;
+    doc.roundedRect(50, infoBoxY, doc.page.width - 100, 100, 10)
+       .lineWidth(1)
+       .stroke('#cccccc');
+    
+    doc
+      .fontSize(14)
+      .fillColor('#000000')
+      .text('Truck Information', 70, infoBoxY + 15)
+      .moveDown(0.5);
+    
+    // Create two columns for truck info
+    doc.fontSize(11);
+    const leftColX = 70;
+    const rightColX = 300;
+    
+    doc.fillColor('#555555')
+      .text(`City:`, leftColX, doc.y)
+      .fillColor('#000000')
+      .text(`${truck.city || 'N/A'}`, leftColX + 80, doc.y - 11)
+      .fillColor('#555555')
+      .text(`Route ID:`, rightColX, doc.y - 11)
+      .fillColor('#000000')
+      .text(`${truck.routeId || 'N/A'}`, rightColX + 80, doc.y - 11)
+      .moveDown(0.5);
+    
+    doc.fillColor('#555555')
+      .text(`Salesman ID:`, leftColX, doc.y)
+      .fillColor('#000000')
+      .text(`${truck.salesmanId || 'N/A'}`, leftColX + 80, doc.y - 11)
+      .fillColor('#555555')
+      .text(`Report Date:`, rightColX, doc.y - 11)
+      .fillColor('#000000')
+      .text(`${new Date().toLocaleDateString()}`, rightColX + 80, doc.y - 11)
+      .moveDown(2);
+
+    
+    // --- PRODUCT DETAILS SECTION ---
+    doc.fontSize(14)
+      .fillColor('#003366')
+      .text('Product Movement Details', 50, doc.y)
+      .moveDown(0.5);
+    
+    // Table header with background
+    const tableTop = doc.y;
+    const itemX = 70;
+    const qtyX  = 220;
+    const typeX = 300;
+    const timeX = 380;
+    const byX   = 480;
+    
+    // Header row with background
+    doc.rect(50, tableTop, doc.page.width - 100, 20)
+      .fill('#003366');
+    
+    doc.fillColor('#ffffff')
+      .fontSize(11)
+      .text('Product', itemX, tableTop + 5)
+      .text('Qty', qtyX, tableTop + 5)
+      .text('Status', typeX, tableTop + 5)
+      .text('Time', timeX, tableTop + 5)
+      .text('By', byX, tableTop + 5);
+    
+    // Table rows
+    if (truck.productDetails.length) {
+      let rowY = tableTop + 20;
+      
+      truck.productDetails.forEach((pd, i) => {
+        // Check if we need a new page
+        if (rowY > doc.page.height - 100) {
+          doc.addPage();
+          rowY = 50;
+          
+          // Repeat header on new page
+          doc.rect(50, rowY, doc.page.width - 100, 20)
+            .fill('#003366');
+          
+          doc.fillColor('#ffffff')
+            .fontSize(11)
+            .text('Product', itemX, rowY + 5)
+            .text('Qty', qtyX, rowY + 5)
+            .text('Status', typeX, rowY + 5)
+            .text('Time', timeX, rowY + 5)
+            .text('By', byX, rowY + 5);
+          
+          rowY += 20;
+        }
+        
+        // Alternating row colors
+        doc.rect(50, rowY, doc.page.width - 100, 20)
+          .fill(i % 2 === 0 ? '#f9f9f9' : '#ffffff');
+        
+        // Format the date
+        const date = new Date(pd.time);
+        const formattedDate = date.toLocaleDateString() + ' ' + 
+          date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Check if outward and display appropriate text
+        const isOutward = pd.inwardoutward && pd.inwardoutward.toLowerCase() === 'outward';
+        const movementStatus = isOutward ? 'Added to Truck' : 'Returned from Truck';
+        
+        // Different colors for added vs returned
+        const statusColor = isOutward ? '#008800' : '#cc0000';
+        
+        doc.fillColor('#000000')
+          .fontSize(10)
+          .text(pd.productname || 'N/A', itemX, rowY + 5, { width: 140 })
+          .text(pd.quantity || '0', qtyX, rowY + 5);
+        
+        // Use different color for status
+        doc.fillColor(statusColor)
+          .text(movementStatus, typeX, rowY + 5);
+        
+        // Back to normal color for remaining fields
+        doc.fillColor('#000000')
+          .text(formattedDate, timeX, rowY + 5, { width: 90 })
+          .text(pd.doneby || 'N/A', byX, rowY + 5);
+        
+        rowY += 20;
+      });
+    } else {
+      doc.rect(50, tableTop + 20, doc.page.width - 100, 30)
+        .fill('#f9f9f9');
+      
+      doc.fillColor('#555555')
+        .fontSize(11)
+        .text('No product movements recorded.', 
+              doc.page.width / 2 - 100, 
+              tableTop + 30, 
+              { align: 'center', italic: true });
+    }
+    
+    // Add footer with page numbers
+    const pages = doc.bufferedPageRange();
+    for (let i = 0; i < pages.count; i++) {
+      doc.switchToPage(i);
+      
+      // Footer line
+      doc.rect(50, doc.page.height - 50, doc.page.width - 100, 1)
+        .fill('#cccccc');
+      
+      // Page number and date
+      doc.fillColor('#555555')
+        .fontSize(9)
+        .text(
+          `Page ${i + 1} of ${pages.count}`,
+          50,
+          doc.page.height - 35,
+          { align: 'center' }
+        );
+    }
+    
+    // Finalize PDF
+    doc.end();
+  } catch (err) {
+    console.error('Error generating PDF:', err);
+    res.status(500).send('Failed to generate PDF');
   }
 };

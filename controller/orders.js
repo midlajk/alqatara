@@ -11,57 +11,113 @@ require("dotenv").config();
 const smssecret = process.env.SMS_SECRET; // Access secret key
 const createError = require('http-errors');
 const Product = mongoose.model('Product');
+const CustomerAssetHistory = mongoose.model('CustomerAssetHistory')
 
 exports.getorders = async (req, res) => {
-    try {
-      const { start, length, draw, search } = req.query; // Extract DataTables parameters
-      const searchQuery = search && search.value ? search.value : ''; // Search value
-      const limit = parseInt(length, 10) || 10; // Number of records per page
-      const skip = parseInt(start, 10) || 0; // Offset
-      const cityFilter = req.session.city; // Get city from session
+  try {
+      const { 
+          start, 
+          length, 
+          draw, 
+          search, 
+          customer, 
+          salesman, 
+          truck, 
+          status, 
+          fromDate, 
+          toDate 
+      } = req.query;
 
-      let truckFilter = {};
+      const searchQuery = search && search.value ? search.value : '';
+      const limit = parseInt(length, 10) || 10;
+      const skip = parseInt(start, 10) || 0;
+      const cityFilter = req.session.city;
+
+      // Build base query with city filter if applicable
+      let baseQuery = {};
       
-      // If city is specified, fetch only trucks in that city
       if (cityFilter && cityFilter.toLowerCase() !== "all") {
-        const trucksInCity = await Truck.find({ city: cityFilter }).select("id");
-        const truckIds = trucksInCity.map(truck => truck.id);
-  
-        // Ensure orders are filtered by these truck IDs
-        truckFilter = { truckId: { $in: truckIds } };
+          const trucksInCity = await Truck.find({ city: cityFilter }).select("id");
+          const truckIds = trucksInCity.map(truck => truck.id);
+          baseQuery.truckId = { $in: truckIds };
       }
-      // Build query with optional search
-      const query = {
-        ...truckFilter, 
-        ...(searchQuery ? { 
-          $or: [
-            { id: { $regex: searchQuery, $options: "i" } }, 
-            { truckId: { $regex: searchQuery, $options: "i" } } 
-          ]
-        } : {})
-      };
-  
-  
-      // Get filtered data and total count
-      const [filteredTrucks, totalRecords, totalFiltered] = await Promise.all([
-        Order.find(query).sort({ _id: -1 }).skip(skip).limit(limit), // Fetch paginated data
-        Order.countDocuments(), // Total records count
-        Order.countDocuments(query) // Filtered records count
+
+      // Add search filter
+      if (searchQuery) {
+          baseQuery.$or = [
+              { id: { $regex: searchQuery, $options: "i" } },
+              { customerId: { $regex: searchQuery, $options: "i" } },
+              { truckId: { $regex: searchQuery, $options: "i" } },
+              { salesmanId: { $regex: searchQuery, $options: "i" } }
+          ];
+      }
+
+      // Add customer filter
+      if (customer) {
+          baseQuery.customerId = customer;
+      }
+
+      // Add salesman filter
+      if (salesman) {
+          baseQuery.salesmanId = salesman;
+      }
+
+      // Add truck filter
+      if (truck) {
+          baseQuery.truckId = truck;
+      }
+
+      // Add status filter
+      if (status) {
+          baseQuery.status = status;
+      }
+
+      // Add date range filter
+      if (fromDate || toDate) {
+          baseQuery.createdAt = {};
+          if (fromDate) {
+              baseQuery.createdAt.$gte = new Date(fromDate);
+          }
+          if (toDate) {
+              baseQuery.createdAt.$lte = new Date(toDate + 'T23:59:59.999Z');
+          }
+      }
+
+      // Get filtered data and counts
+      const [orders, totalRecords, filteredCount] = await Promise.all([
+          Order.find(baseQuery)
+              .sort({ createdAt: -1 })
+              .skip(skip)
+              .limit(limit),
+          Order.countDocuments(),
+          Order.countDocuments(baseQuery)
       ]);
-  
-      // Respond with DataTables-compatible JSON
+
+      // Calculate summary data
+      const summary = {
+          total: await Order.countDocuments(),
+          pending: await Order.countDocuments({ status: 'PENDING' }),
+          completed: await Order.countDocuments({ status: 'COMPLETED' }),
+          cancelled: await Order.countDocuments({ status: 'CANCELLED' }),
+          delivered: await Order.countDocuments({ status: 'DELIVERED' })
+      };
+
       res.json({
-        draw: parseInt(draw, 10) || 1, // Pass draw counter
-        recordsTotal: totalRecords, // Total records in database
-        recordsFiltered: totalFiltered, // Total records after filtering
-        docs: filteredTrucks // Data for the current page
+          draw: parseInt(draw, 10) || 1,
+          recordsTotal: totalRecords,
+          recordsFiltered: filteredCount,
+          docs: orders,
+          summary: summary
       });
-    } catch (err) {
-      console.error('Error fetching trucks:', err);
-      res.status(500).json({ error: 'Failed to fetch trucks' });
-    }
-  };
-  
+
+  } catch (err) {
+      console.error('Error fetching orders:', err);
+      res.status(500).json({ 
+          error: 'Failed to fetch orders',
+          details: err.message 
+      });
+  }
+};
 
 //   app.post('/addtruck', async (req, res) => {
 
@@ -93,8 +149,8 @@ exports.getorders = async (req, res) => {
           productid: product.productid,
           quantity: quantity,
           price: product.price,
-          itemtype: product.type, // "Lend" or "Return"
-          lendtype: product.type === "Lend" ? "New" : "Return", // Default value based on type
+          // itemtype: product.type, // "Lend" or "Return"
+          lendtype: product.type, // Default value based on type
         };
       });
   
@@ -166,36 +222,138 @@ exports.getorders = async (req, res) => {
     }
   };
 
-exports.updateOrder = async (req, res) => {
-  try {
-      const { orderId, truckId, area, noOf5galBottles, noOf200mlBottles, route } = req.body;
-
-      // Ensure numerical values are parsed correctly
-      const updateData = {
-          truckId,
-          area,
-          noOf5galBottles: parseInt(noOf5galBottles, 10),
-          noOf200mlBottles: parseInt(noOf200mlBottles, 10),
-          routeId: route,
-          updatedAt: new Date(), // Update timestamp
-      };
-
-      // Find the order by ID and update it
-      const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, {
-          new: true,  // Return updated document
-          upsert: false // Don't create new document if not found
-      });
-
-      if (!updatedOrder) {
-          return res.status(404).send('Order not found');
+  exports.updateOrder = async (req, res) => {
+    try {
+      const {
+        orderId,
+        name,
+        customerId,
+        area,
+        truckId,
+        notes,
+        products,
+        status,
+        city,
+        salesman
+      } = req.body;
+            // Step 1: Find the existing order
+      const existingOrder = await Order.findOne({ id: orderId });
+      if (!existingOrder) {
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found'
+        });
       }
+  
+      //Step 2: Check order status
+      if (existingOrder.status !== 'PENDING') {
+        return res.status(400).json({
+          success: false,
+          message: `Order cannot be updated because its status is '${existingOrder.status}'`
+        });
+      }
+  
+      // Step 3: Fetch truck info
+      const truck = await Truck.findOne({ id: truckId });
+      const salesmanId = salesman || truck?.salesmanId;
+  
+      // Step 4: Prepare order items and calculate total price
+      let totalPrice = 0;
+      const orderItems = [];
+  
+      for (const product of products) {
 
-      res.redirect('/orders'); // Redirect to orders page after successful update
-  } catch (error) {
+        const matchingEntries = truck.productDetails.filter(p => p.productid === product.productid);
+
+        const outwardQty = matchingEntries
+          .filter(p => p.inwardoutward === 'outward')
+          .reduce((sum, p) => sum + (p.quantity || 0), 0);
+  
+        const inwardQty = matchingEntries
+          .filter(p => p.inwardoutward === 'inward')
+          .reduce((sum, p) => sum + (p.quantity || 0), 0);
+  
+        const deliveredQty = matchingEntries
+          .reduce((sum, p) => sum + (p.delivered || 0), 0);
+  
+        const availableQty = outwardQty - inwardQty - deliveredQty;
+  
+        const requestedQty = parseInt(product.quantity || 0);
+  
+        if (availableQty - requestedQty < 0) {
+          return res.status(400).json({
+            success: false,
+            message: `Item '${product.productname}' is currently out of stock in the truck for quantity ${requestedQty}. Please update the order and continue.`
+          });
+        }
+        const price = parseFloat(product.price || 0);
+        const quantity = parseInt(product.quantity || 0);
+        totalPrice += price * quantity;
+
+
+  
+        // Step 5: Save asset history if delivered and lend type
+        if (status == 'DELIVERED' && product.lendtype == 'Lend') {
+
+          const newAsset = new CustomerAssetHistory({
+            assetType: product.productname,
+            noOfAssets: quantity,
+            securityDeposit: totalPrice,
+            customerId,
+            salesmanId,
+            truckId,
+            lendType: 'CUSTODY'
+          });
+          await newAsset.save();
+
+        }
+  
+        orderItems.push({
+          productname: product.productname,
+          productid: product.productid,
+          quantity,
+          price,
+          lendtype: product.lendtype || 'LEND',
+          itemtype: product.itemtype || 'Normal'
+        });
+      }
+  
+      // Step 6: Update the order
+      const updatedOrder = await Order.findOneAndUpdate(
+        { id: orderId },
+        {
+          name,
+          customerId,
+          area,
+          truckId,
+          notes,
+          salesmanId,
+          status: status || 'PENDING',
+          totalPrice,
+          city,
+          order: orderItems,
+          updatedAt: new Date()
+        },
+        { new: true }
+      );
+  
+      // Step 7: Return response
+      return res.json({
+        success: true,
+        message: 'Order updated successfully',
+        order: updatedOrder
+      });
+  
+    } catch (error) {
       console.error('Error updating order:', error);
-      res.status(500).send('Failed to update order.');
-  }
-};
+      return res.status(500).json({
+        success: false,
+        message: 'Error updating order',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  };
+  
 
 
 
@@ -337,14 +495,6 @@ exports.updateOrderStatus = async (req, res) => {
         }
       );
 
-      // Step 2: Ensure stock values don't go negative
-      // await Truck.findOneAndUpdate(
-      //   { id: truckId },
-      //   {
-      //     remaining5galBottles: { $gte: 0 } ? 0 : undefined,
-      //     remaining200mlBottles: { $gte: 0 } ? 0 : undefined,
-      //   }
-      // );
       const response = await axios.get('https://smartsmsgateway.com/api/api_http.php', {
         params: {
             username: 'qatrawtr',
@@ -417,7 +567,112 @@ exports.addpayments = async (req, res) => {
   }
 };
 
+exports.getDashboardStats = async (req, res) => {
+  try {
+      const { 
+          customer, 
+          salesman, 
+          truck, 
+          status, 
+          fromDate, 
+          toDate 
+      } = req.query;
 
+      const cityFilter = req.session.city;
+
+      // Build base query with city filter if applicable
+      let baseQuery = {};
+      
+      if (cityFilter && cityFilter.toLowerCase() !== "all") {
+          const trucksInCity = await Truck.find({ city: cityFilter }).select("id");
+          const truckIds = trucksInCity.map(truck => truck.id);
+          baseQuery.truckId = { $in: truckIds };
+      }
+
+      // Add customer filter
+      if (customer) {
+          baseQuery.customerId = customer;
+      }
+
+      // Add salesman filter
+      if (salesman) {
+          baseQuery.salesmanId = salesman;
+      }
+
+      // Add truck filter
+      if (truck) {
+          baseQuery.truckId = truck;
+      }
+
+      // Add status filter (not applied to pending payments count)
+      if (status) {
+          baseQuery.status = status;
+      }
+
+      // Add date range filter
+      if (fromDate || toDate) {
+          baseQuery.createdAt = {};
+          if (fromDate) {
+              baseQuery.createdAt.$gte = new Date(fromDate);
+          }
+          if (toDate) {
+              baseQuery.createdAt.$lte = new Date(toDate + 'T23:59:59.999Z');
+          }
+      }
+
+      // Get all stats in parallel
+      const [
+          totalOrders,
+          pendingOrders,
+          revenueResult,
+          pendingPayments
+      ] = await Promise.all([
+          // Total orders count
+          Order.countDocuments(baseQuery),
+          
+          // Pending orders count (override status filter)
+          Order.countDocuments({
+              ...baseQuery,
+              status: 'PENDING',
+              ...(status && delete baseQuery.status) // Remove status filter for this count
+          }),
+          
+          // Total revenue (sum of totalPrice)
+          Order.aggregate([
+              { $match: baseQuery },
+              { $group: { _id: null, total: { $sum: "$totalPrice" } } }
+          ]),
+          
+          // Pending payments count (isCreditCustomerPaid: false)
+          Order.countDocuments({
+              ...baseQuery,
+              isCreditCustomerPaid: false,
+              ...(status && delete baseQuery.status) // Remove status filter for this count
+          })
+      ]);
+
+      // Extract revenue from aggregation result
+      const totalRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0;
+
+      res.json({
+          success: true,
+          data: {
+              totalOrders,
+              pendingOrders,
+              totalRevenue,
+              pendingPayments
+          }
+      });
+
+  } catch (err) {
+      console.error('Error fetching dashboard stats:', err);
+      res.status(500).json({ 
+          success: false,
+          error: 'Failed to fetch dashboard stats',
+          details: err.message 
+      });
+  }
+};
 //// Fetch orders for a specific salesman or truck
 exports.assignedorders = async (req, res) => {
   try {
@@ -882,24 +1137,55 @@ exports.orderdetails = async (req, res) => {
   };
 
 
-
-
-
-
   exports.getorderdeliverysummery = async (req, res) => {
+    console.log('HERE')
     try {
-      const { truckId, fromDate, toDate } = req.query;
+      const { 
+        truckId, 
+        fromDate, 
+        toDate,
+        customer,
+        salesman,
+        status
+      } = req.query;
       
-      // Convert dates to proper Date objects
-      const startDate = fromDate ? new Date(fromDate) : new Date(0); // Beginning of time if no date
-      const endDate = toDate ? new Date(toDate) : new Date(); // Now if no date
+      // Build base query
+      let matchQuery = {};
       
-      // Aggregation pipeline to calculate product summaries
+      // Date range filter
+      if (fromDate || toDate) {
+        matchQuery.createdAt = {};
+        if (fromDate) matchQuery.createdAt.$gte = new Date(fromDate);
+        if (toDate) matchQuery.createdAt.$lte = new Date(toDate + 'T23:59:59.999Z');
+      }
+      
+      // Truck filter
+      if (truckId) matchQuery.truckId = truckId;
+      
+      // Customer filter
+      if (customer) matchQuery.customerId = customer;
+      
+      // Salesman filter
+      if (salesman) matchQuery.salesmanId = salesman;
+      
+      // Status filter
+      if (status) matchQuery.status = status;
+      
+      // City filter from session
+      if (req.session.city && req.session.city.toLowerCase() !== "all") {
+        const trucksInCity = await Truck.find({ city: req.session.city }).select("id");
+        const truckIds = trucksInCity.map(truck => truck.id);
+        matchQuery.truckId = { $in: truckIds };
+      }
+
+      // Aggregation pipeline
       const productSummaries = await Order.aggregate([
-        // Match documents for the specific truck and date range
+        // Match documents based on filters
+        { $match: matchQuery },
         
-        // Unwind the productDetails array to process each product separately
+        // Unwind the order array to process each product separately
         { $unwind: "$order" },
+        
         // Group by product and calculate sums
         {
           $group: {
@@ -907,40 +1193,32 @@ exports.orderdetails = async (req, res) => {
               productId: "$order.productid",
               productName: "$order.productname"
             },
-            // totalLoaded: {
-            //   $sum: {
-            //     $cond: [
-            //         { $eq: ["$order.inwardoutward", "outward"] },
-            //         "$order.quantity",
-            //         0
-            //     ]
-            // }
-            //     // $sum: "$productDetails.quantity"
-  
-            // },
             totalDelivered: {
               $sum: {
                 $cond: [
-                    { $eq: ["$order.inwardoutward", "outward"] },
-                    "$order.quantity",
-                    0
+                  { $eq: ["$status", "DELIVERED"] },
+                  "$order.quantity",
+                  0
                 ]
-            }
-                // $sum: "$productDetails.quantity"
-  
+              }
+       
             },
             totalorder: {
-                $sum: "$order.quantity"
-                
+              $sum:     "$order.quantity"
             },
-            totalReturned: {
-  
-              $sum: "$order.quantity"
-  
-              
+            totalPending: {
+              $sum:{
+                $cond: [
+                  { $eq: ["$status", "PENDING"] },
+                  "$order.quantity",
+                  0
+                ]
+              }
+       
             }
           }
         },
+        
         // Project to reshape the output
         {
           $project: {
@@ -949,39 +1227,45 @@ exports.orderdetails = async (req, res) => {
             productName: "$_id.productName",
             totalorder: 1,
             totalDelivered: 1,
-            totalReturned: 1
+            totalPending: 1
           }
         },
+        
         // Sort by product name
         { $sort: { productName: 1 } }
       ]);
+
       // Get all products to ensure we show all even if no activity
-      const allProducts = await Product.find({}, 'productid name type');
+      // const allProducts = await Product.find({}, 'productid name type');
+      // console.log(allProducts)
       
-      // Merge with product data to include all products
-      const mergedData = allProducts.map(product => {
-        const summary = productSummaries.find(p => p.productId == product._id.toString()) || {};
-        return {
-          productId: product.productid,
-          productName: product.name,
-          productType: product.type,
-          totalorder: summary.totalorder ,
-          totalDelivered: summary.totalDelivered ,
-          totalReturned: summary.totalReturned 
-        };
-      });
-      // console.log(mergedData)
-  
+      // // Merge with product data to include all products
+      // // const mergedData = allProducts.map(product => {
+      // //   const summary = productSummaries.find(p => p.productName == product.name.toString()) || {};
+      // //   return {
+      // //     productId: product.productid,
+      // //     productName: product.name,
+      // //     productType: product.type,
+      // //     totalorder: summary.totalorder || 0,
+      // //     totalDelivered: summary.totalDelivered || 0,
+      // //     totalReturned: summary.totalReturned || 0
+      // //   };
+      // // });
+
       res.json({
         success: true,
-        data: mergedData
+        data: productSummaries
       });
-  
+
     } catch (err) {
       console.error('Error fetching product summary:', err);
       res.status(500).json({ 
         success: false,
-        error: 'Failed to fetch product summary'
+        error: 'Failed to fetch product summary',
+        details: err.message 
       });
     }
-  };
+};
+
+
+

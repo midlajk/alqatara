@@ -182,19 +182,20 @@
     
             <!-- Bottle LendType -->
             <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Bottle LendType</label>
+                <label class="form-label small font-weight-bold">Product</label>
                 <select class="form-control">
-                    <option selected>Select Bottle LendType</option>
-                    <option value="Loan">Loan</option>
-                    <option value="Purchase">Purchase</option>
+                  <option selected>Select Product to choose lend type </option>
+
+                    <option value="Bottle">Bottle</option>
+                    <option value="Loan">Dispenser</option>
                 </select>
             </div>
     
             <!-- Cooler LendType -->
             <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Cooler LendType</label>
+                <label class="form-label small font-weight-bold">Product LendType</label>
                 <select class="form-control">
-                    <option selected>Select Cooler LendType</option>
+                    <option selected>Select LendType</option>
                     <option value="Rental">Rental</option>
                     <option value="Owned">Owned</option>
                 </select>
@@ -313,38 +314,9 @@
               Sales Rep: SR-008</p>
             </div>
           </div>
-          <h6 class="font-weight-bold">Asset In Hand Information</h6>
-
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead class="thead-light">
-                <tr>
-                  <th>Product</th>
-                  <th>Lend Type</th>
-                  <th>Quantity</th>
-            
-                </tr>
-              </thead>
-              <tbody>
-            
-         
-           
-              </tbody>
-            </table>
-          </div>
+      
           
-          <div class="row mt-4">
-            <div class="col-md-6">
-              <h6 class="font-weight-bold">Delivery Notes</h6>
-              <p></p>
-            </div>
-            <div class="col-md-6">
-              <h6 class="font-weight-bold">Payment Information</h6>
-              <p>Status: <span class="badge badge-success"></span><br>
-              Method: <br>
-              Transaction ID:</p>
-            </div>
-          </div>
+     
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -471,7 +443,7 @@
           data: null,
           title: 'Actions',
           render: function(data, type, row) {
-            return `<button class="btn btn-action btn-view edit-zone" data-id="${row.id}">More Details</button>
+            return `<button class="btn btn-action btn-view edit-zone" data-id="${row.id}">Details</button>
             <a class="btn btn-action btn-manage edit-zone" href="/customerorderhistory/${row.id}">Transactions</a>`;
           }
         }

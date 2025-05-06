@@ -193,7 +193,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  <span class="h2 font-weight-bold mb-0" id="totalorders">0</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
@@ -213,7 +213,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Pending Orders</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  <span class="h2 font-weight-bold mb-0" id="pendingorderds">0</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
@@ -233,7 +233,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Total Revenue</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  <span class="h2 font-weight-bold mb-0" id="totalrevenue">0</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
@@ -252,7 +252,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  <span class="h2 font-weight-bold mb-0" id="pendingpayments">0</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
@@ -276,57 +276,57 @@
       <div class="filter-section">
         <h5 class="mb-4"><i class="fas fa-filter text-primary mr-2"></i>Filter Orders</h5>
         <div class="row" id="cardb">
-          <div class="col-md-3 mb-3" id="cardb">
+          <div class="col-md-3 mb-3">
             <label class="form-label small font-weight-bold">Customer</label>
-            <select class="form-control customer-code-js">
+            <select class="form-control customer-code-js" id="customerFilter">
               <option value="">All Customers</option>
             </select>
           </div>
           
           <div class="col-md-3 mb-3">
             <label class="form-label small font-weight-bold">Sales Rep</label>
-            <select class="form-control salesman-js">
+            <select class="form-control" id="salesmanFilter">
               <option value="">All Sales Reps</option>
             </select>
           </div>
           
           <div class="col-md-3 mb-3">
             <label class="form-label small font-weight-bold">Truck</label>
-            <select class="form-control truck-js">
+            <select class="form-control" id="truckFilter">
               <option value="">All Trucks</option>
             </select>
           </div>
           
           <div class="col-md-3 mb-3">
             <label class="form-label small font-weight-bold">Status</label>
-            <select class="form-control">
+            <select class="form-control" id="statusFilter">
               <option value="">All Statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-              <option value="Cancelled">Cancelled</option>
+              <option value="PENDING">Pending</option>
+              <option value="DELIVERED">Delivered</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="CANCELLED">Cancelled</option>
             </select>
           </div>
           
           <div class="col-md-3 mb-3">
             <label class="form-label small font-weight-bold">From Date</label>
             <div class="date-input-group">
-              <input type="date" class="form-control">
+              <input type="date" class="form-control" id="fromDateFilter">
             </div>
           </div>
           
           <div class="col-md-3 mb-3">
             <label class="form-label small font-weight-bold">To Date</label>
             <div class="date-input-group">
-              <input type="date" class="form-control">
+              <input type="date" class="form-control" id="toDateFilter">
             </div>
           </div>
           
           <div class="col-md-3 mb-3 d-flex align-items-end">
-            <button class="btn btn-sm filter-btn mr-2">
+            <button class="btn btn-sm filter-btn mr-2" id="applyFilters">
               <i class="fas fa-filter mr-1"></i> Apply
             </button>
-            <button class="btn  btn-outline-secondary">
+            <button class="btn btn-outline-secondary" id="resetFilters">
               <i class="fas fa-sync-alt mr-1"></i> Reset
             </button>
           </div>
@@ -483,12 +483,44 @@
       </div>
     </div>
   </div>
+  </div>
 
-<%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>
 
 <script>
 $(document).ready(function() {
+
+  async function updateDashboardStats() {
+    try {
+      // Get current filter values
+      const filters = {
+        customer: $('#customerFilter').val(),
+        salesman: $('#salesmanFilter').val(),
+        truck: $('#truckFilter').val(),
+        status: $('#statusFilter').val(),
+        fromDate: $('#fromDateFilter').val(),
+        toDate: $('#toDateFilter').val()
+      };
+
+      // Fetch stats from backend
+      const response = await $.ajax({
+        url: '/orderdashboard-stats',
+        method: 'GET',
+        data: filters
+      });
+
+      if (response.success) {
+        // Update the dashboard cards
+        $('#totalorders').text(response.data.totalOrders);
+        $('#pendingorderds').text(response.data.pendingOrders);
+        $('#totalrevenue').text('$' + response.data.totalRevenue.toFixed(2));
+        $('#pendingpayments').text(response.data.pendingPayments);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    }
+  }
+  
   // Initialize DataTable
   var datatable = $('#ordertable').DataTable({
     responsive: true,
@@ -507,20 +539,6 @@ $(document).ready(function() {
         d.toDate = $('#toDateFilter').val();
         
         return d;
-      },
-      dataFilter: function(data) {
-        // Parse the response to get summary data
-        var json = JSON.parse(data);
-        if(json.summary) {
-          summaryData = {
-            total: json.summary.total || 0,
-            pending: json.summary.pending || 0,
-            completed: json.summary.completedToday || 0,
-            cancelled: json.summary.cancelled || 0
-          };
-          updateSummaryCards(summaryData);
-        }
-        return JSON.stringify(json); // Return the original data for DataTables
       }
     },
     language: {
@@ -535,12 +553,18 @@ $(document).ready(function() {
     },
     columns: [
       { data: 'id', title: 'Order ID' },
-      { data: 'name', title: 'Customer' },
+      { 
+        data: 'customerId', 
+        title: 'Customer',
+        render: function(data, type, row) {
+          return row.name || data || 'N/A';
+        }
+      },
       { 
         data: 'createdAt', 
         title: 'Date',
         render: function(data) {
-          return new Date(data).toLocaleDateString();
+          return data ? new Date(data).toLocaleDateString() : 'N/A';
         }
       },
       { data: 'truckId', title: 'Truck' },
@@ -549,12 +573,13 @@ $(document).ready(function() {
         title: 'Status',
         render: function(data) {
           let badgeClass = 'badge-secondary';
-          if(data === 'Pending') badgeClass = 'badge-pending';
+          if(data === 'PENDING') badgeClass = 'badge-pending';
           if(data === 'DELIVERED') badgeClass = 'badge-completed';
-          if(data === 'Cancelled') badgeClass = 'badge-cancelled';
-          if(data === 'In Progress') badgeClass = 'badge-in-progress';
+          if(data === 'COMPLETED') badgeClass = 'badge-completed';
+          if(data === 'CANCELLED') badgeClass = 'badge-cancelled';
+          if(data === 'IN_PROGRESS') badgeClass = 'badge-in-progress';
           
-          return `<span class="status-badge ${badgeClass}">${data}</span>`;
+          return `<span class="badge ${badgeClass}">${data}</span>`;
         }
       },
       { 
@@ -565,17 +590,18 @@ $(document).ready(function() {
         }
       },
       { 
-        data: 'totalPrice', 
+        data: null, 
         title: 'Balance',
-        render: function(data) {
-          return data ? '$' + parseFloat(data).toFixed(2) : '$0.00';
+        render: function(data, type, row) {
+          const balance = row.totalPrice - (row.creditAmountPaid || 0);
+          return '$' + balance.toFixed(2);
         }
       },
       { 
         data: 'isCreditCustomerPaid', 
         title: 'Payment',
         render: function(data) {
-          return data ? 'Paid' : 'Unpaid';
+          return data ? '<span class="badge badge-success">Paid</span>' : '<span class="badge badge-danger">Unpaid</span>';
         }
       },
       { 
@@ -589,19 +615,28 @@ $(document).ready(function() {
 
           `;
         }
-      }
+      },  
+        
     ],
     drawCallback: function(settings) {
-      // Update summary cards after each draw
-      if(settings.json && settings.json.summary) {
-        updateSummaryCards({
-          total: settings.json.summary.total || 0,
-          pending: settings.json.summary.pending || 0,
-          completed: settings.json.summary.completedToday || 0,
-          cancelled: settings.json.summary.cancelled || 0
-        });
-      }
+      // Update dashboard stats whenever table is redrawn
+      updateDashboardStats();
     }
+
+  });
+   $('#applyFilters').click(function() {
+    datatable.ajax.reload();
+  });
+
+  // Reset filters button
+  $('#resetFilters').click(function() {
+    $('#customerFilter').val('').trigger('change');
+    $('#salesmanFilter').val('').trigger('change');
+    $('#truckFilter').val('').trigger('change');
+    $('#statusFilter').val('');
+    $('#fromDateFilter').val('');
+    $('#toDateFilter').val('');
+    datatable.ajax.reload();
   });
    $('#ordertable tbody').on('click', '.edit-zone', function () {
         var orderId = $(this).data('id');
@@ -784,43 +819,40 @@ $(document).ready(function() {
     }
   });
 
-  $('.salesman-js').select2({
-    dropdownParent: $("#cardb"),
+  $('#salesmanFilter').select2({
+    placeholder: "Select Sales Rep",
+    allowClear: true,
     ajax: {
-      url: '/salesmanids',
-      dataType: 'json',
+      url: "/salesmanids",
+      dataType: "json",
       delay: 250,
       processResults: function(data) {
         return {
           results: data.map(function(item) {
             return { id: item.id, text: item.id };
-          }),
+          })
         };
-      },
+      }
     }
   });
 
-  $('.truck-js').select2({
-    dropdownParent: $("#cardb"),
+  $('#truckFilter').select2({
+    placeholder: "Select Truck",
+    allowClear: true,
     ajax: {
-      url: '/truckids',
-      dataType: 'json',
+      url: "/truckids",
+      dataType: "json",
       delay: 250,
-      data: function(params) {
-        return {
-          search: params.term,
-          customKey: 'utilities'
-        };
-      },
       processResults: function(data) {
         return {
           results: data.map(function(item) {
             return { id: item.id, text: item.id };
-          }),
+          })
         };
-      },
+      }
     }
   });
+ 
 });
 </script>
 
@@ -829,71 +861,94 @@ $(document).ready(function() {
 <script>
 
 $('#showSumBtn').click(function() {
-      // Show loading state
-      $('#productCardsContainer').html(`
+    // Get current filter values
+    const filters = {
+        truck: $('#truckFilter').val(),
+        customer: $('#customerFilter').val(),
+        salesman: $('#salesmanFilter').val(),
+        status: $('#statusFilter').val(),
+        fromDate: $('#fromDateFilter').val(),
+        toDate: $('#toDateFilter').val()
+    };
+
+    // Show loading state
+    $('#productCardsContainer').html(`
         <div class="col-12 text-center py-5">
-          <i class="fas fa-spinner fa-spin fa-2x"></i>
-          <p>Loading product data...</p>
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Loading product data...</p>
         </div>
-      `);
-      
-      // Fetch product summary data
-      $.ajax({
+    `);
+    
+    // Fetch product summary data with current filters
+    $.ajax({
         url: '/getorderdeliverysummery',
         method: 'GET',
+        data: filters,
         success: function(response) {
-          if (response.success && response.data && response.data.length > 0) {
-            renderProductCards(response.data);
-          } else {
-            $('#productCardsContainer').html(`
-              <div class="col-12 text-center py-5">
-                <i class="fas fa-box-open fa-2x mb-3"></i>
-                <p>No product data available</p>
-              </div>
-            `);
-          }
+            if (response.success && response.data && response.data.length > 0) {
+                renderProductCards(response.data);
+            } else {
+                $('#productCardsContainer').html(`
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-box-open fa-2x mb-3"></i>
+                        <p>No product data available</p>
+                    </div>
+                `);
+            }
         },
-        error: function() {
-          $('#productCardsContainer').html(`
-            <div class="col-12 text-center py-5">
-              <i class="fas fa-exclamation-triangle fa-2x mb-3 text-danger"></i>
-              <p>Error loading product data</p>
-            </div>
-          `);
+        error: function(xhr, status, error) {
+            $('#productCardsContainer').html(`
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3 text-danger"></i>
+                    <p>Error loading product data</p>
+                    <p class="small text-muted">${error}</p>
+                </div>
+            `);
         }
-      });
-      
-      $('#productSummaryModal').modal('show');
     });
     
-    function renderProductCards(products) {
-      console.log(products)
-      let html = '';
-      
-      products.forEach(product => {
-        html += `
-          <div class="col-md-12 product-card">
-            <div class="product-name">
-              <i class="fas fa-box mr-2"></i>${product.productName}
+    $('#productSummaryModal').modal('show');
+});
+
+function renderProductCards(products) {
+    let html = '';
+    
+    // Filter out products with no activity if desired
+    const activeProducts = products.filter(p => p.totalorder > 0 || p.totalDelivered > 0 || p.totalReturned > 0);
+    
+    if (activeProducts.length === 0) {
+        html = `
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-box-open fa-2x mb-3"></i>
+                <p>No product activity found for current filters</p>
             </div>
-            <div class="product-stats">
-              <div class="stat-item">
-                <div class="stat-value text-loaded">${product.totalorder || 0}</div>
-                <div class="stat-label">Number Of Orders</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value text-delivered">${product.totalDelivered || 0}</div>
-                <div class="stat-label">Delivered</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-value text-returned">${product.totalReturned || 0}</div>
-                <div class="stat-label">Returned</div>
-              </div>
-            </div>
-          </div>
         `;
-      });
-      
-      $('#productCardsContainer').html(html);
+    } else {
+        activeProducts.forEach(product => {
+            html += `
+                <div class="col-md-12 product-card">
+                    <div class="product-name">
+                        <i class="fas fa-${product.productType === 'bottle' ? 'wine-bottle' : 'box'} mr-2"></i>
+                        ${product.productName}
+                    </div>
+                    <div class="product-stats">
+                        <div class="stat-item">
+                            <div class="stat-value text-loaded">${product.totalorder}</div>
+                            <div class="stat-label">Ordered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value text-delivered">${product.totalDelivered}</div>
+                            <div class="stat-label">Delivered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value text-returned">${product.totalPending}</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
     }
-</script>
+    
+    $('#productCardsContainer').html(html);
+}</script>

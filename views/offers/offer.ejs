@@ -74,6 +74,8 @@
                 <thead class="thead-light">
                   <tr>
                     <th scope="col" class="sort" data-sort="name">OfferID</th>
+                    <th scope="col" class="sort" data-sort="name">Routes</th>
+
                     <th scope="col" class="sort">Offer Items</th>
                     <th scope="col" class="sort">Amount</th>
                     <th scope="col" class="sort">Coupons</th>
@@ -120,6 +122,15 @@ $(document).ready(function() {
                 data: 'code',
                 render: function(data, type, row) {
                     return data; // Displaying MongoDB _id as OfferID
+                }
+            },
+            { 
+                data: 'routes',
+                render: function(data, type, row) {
+                    if (Array.isArray(data)) {
+                        return data.join(', '); // Join array items with comma
+                    }
+                    return data || 'All';
                 }
             },
             { 

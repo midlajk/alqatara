@@ -541,3 +541,95 @@ function populateSalesmanTable() {
 </script>
 
 <%- include('./includes/end.ejs') -%>
+
+
+
+
+exports.customercoupons = async (req, res) => {
+
+
+  try {
+    const customerId = req.params.customerId;
+        const truckId = req.params.truckId;const product = req.params.product;
+    // Find all recharges for this customer with available coupons
+    const recharges = await Recharge.find({
+      customerId: customerId,
+      
+      'coupons.status': 'ACTIVE'
+    });
+    
+    // Extract all active coupons
+    const coupons = [];
+    recharges.forEach(recharge => {
+      recharge.coupons.forEach(coupon => {
+        if (coupon.status === 'ACTIVE') {
+          coupons.push({
+            couponid: coupon.couponid,
+            couponamt: coupon.couponamt,
+            coupontype: coupon.coupontype,
+            status: coupon.status,
+            rechargeId: recharge._id
+          });
+        }
+      });
+    });
+    
+    res.json({ success: true, coupons });
+  } catch (error) {
+    console.error('Error fetching customer coupons:', error);
+    res.status(500).json({ success: false, message: 'Error fetching coupons' });
+  }
+} here instead of this const rechargeSchema = new mongoose.Schema({
+  rechargeId: { type: String, unique: true },
+  amount: { type: Number, required: true },
+  customerId: String,
+  routes:[String],
+  item:String,
+
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  isDebit: { type: Boolean, default: false },
+  salesmanId: { type: String },
+  status: { type: String, default: 'PENDING' },
+  paidcoupons:Number,
+  freecoupons:Number,
+  coupons : [{
+    couponid:String,
+    couponamt:Number,
+    coupontype:String,
+    created:{ type: Date, default: Date.now },
+    status:String,
+    updated:Date,
+
+  }]
+}); fromn this database i want to get recharges but forit firestly i need to fetch   const truckSchema = new mongoose.Schema({
+    id: { type: String, required: true ,unique: true},
+    createdAt: { type: Date, default: Date.now },
+    salesmanId: { type: String},
+    updatedAt: { type: Date, default: Date.now },
+    damaged5galBottles: { type: Number, default: 0 },
+    delivered200mlBottles: { type: Number, default: 0 },
+    delivered5galBottles: { type: Number, default: 0 },
+    remaining200mlBottles: { type: Number, default: 0 },
+    remaining5galBottles: { type: Number, default: 0 },
+    stockOf200mlBottles: { type: Number, default: 0 },
+    stockOf5galBottles: { type: Number, default: 0 },
+    assistants: [],
+    routeId: { type: String, required: true },
+    city: { type: String, required: true },
+    productDetails: [{
+      productid: { type: String },
+      productname: { type:String}, 
+      quantity: { type: Number },
+      inwardoutward:{ type:String}, 
+      time: { type: Date }, // If product is returned
+      itemtype: { type:String}, // If product is damaged
+      doneby: { type:String}, // If product is damaged
+      city: { type:String},
+      previousStock: { type: Number },
+      previousDamage: { type: Number },
+      previousDiscard: { type: Number },
+      delivered:Number
+    }]
+    }, { timestamps: true }); routeid of truck from this schema and based on i want to get reachrges which matche customerid and has route id in its routes aslo item
+    is product in filtering i want to get number of coupons from coupon array for which status is active and sum of coupon couponamt also rechargeid 

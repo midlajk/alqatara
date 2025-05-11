@@ -38,7 +38,14 @@
             <label class="form-label">Sales Man I.D</label>
             <input type="text" class="form-control" placeholder="Search ID Here">
         </div>
-        
+        <div class="col-md-3">
+          <label class="form-label">Asset</label>
+          <input type="text" class="form-control" placeholder="Search ID Here">
+      </div>   
+      <div class="col-md-3">
+        <label class="form-label">Lend Type</label>
+        <input type="text" class="form-control" placeholder="Search ID Here">
+    </div>
         <div class="col-md-3">
             <label class="form-label">From</label>
             <input type="date" class="form-control">
@@ -48,91 +55,29 @@
             <label class="form-label">To</label>
             <input type="date" class="form-control">
         </div>
+        <div class="col-md-3 mb-1 d-flex align-items-end">
+          <button class="btn btn-sm filter-btn mr-2">
+            <i class="fas fa-filter mr-1"></i> Apply
+          </button>
+          <button class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt mr-1"></i> Reset
+          </button>
+        </div>
     </div>
 </div>
   
 
     </div>
     <div class="col-12">
-    <!-- <div class="row">    
-      <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-orange  text-white rounded-circle shadow">
-                      <i class="ni ni-delivery-fast" ></i>
-                    </div>
-                  </div>
-                </div>
-              
-              </div>
-            </div>
-          </div>
-        <div class="col-xl-3 col-md-6">
-          <div class="card card-stats">
-            <div class="card-body">
-              <div class="row">
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Total Value</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                </div>
-                <div class="col-auto">
-                  <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                    <i class="fa-solid fa-credit-card"></i>
-                                  </div>
-                </div>
-              </div>
-            
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Today Paid</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
-                        <i class="fa-solid fa-money-bill"></i>
-                                        </div>
-                  </div>
-                </div>
-              
-              </div>
-            </div>
-          </div>
-       
-          <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Mobile Number</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                        <i class="fa-solid fa-phone"></i>
-                                        </div>
-                  </div>
-                </div>
-              
-              </div>
-            </div>
-          </div>
-    </div> -->
+
 </div>
 <div class="col-12">
   <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
-   
+   <li class="nav-item">
+      <a class="nav-link active" id="salesman-tab"  href="/customerassethistory/<%=id%>">
+        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
+      </a>
+    </li>
     <li class="nav-item">
       <a class="nav-link" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
         <i class="fa-solid fa-list"></i>
@@ -145,35 +90,34 @@
                 Payments History
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link active" id="salesman-tab"  href="/customerassethistory/<%=id%>">
-        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
-      </a>
-    </li>
+    
+
+    
     </ul>
     </div>
     <div class="col">
       <div class="card">
         <!-- Card header -->
-        <div class="card-header border-0">
-          <h3 class="mb-0 text-white">Asset History  user1</h3>
+        <div class="card-header border-0 mb-2">
+          <h3 class="mb-0 text-white">Asset History of <%=id%></h3>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
-          <table id="customertable" class="table align-items-center table-flush">
-            <thead class="thead-light">
+          <table id="assettable" class="table align-items-center table-flush">
+            <thead>
               <tr>
-                <th scope="col" class="sort" data-sort="name">Order Id</th>
-                <th scope="col" class="sort" data-sort="budget">Date</th>
-                <th scope="col" class="sort" data-sort="status">Asset</th>
-                <th scope="col" class="sort">Qty</th>
-                <th scope="col" class="sort" data-sort="completion">Truck</th>
-                <th scope="col" class="sort">Salesman</th>
-                <th scope="col" class="sort" data-sort="completion"> Create Return</th>
-                <!-- <th scope="col" class="sort" data-sort="completion">Status</th>
-                <th scope="col" class="sort" data-sort="completion">Caption</th> -->
+                <th scope="col" class="sort" data-sort="createdAt">Created At</th>
+               
+                <th scope="col" class="sort" data-sort="assetType">Asset Type</th>
+                <th scope="col" class="sort" data-sort="noOfAssets">No. of Assets</th>
+                <th scope="col" class="sort" data-sort="securityDeposit">Security Deposit</th>
+                <th scope="col" class="sort" data-sort="lendType">Lend Type</th>
+                <th scope="col" class="sort" data-sort="truckId">Truck ID</th>
+                <th scope="col" class="sort" data-sort="salesmanId">Salesman ID</th>
+                <th scope="col" class="sort" data-sort="actions">Actions</th>
               </tr>
             </thead>
+            
             <tbody class="list">
               <tr>
                 
@@ -192,7 +136,94 @@
     
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
     
-
+    <script>
+   $(document).ready(function () {
+  var datatable = $("#assettable").DataTable({
+    responsive: true,
+    processing: true,
+    serverSide: true,
+    ajax: {
+      url: "/getcustomerassets",
+      dataSrc: "docs",
+      data: function (d) {
+        d.customer = '<%= id %>'; // Pass customerId to server
+        return d;
+      }
+    },
+    language: {
+      paginate: {
+        next: '<i class="fas fa-chevron-right"></i>',
+        previous: '<i class="fas fa-chevron-left"></i>',
+      },
+      search: "_INPUT_",
+      searchPlaceholder: "Search asset history...",
+      lengthMenu: "Show _MENU_ records",
+      info: "Showing _START_ to _END_ of _TOTAL_ records",
+    },
+    columns: [
+    {
+        data: "createdAt",
+        title: "Created At",
+        render: function (data) {
+          return data ? new Date(data).toLocaleDateString() : "N/A";
+        }
+      },
+      {
+        data: "assetType",
+        title: "Asset Type",
+        render: function (data) {
+          return data || "N/A";
+        }
+      },
+      {
+        data: "noOfAssets",
+        title: "No. of Assets",
+        render: function (data) {
+          return data !== undefined ? data : "N/A";
+        }
+      },
+      {
+        data: "securityDeposit",
+        title: "Security Deposit",
+        render: function (data) {
+          return data !== undefined ? `₹${data}` : "N/A";
+        }
+      },
+      {
+        data: "lendType",
+        title: "Lend Type",
+        render: function (data) {
+          return data || "N/A";
+        }
+      },
+      {
+        data: "truckId",
+        title: "Truck ID",
+        render: function (data) {
+          return data || "N/A";
+        }
+      },
+      {
+        data: "salesmanId",
+        title: "Salesman ID",
+        render: function (data) {
+          return data || "N/A";
+        }
+      },
+  
+      {
+        data: null,
+        title: "Actions",
+        render: function (data, type, row) {
+          return `
+            <button class="btn btn-info btn-sm" data-id="${row._id}">View</button>
+          `;
+        }
+      }
+    ]
+  });
+});
+ </script>
 
 <%- include('../includes/footer.ejs') -%>
 

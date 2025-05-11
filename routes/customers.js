@@ -10,6 +10,9 @@ const authMiddleware = require('../middleware/auth');
 router.get('/getcustomers',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getcustomer);
 router.post('/addCustomer',setCustomHeader('customers'),WritePrivilage, customerapi.newcustomer);
 
+router.get('/getcustomerassets',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getcustomerassets);
+router.get('/getcustomerorders',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getcustomerorders);
+router.get('/getcustomerpayments',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getcustomerpayments);
 
 
 
@@ -17,6 +20,8 @@ router.delete('/deletecustomer/:id',setCustomHeader('customers'),apiprev.Getapip
 
 router.get('/customers/deletedcustomers',setCustomHeader('customers'),authMiddleware, customerapi.deletecustomersscreen);
 router.get('/getdeletedcustomers',setCustomHeader('customers'),apiprev.Getapiprev, customerapi.getdeletedcustomers);
+router.get('/customersexport',setCustomHeader('customers'),authMiddleware, customerapi.exportCustomers);
+
 
 //////////Views
 

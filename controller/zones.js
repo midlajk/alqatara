@@ -80,19 +80,27 @@ exports.getzones = async (req, res) => {
 
 exports.zoneids = async (req, res) => {
   try {
-    const { truckid } = req.query; // Get truckid from the request query
+    const { truckid, route } = req.query;
 
-    let filter = {}; // Default filter
+    let filter = {}; // Initialize empty filter
 
-    if (truckid) {
-      const truck = await Truck.findOne({ id: truckid }); // Find truck by id
+    // if (truckid) {
+    //   const truck = await Truck.findOne({ id: truckid }); // Find truck by id
 
-      if (truck && truck.routeId) {
-        // filter.route = truck.routeId; // Apply filter only if routeId exists
-      } 
+    //   if (truck && truck.routeId) {
+    //     // filter.routeId = truck.routeId; // Use truck's routeId
+    //   }
+    // }
+
+    // If route is explicitly passed in query, override or set it
+    if (route) {
+      filter.routeId = route;
     }
+    console.log(filter)
 
-    const zones = await Zone.find(filter, { id: 1 }); // Fetch zones based on filter
+    // Now filter zones by routeId
+    const zones = await Zone.find(filter);
+    console.log(zones)
 
     res.json(zones);
   } catch (err) {

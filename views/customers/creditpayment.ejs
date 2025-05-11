@@ -136,7 +136,11 @@
 </div>
 <div class="col-12">
   <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
-   
+   <li class="nav-item">
+      <a class="nav-link " id="salesman-tab"  href="/customerassethistory/<%=id%>">
+        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
+      </a>
+    </li>
     <li class="nav-item">
       <a class="nav-link" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
         <i class="fa-solid fa-list"></i>
@@ -149,35 +153,29 @@
                 Payments History
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link " id="salesman-tab"  href="/customerassethistory/<%=id%>">
-        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
-      </a>
-    </li>
+    
     </ul>
     </div>
     <div class="col">
       <div class="card">
         <!-- Card header -->
-        <div class="card-header border-0">
-          <h3 class="mb-0 text-white">Payment History of user1</h3>
+        <div class="card-header border-0 mb-2">
+          <h3 class="mb-0 text-white">Payment History of f <%=id%></h3>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
-          <table id="customertable" class="table align-items-center table-flush">
+          <table id="paymenttable" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
-                <th scope="col" class="sort" data-sort="name">Order Id</th>
-                <th scope="col" class="sort" data-sort="budget">Salesman ID</th>
-                <th scope="col" class="sort" data-sort="status">Total Credit</th>
-                <th scope="col" class="sort">Credit Recieved</th>
-                <th scope="col" class="sort" data-sort="completion">Credit Balance</th>
-                <th scope="col" class="sort">Last Recieved</th>
-                <th scope="col" class="sort" data-sort="completion">Pay Credit</th>
-                <!-- <th scope="col" class="sort" data-sort="completion">Status</th>
-                <th scope="col" class="sort" data-sort="completion">Caption</th> -->
+                <th scope="col" class="sort" data-sort="orderId">Order ID</th>
+                <th scope="col" class="sort" data-sort="salesmanid">Salesman</th>
+                <th scope="col" class="sort" data-sort="totalCreditAmountDue">Total Credit</th>
+                <th scope="col" class="sort" data-sort="creditAmountPaid">Credit Received</th>
+                <th scope="col" class="sort" data-sort="creditBalance">Credit Balance</th>
+                <th scope="col" class="sort" data-sort="createdAt">Last Received</th>
               </tr>
             </thead>
+            
             <tbody class="list">
               <tr>
                 
@@ -197,7 +195,78 @@
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
     
 
-
+    <script>
+      $(document).ready(function () {
+        var datatable = $("#paymenttable").DataTable({
+          responsive: true,
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/getcustomerpayments", // Updated route to payment API
+            dataSrc: "docs",
+            data: function (d) {
+              d.customer = '<%= id %>'; // Pass customerId to server
+              return d;
+            }
+          },
+          language: {
+            paginate: {
+              next: '<i class="fas fa-chevron-right"></i>',
+              previous: '<i class="fas fa-chevron-left"></i>',
+            },
+            search: "_INPUT_",
+            searchPlaceholder: "Search payments...",
+            lengthMenu: "Show _MENU_ records",
+            info: "Showing _START_ to _END_ of _TOTAL_ records",
+          },
+          columns: [
+            {
+              data: "orderId",
+              title: "Order ID",
+              render: function (data) {
+                return data || "N/A";
+              }
+            },
+            {
+              data: "createdAt",
+              title: "Date",
+              render: function (data) {
+                return data ? new Date(data).toLocaleDateString() : "N/A";
+              }
+            },
+            {
+              data: "salesmanid",
+              title: "Salesman",
+              render: function (data) {
+                return data || "N/A";
+              }
+            },
+            {
+              data: "modeOfPayment",
+              title: "Mode of Payment",
+              render: function (data) {
+                return data || "N/A";
+              }
+            },
+            {
+              data: "creditAmountPaid",
+              title: "Payment Received",
+              render: function (data) {
+                return data !== undefined ? `₹${data}` : "N/A";
+              }
+            },
+            {
+              data: "totalCreditAmountDue",
+              title: "Balance Payment",
+              render: function (data) {
+                return data !== undefined ? `₹${data}` : "N/A";
+              }
+            }
+          ]
+        });
+      });
+    </script>
+    
 <%- include('../includes/footer.ejs') -%>
 
 <%- include('../includes/end.ejs') -%>

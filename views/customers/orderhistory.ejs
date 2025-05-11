@@ -48,6 +48,15 @@
             <label class="form-label">To</label>
             <input type="date" class="form-control">
         </div>
+
+        <div class="col-md-3 mb-1 d-flex align-items-end">
+          <button class="btn btn-sm filter-btn mr-2">
+            <i class="fas fa-filter mr-1"></i> Apply
+          </button>
+          <button class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt mr-1"></i> Reset
+          </button>
+        </div>
     </div>
 </div>
   
@@ -136,7 +145,11 @@
 </div>
 <div class="col-12">
   <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
-   
+   <li class="nav-item">
+      <a class="nav-link " id="salesman-tab"  href="/customerassethistory/<%=id%>">
+        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
+      </a>
+    </li>
     <li class="nav-item">
       <a class="nav-link active" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
         <i class="fa-solid fa-list"></i>
@@ -149,40 +162,31 @@
                 Payments History
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link " id="salesman-tab"  href="/customerassethistory/<%=id%>">
-        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
-      </a>
-    </li>
+    
     </ul>
     </div>
     <div class="col">
       <div class="card">
         <!-- Card header -->
-        <div class="card-header border-0">
-          <h3 class="mb-0 text-white">Order History of user1</h3>
+        <div class="card-header border-0 mb-2">
+          <h3 class="mb-0 text-white">Order History of <%=id%></h3>
         </div>
         <!-- Light table -->
         <div class="table-responsive">
-          <table id="customertable" class="table align-items-center table-flush">
-            <thead class="thead-light">
+          <table id="ordertable" class="table align-items-center table-flush">
+            <thead>
               <tr>
-                <th scope="col" class="sort" data-sort="name">Order Id</th>
-                <th scope="col" class="sort" data-sort="completion">Truck</th>
-                <th scope="col" class="sort" data-sort="completion">Salesman</th>
-                <th scope="col" class="sort" data-sort="completion">Date</th>
-                <th scope="col" class="sort" data-sort="budget">Order</th>
-                <th scope="col" class="sort" data-sort="status">Order Value</th>
-                <th scope="col" class="sort">Payment Recieved</th>
-                <th scope="col" class="sort" data-sort="completion">Balance Payment</th>
-
+                <th scope="col" class="sort" data-sort="name">Order Date</th>
+                <th scope="col" class="sort" data-sort="truckId">Truck</th>
+                <th scope="col" class="sort" data-sort="salesmanId">Salesman</th>
+                <th scope="col" class="sort" data-sort="status">Status</th>
+                <th scope="col" class="sort" data-sort="totalPrice">Order Value</th>
+                <th scope="col" class="sort" data-sort="creditAmountPaid">Payment Received</th>
+                <th scope="col" class="sort" data-sort="balance">Balance Payment</th>
+                <th scope="col" class="sort" data-sort="action">Actions</th>
               </tr>
             </thead>
-            <tbody class="list">
-              <tr>
-                
-              </tr>
-            </tbody>
+         
           </table>
         </div>
         <!-- Card footer -->
@@ -196,7 +200,95 @@
     
     <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
     
-
+    <script>
+      $(document).ready(function () {
+        var datatable = $("#ordertable").DataTable({
+          responsive: true,
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: "/getcustomerorders", // Updated route
+            dataSrc: "docs",
+            data: function (d) {
+              d.customer = '<%= id %>'; // Pass customerId to server
+              return d;
+            }
+          },
+          language: {
+            paginate: {
+              next: '<i class="fas fa-chevron-right"></i>',
+              previous: '<i class="fas fa-chevron-left"></i>',
+            },
+            search: "_INPUT_",
+            searchPlaceholder: "Search orders...",
+            lengthMenu: "Show _MENU_ records",
+            info: "Showing _START_ to _END_ of _TOTAL_ records",
+          },
+          columns: [
+            {
+              data: "createdAt",
+              title: "Created At",
+              render: function (data) {
+                return data ? new Date(data).toLocaleDateString() : "N/A";
+              }
+            },
+        
+            {
+              data: "truckId",
+              title: "Truck ID",
+              render: function (data) {
+                return data || "N/A";
+              }
+            },
+            {
+              data: "salesmanId",
+              title: "Salesman ID",
+              render: function (data) {
+                return data || "N/A";
+              }
+            },
+            {
+              data: "status",
+              title: "Status",
+              render: function (data) {
+                return data || "PENDING";
+              }
+            },
+            {
+              data: "totalPrice",
+              title: "Order Value",
+              render: function (data) {
+                return data !== undefined ? `₹${data}` : "N/A";
+              }
+            },
+            {
+              data: "totalPrice",
+              title: "Payment Received",
+              render: function (data) {
+                return data !== undefined ? `₹${data}` : "N/A";
+              }
+            },
+            {
+              data: "totalPrice",
+              title: "Balance Payment",
+              render: function (data) {
+                return data !== undefined ? `₹${data}` : "N/A";
+              }
+            },
+            {
+              data: null,
+              title: "Actions",
+              render: function (data, type, row) {
+                return `
+                  <button class="btn btn-info btn-sm" data-id="${row._id}">View</button>
+                `;
+              }
+            }
+          ]
+        });
+      });
+    </script>
+    
 
 <%- include('../includes/footer.ejs') -%>
 

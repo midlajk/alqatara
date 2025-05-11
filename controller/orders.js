@@ -3,7 +3,7 @@ require('../model/database')
 const mongoose = require('mongoose');
 const Customer = mongoose.model('Customer')
 const Order = mongoose.model('Order')
-const CreditOrderHistory = mongoose.model('CreditOrderHistory')
+const Payments = mongoose.model('Payments')
 const Truck = mongoose.model('Truck')
 const Salesman = mongoose.model('Salesman')
 const axios = require('axios');
@@ -12,6 +12,7 @@ const smssecret = process.env.SMS_SECRET; // Access secret key
 const createError = require('http-errors');
 const Product = mongoose.model('Product');
 const CustomerAssetHistory = mongoose.model('CustomerAssetHistory')
+const Recharge = mongoose.model('Recharge')
 
 exports.getorders = async (req, res) => {
   try {
@@ -136,6 +137,7 @@ exports.getorders = async (req, res) => {
       } = req.body;
       // Calculate total price
       let totalPrice = 0;
+
       
       // Transform products array to match the schema
       const orderItems = products.map(product => {
@@ -195,7 +197,7 @@ exports.getorders = async (req, res) => {
           message: 'The requested order does not exist'
         });
       }
-      const payments = await CreditOrderHistory.find({orderId:id}).lean();
+      const payments = await Payments.find({orderId:id}).lean();
       // Format data for the view
       const viewData = {
         title: 'Al Qattara',
@@ -223,6 +225,7 @@ exports.getorders = async (req, res) => {
   };
 
   exports.updateOrder = async (req, res) => {
+
     try {
       const {
         orderId,
@@ -236,7 +239,7 @@ exports.getorders = async (req, res) => {
         city,
         salesman
       } = req.body;
-            // Step 1: Find the existing order
+      console.log(products)
       const existingOrder = await Order.findOne({ id: orderId });
       if (!existingOrder) {
         return res.status(404).json({
@@ -245,7 +248,6 @@ exports.getorders = async (req, res) => {
         });
       }
   
-      //Step 2: Check order status
       if (existingOrder.status !== 'PENDING') {
         return res.status(400).json({
           success: false,
@@ -253,18 +255,69 @@ exports.getorders = async (req, res) => {
         });
       }
   
-      // Step 3: Fetch truck info
       const truck = await Truck.findOne({ id: truckId });
       const salesmanId = salesman || truck?.salesmanId;
   
-      // Step 4: Prepare order items and calculate total price
       let totalPrice = 0;
       const orderItems = [];
+      const unavailableProducts = [];
   
       for (const product of products) {
+        product.newcouponQty =0;
 
-        const matchingEntries = truck.productDetails.filter(p => p.productid === product.productid);
+        if (product.rechargeId) {
+          const recharge = await Recharge.findOne({ rechargeId: product.rechargeId });
 
+        
+          if (
+            recharge 
+            // &&
+            // recharge.routes.includes(truck.routeid) &&
+            // recharge.item === product.name
+          ) {
+            const activeCoupons = recharge.coupons.filter(c => c.status === 'ACTIVE');
+        
+            const availableCount = activeCoupons.length;
+            const requiredQty = product.couponQty;
+        
+            const claimCount = Math.min(availableCount, requiredQty);
+        
+            const claimedCouponIds = activeCoupons.slice(0, claimCount).map(c => c._id);
+        
+            await Recharge.updateOne(
+              { rechargeId: product.rechargeId },
+              {
+                $set: {
+                  'coupons.$[elem].status': 'Claimed',
+                  'coupons.$[elem].updated': new Date(),
+                  'coupons.$[elem].orderid': orderId
+                }
+              },
+              {
+                arrayFilters: [
+                  {
+                    'elem.status': 'Active',
+                    'elem._id': { $in: claimedCouponIds } // ✅ fixed here
+                  }
+                ]
+              }
+            );
+            
+
+            // Push claimed IDs to product.redeemedCoupons
+            product.newredeemedCoupons = claimedCouponIds;
+        
+            // Update couponQty to actual claimed count
+            product.newcouponQty = claimCount||0;
+            product.newrechargeId = claimCount > 0 ? product.rechargeId : '';
+
+          }
+        }
+        
+        
+
+        const matchingEntries = truck.productDetails.filter(p => p.productname === product.productname);
+  
         const outwardQty = matchingEntries
           .filter(p => p.inwardoutward === 'outward')
           .reduce((sum, p) => sum + (p.quantity || 0), 0);
@@ -273,39 +326,62 @@ exports.getorders = async (req, res) => {
           .filter(p => p.inwardoutward === 'inward')
           .reduce((sum, p) => sum + (p.quantity || 0), 0);
   
-        const deliveredQty = matchingEntries
-          .reduce((sum, p) => sum + (p.delivered || 0), 0);
+        const deliveredQty = matchingEntries.reduce((sum, p) => sum + (p.delivered || 0), 0);
   
         const availableQty = outwardQty - inwardQty - deliveredQty;
+        const requestedQty = Number(product.quantity) || 0;
+        const price = Number(product.price) || 0;
+        const quantity = Number(product.quantity) || 0;
+        
+        totalPrice += price * (quantity-product.newcouponQty);
   
-        const requestedQty = parseInt(product.quantity || 0);
-  
-        if (availableQty - requestedQty < 0) {
-          return res.status(400).json({
-            success: false,
-            message: `Item '${product.productname}' is currently out of stock in the truck for quantity ${requestedQty}. Please update the order and continue.`
+        // Track insufficient stock only if status is DELIVERED
+        if (status === 'DELIVERED' && availableQty - requestedQty < 0) {
+          unavailableProducts.push({
+            productname: product.productname,
+            requested: requestedQty,
+            available: availableQty
           });
+          continue; // Skip adding this product to the order
         }
-        const price = parseFloat(product.price || 0);
-        const quantity = parseInt(product.quantity || 0);
-        totalPrice += price * quantity;
-
-
+        if (status === 'DELIVERED') {
+          const existingDeliveredEntry = truck.productDetails.find(p =>
+            p.productid == product.productid ||
+            p.productname == product.productname &&
+            p.inwardoutward == 'delivered'
+          );
+          
+          if (existingDeliveredEntry) {
+            existingDeliveredEntry.delivered = (existingDeliveredEntry.delivered || 0) + quantity;
+            existingDeliveredEntry.time = new Date(); // optional: update time
+            existingDeliveredEntry.doneby = salesmanId; // optional: track who did the update
+          } else {
+            truck.productDetails.push({
+              productid: product.productid,
+              productname: product.productname,
+              quantity: 0, // not used for delivered
+              inwardoutward: 'delivered',
+              delivered: quantity,
+              time: new Date(),
+              itemtype: product.itemtype || 'Normal',
+              doneby: salesmanId,
+              city
+            });
+          }
+          
+        }
   
-        // Step 5: Save asset history if delivered and lend type
-        if (status == 'DELIVERED' && product.lendtype == 'Lend') {
-
+        if (status === 'DELIVERED' && product.lendtype === 'Lend') {
           const newAsset = new CustomerAssetHistory({
             assetType: product.productname,
             noOfAssets: quantity,
-            securityDeposit: totalPrice,
+            securityDeposit: price * quantity,
             customerId,
             salesmanId,
             truckId,
             lendType: 'CUSTODY'
           });
           await newAsset.save();
-
         }
   
         orderItems.push({
@@ -313,12 +389,15 @@ exports.getorders = async (req, res) => {
           productid: product.productid,
           quantity,
           price,
+          total:totalPrice,
           lendtype: product.lendtype || 'LEND',
-          itemtype: product.itemtype || 'Normal'
+          itemtype: product.itemtype || 'Normal',     // Push claimed IDs to product.redeemedCoupons
+          couponQty:  product.newcouponQty,
+          rechargeId:product.newrechargeId , 
+          redeamedcoupons: product.newredeemedCoupons
         });
       }
-  
-      // Step 6: Update the order
+    truck.save()
       const updatedOrder = await Order.findOneAndUpdate(
         { id: orderId },
         {
@@ -337,10 +416,19 @@ exports.getorders = async (req, res) => {
         { new: true }
       );
   
-      // Step 7: Return response
+      let message = 'Order updated successfully.';
+      if (unavailableProducts.length > 0) {
+        const productDetails = unavailableProducts
+          .map(p => `${p.productname} (Requested: ${p.requested ?? 'N/A'}, Available: ${p.available ?? 'N/A'})`)
+          .join('; ');
+        message += ` Note: These products had insufficient stock at delivery time: ${productDetails}`;
+      }
+      
+      
       return res.json({
         success: true,
-        message: 'Order updated successfully',
+        message,
+        unavailableProducts,
         order: updatedOrder
       });
   
@@ -354,9 +442,10 @@ exports.getorders = async (req, res) => {
     }
   };
   
+  
 
 
-
+////unwanted//
 exports.orderhistory = async (req, res) => {
   try {
       const id = req.params.id;
@@ -413,9 +502,9 @@ exports.orderhistorydata = async (req, res) => {
 
     // Fetch filtered data and total count
     const [filteredHistory, totalRecords, totalFiltered] = await Promise.all([
-      CreditOrderHistory.find(query).sort({_id:-1}).skip(skip).limit(limit), // Fetch paginated data
-      CreditOrderHistory.countDocuments(), // Total records count
-      CreditOrderHistory.countDocuments(query), // Filtered records count
+      Payments.find(query).sort({_id:-1}).skip(skip).limit(limit), // Fetch paginated data
+      Payments.countDocuments(), // Total records count
+      Payments.countDocuments(query), // Filtered records count
     ]);
 
 
@@ -431,7 +520,7 @@ exports.orderhistorydata = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch order history" });
   }
 };
-
+//////////^unwanted//////
 exports.deleteorder = async (req, res) => {
   console.log('ssd')
   try {
@@ -448,6 +537,8 @@ exports.deleteorder = async (req, res) => {
 };
 
 exports.updateOrderStatus = async (req, res) => {
+  console.log(req.body)
+
   try {
     const { _id, id, delivered_at, assistants, priceFor5galBottle, priceFor200mlBottle, ...updateData } = req.body;
 
@@ -535,8 +626,8 @@ exports.addpayments = async (req, res) => {
             message: "Payment exceeds the total amount due. Please enter a valid amount." 
         });
     }
-      // Save the new payment in CreditOrderHistory
-      const payment = new CreditOrderHistory({
+      // Save the new payment in Payments
+      const payment = new Payments({
           orderId: orderId,
           salesmanid:salesmanid,
           createdAt: new Date(),
@@ -564,6 +655,69 @@ exports.addpayments = async (req, res) => {
   } catch (error) {
     console.log(error)
       res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+// DELETE /payments/:paymentId
+exports.deletePayment = async (req, res) => {
+  try {
+    const { paymentId } = req.params;
+
+    // 1) Find the payment
+    const payment = await Payments.findById(paymentId);
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        message: `Payment ${paymentId} not found`
+      });
+    }
+
+    // 2) Find the related order
+    const order = await Order.findOne({ id: payment.orderId });
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: `Order ${payment.orderId} not found`
+      });
+    }
+
+    // 3) Compute the new creditAmountPaid
+    const newCreditAmountPaid = parseFloat(order.creditAmountPaid) 
+                               - parseFloat(payment.creditAmountPaid);
+    // Clamp at zero
+    const clampedCreditPaid = newCreditAmountPaid >= 0 
+      ? newCreditAmountPaid 
+      : 0;
+
+    // 4) Recompute isCreditCustomerPaid
+    const remainingAmount = parseFloat(order.totalPrice) - clampedCreditPaid;
+    const isPaid = remainingAmount <= 0;
+
+    // 5) Update the order
+    order.creditAmountPaid   = clampedCreditPaid.toFixed(2);
+    order.isCreditCustomerPaid = isPaid;
+    await order.save();
+
+    // 6) Delete the payment
+    await payment.deleteOne();
+
+    return res.json({
+      success: true,
+      message: `Payment ${paymentId} deleted and order updated`,
+      order: {
+        id: order.id,
+        creditAmountPaid: order.creditAmountPaid,
+        isCreditCustomerPaid: order.isCreditCustomerPaid
+      }
+    });
+
+  } catch (err) {
+    console.error('Error deleting payment:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while deleting payment'
+    });
   }
 };
 
@@ -897,14 +1051,14 @@ exports.deliveryorderapi = async (req, res) => {
     // Handle credit order history if payment is involved
     if (creditAmountPaid > 0) {
       const totalCreditAmountDue = Math.max(0, totalPrice - creditAmountPaid); // Prevent negative values
-      const creditOrderHistory = new CreditOrderHistory({
+      const Payments = new Payments({
         orderId: order.id,
         modeOfPayment,
         creditAmountPaid,
         totalCreditAmountDue,
       });
 
-      await creditOrderHistory.save();
+      await Payments.save();
 
       if(totalCreditAmountDue === 0){
         order.isCreditCustomerPaid = true
@@ -1006,7 +1160,7 @@ exports.orderdetails = async (req, res) => {
         // Save the updated order
         await order.save();
   
-        const creditOrderHistory = new CreditOrderHistory({
+        const Payments = new Payments({
           orderId: orderid,
           modeOfPayment,
           creditAmountPaid,
@@ -1014,7 +1168,7 @@ exports.orderdetails = async (req, res) => {
           salesmanid:salesmanId
         });
   
-        await creditOrderHistory.save();
+        await Payments.save();
   
         return res.status(201).json({
           message: "Order updated successfully!",
@@ -1042,8 +1196,8 @@ exports.orderdetails = async (req, res) => {
   
       const endOfDay = new Date();
       endOfDay.setHours(23, 59, 59, 999);
-      const salesDat = await CreditOrderHistory.find({salesmanid:salesmanId})
-      const salesData = await CreditOrderHistory.aggregate([
+      const salesDat = await Payments.find({salesmanid:salesmanId})
+      const salesData = await Payments.aggregate([
         {
           $match: {
             salesmanid: salesmanId,
@@ -1138,7 +1292,6 @@ exports.orderdetails = async (req, res) => {
 
 
   exports.getorderdeliverysummery = async (req, res) => {
-    console.log('HERE')
     try {
       const { 
         truckId, 
@@ -1190,7 +1343,7 @@ exports.orderdetails = async (req, res) => {
         {
           $group: {
             _id: {
-              productId: "$order.productid",
+              // productId: "$order.productid",
               productName: "$order.productname"
             },
             totalDelivered: {

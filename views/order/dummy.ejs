@@ -1037,8 +1037,8 @@ $(document).ready(function() {
                         </tr>
                       </thead>
                       <tbody>
-                        <% if(order.creditOrderHistory && order.creditOrderHistory.length > 0) { %>
-                          <% order.creditOrderHistory.forEach(payment => { %>
+                        <% if(order.Payments && order.Payments.length > 0) { %>
+                          <% order.Payments.forEach(payment => { %>
                             <tr>
                               <td><%= new Date(payment.createdAt).toLocaleDateString() %></td>
                               <td><%= payment.creditAmountPaid.toFixed(2) %></td>
@@ -1225,29 +1225,6 @@ $(document).ready(function() {
       },
     }
   });
-
-  $('.truck-js').select2({
-    dropdownParent: $("#cardb"),
-    ajax: {
-      url: '/truckids',
-      dataType: 'json',
-      delay: 250,
-      data: function(params) {
-        return {
-          search: params.term,
-          customKey: 'utilities'
-        };
-      },
-      processResults: function(data) {
-        return {
-          results: data.map(function(item) {
-            return { id: item.id, text: item.id };
-          }),
-        };
-      },
-    }
-  });
-
   $(".customer-name-js").select2({
     placeholder: "Select Customer Name",
     allowClear: true,
@@ -1293,6 +1270,29 @@ $(document).ready(function() {
       },
     }
   });
+
+  $('.truck-js').select2({
+    dropdownParent: $("#cardb"),
+    ajax: {
+      url: '/truckids',
+      dataType: 'json',
+      delay: 250,
+      data: function(params) {
+        return {
+          search: params.term,
+          customKey: 'utilities'
+        };
+      },
+      processResults: function(data) {
+        return {
+          results: data.map(function(item) {
+            return { id: item.id, text: item.id };
+          }),
+        };
+      },
+    }
+  });
+
 
   // Calculate totals when quantity or price changes
   $(document).on('change', '.quantity-input, .price-input', function() {

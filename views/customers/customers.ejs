@@ -1,6 +1,5 @@
-
-<%- include('../includes/head.ejs') -%>
-<%- include('../includes/navigation.ejs') -%>
+<%- include('../includes/head.ejs') -%> <%-
+include('../includes/navigation.ejs') -%>
 
 <div class="header bg-primary pb-6">
   <div class="container-fluid">
@@ -10,101 +9,32 @@
           <h6 class="h2 text-white d-inline-block mb-0">Customer Dashboard</h6>
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
             <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-              <li class="breadcrumb-item"><a href="/dashboard"><i class="fas fa-home"></i></a></li>
-              <li class="breadcrumb-item active" aria-current="page">Customers</li>
+              <li class="breadcrumb-item">
+                <a href="/dashboard"><i class="fas fa-home"></i></a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">
+                Customers
+              </li>
             </ol>
           </nav>
         </div>
         <div class="col-lg-6 col-5 text-right">
-          <a href="/customers/deletedcustomers" class="btn btn-add-new bg-gradient-red">
+          <a
+            href="/customers/deletedcustomers"
+            class="btn btn-add-new bg-gradient-red"
+          >
             <i class="fas fa-bin mr-2"></i> Deleted Customer
           </a>
-          <a href="/customers/newcustomer" class="btn btn-add-new bg-gradient-success">
+          <a
+            href="/customers/newcustomer"
+            class="btn btn-add-new bg-gradient-success"
+          >
             <i class="fas fa-plus mr-2"></i> New Customer
           </a>
         </div>
       </div>
-      
-      <!-- Summary Cards -->
-      <!-- <div class="row">
-        <div class="col-xl-3 col-md-6">
-          <div class="card card-stats">
-            <div class="card-body">
-              <div class="row">
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                </div>
-                <div class="col-auto">
-                  <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                    <i class="fa-solid fa-list"></i>
-                  </div>
-                </div>
-              </div>
-            
-            </div>
-          </div>
-        </div>
-        
-       <div class="col-xl-3 col-md-6">
-          <div class="card card-stats">
-  
-            <div class="card-body">
-              <div class="row">
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Orders</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                </div>
-                <div class="col-auto">
-                  <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                                    </div>
-                </div>
-              </div>
-            
-            </div>
-          </div>
-        </div>   
-         
-         <div class="col-xl-3 col-md-6">
-          <div class="card card-stats">
-            <div class="card-body">
-              <div class="row">
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Total Revenue</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                </div>
-                <div class="col-auto">
-                  <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
-                    <i class="fa-solid fa-dollar-sign"></i>
-                                    </div>
-                </div>
-              </div>
-            
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-3 col-md-6">
-          <div class="card card-stats">
-            <div class="card-body">
-              <div class="row">
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                </div>
-                <div class="col-auto">
-                  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                    <i class="fa-solid fa-credit-card"></i>
-                                    </div>
-                </div>
-              </div>
-            
-            </div>
-          </div>
-        </div> 
-      </div>
-     -->
-    </div>
+
+   </div>
   </div>
 </div>
 
@@ -120,137 +50,154 @@
 <div class="container-fluid mt--6">
   <style>
     .filter-box {
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 10px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
     }
-</style>
-
+  </style>
 
   <div class="row">
     <div class="col-12">
-   <div class="filter-section">
-        <h5 class="mb-4"><i class="fas fa-filter text-primary mr-2"></i>Filter Orders</h5>
+      <div class="filter-section">
+        <h5 class="mb-4">
+          <i class="fas fa-filter text-primary mr-2"></i>Filter Orders
+        </h5>
         <div class="row" id="cardb">
-            <!-- ID -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">I.D</label>
-                <input type="text" class="form-control" placeholder="Search ID Here">
-            </div>
-            
-            <!-- Name -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Name</label>
-                <input type="text" class="form-control" placeholder="Search Name Here">
-            </div>
-    
-            <!-- Order Status -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Status</label>
-                <select class="form-control">
-                    <option selected>Select Order status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-            </div>
-    
-            <!-- Customer Type -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Type</label>
-                <select class="form-control">
-                    <option selected>Select customer type</option>
-                    <option value="Regular">Regular</option>
-                    <option value="New">New</option>
-                </select>
-            </div>
-    
-            <!-- Delivery Day -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Delivery Day</label>
-                <select class="form-control">
-                    <option selected>Select a day</option>
-                    <option value="Monday">Monday</option>
-                    <option value="Tuesday">Tuesday</option>
-                    <option value="Wednesday">Wednesday</option>
-                    <option value="Thursday">Thursday</option>
-                    <option value="Friday">Friday</option>
-                </select>
-            </div>
-    
-            <!-- Bottle LendType -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Product</label>
-                <select class="form-control">
-                  <option selected>Select Product to choose lend type </option>
+          <!-- ID -->
+          <!-- <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">I.D</label>
+            <select
+              class="form-control customer-code-js"
+              id="customerCode"
+            ></select>
+          </div>
 
-                    <option value="Bottle">Bottle</option>
-                    <option value="Loan">Dispenser</option>
-                </select>
+
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">Name</label>
+            <select
+              class="form-control customer-name-js"
+              id="customerName"
+            ></select>
+          </div> -->
+
+          <!-- Order Status -->
+
+          <!-- Customer Type -->
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">Customer Type</label>
+            <select class="form-control" id="customertype">
+              <option value="" disabled selected hidden>Select type</option>
+
+              <option value="Regular">Regular</option>
+              <option value="New">New</option>
+            </select>
+          </div>
+
+          <!-- Delivery Day -->
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold"
+              >Delivery Day</label
+            >
+            <select class="form-control" id="deliveryday">
+              <option value="" disabled selected hidden>Select Day</option>
+
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+            </select>
+          </div>
+
+          <!-- Bottle LendType -->
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">Lend Products</label>
+            <select class="form-control products-js" multiple="multiple">
+
+              <!-- <option value="Bottle">Bottle</option>
+                    <option value="Loan">Dispenser</option> -->
+            </select>
+          </div>
+
+          <!-- Cooler LendType -->
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold"
+              >Product LendType</label
+            >
+            <select class="form-control" id="lendtype">
+              <option value="" disabled selected hidden>Select LendType</option>
+
+              <option value="CUSTODY">Custody</option>
+              <option value="SOLD">Sold</option>
+              <option value="DEPOSIT">Deposit</option>
+
+            </select>
+          </div>
+
+          <!-- Route -->
+ 
+
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">From</label>
+            <input name="fromDate" id="fromDate" type="date" class="form-control" />
+          </div>
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">To</label>
+            <input name="toDate" id="toDate" type="date" class="form-control" />
+          </div>
+
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">Order status</label>
+            <select class="form-control" id="orderStatus">
+              <option value="" disabled selected hidden>Select Order Status</option>
+              <option value="Ordered">Ordered</option>
+              <option value="Not Ordered">Not Ordered</option>
+
+              <!-- <option value="Cancelled">Cancelled</option> -->
+            </select>
+          </div>
+          <div class="col-md-3 mb-1">
             </div>
-    
-            <!-- Cooler LendType -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Product LendType</label>
-                <select class="form-control">
-                    <option selected>Select LendType</option>
-                    <option value="Rental">Rental</option>
-                    <option value="Owned">Owned</option>
-                </select>
-            </div>
-    
-            <!-- Route -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Route</label>
-                <select id="routeSelect" class="form-control">
-                    <option selected>Select Route</option>
-                    <option value="4278">4278</option>
-                    <option value="5283">5283</option>
-                    <option value="6390">6390</option>
-                </select>
-            </div>
-    
-            <!-- Zone -->
-            <div class="col-md-3 mb-1">
-                <label class="form-label small font-weight-bold">Zone</label>
-                <select id="zoneSelect" class="form-control">
-                    <option selected>Select Zone</option>
-                </select>
-            </div>
-    
-            <!-- Date -->
-            <div class="col-md-3 mb-1 ">
-                <label class="form-label small font-weight-bold">To</label>
-                <input type="date" class="form-control">
-            </div>
-          
-          <div class="col-md-3 mb-1  d-flex align-items-end">
+          <!-- Date -->
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">Route</label>
+            <select id="routeSelect" class="form-control routeids-js">
+            </select>
+          </div>
+
+          <!-- Zone -->
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold">Zone</label>
+            <select id="zoneSelect" class="form-control zone-js">
+            </select>
+          </div>
+          <div class="col-md-3 mb-1 d-flex align-items-end">
             <button class="btn btn-sm filter-btn mr-2">
               <i class="fas fa-filter mr-1"></i> Apply
             </button>
-            <button class="btn  btn-outline-secondary">
+            <button class="btn btn-outline-secondary">
               <i class="fas fa-sync-alt mr-1"></i> Reset
             </button>
           </div>
         </div>
       </div>
-      
-  
-
     </div>
-    
+
     <div class="col">
       <div class="card">
         <!-- Card header -->
         <div class="card-header border-0 mb-2">
           <div class="row align-items-center">
             <div class="col">
-              <h3 class="mb-0 text-white"><i class="fas fa-users mr-2"></i>Customer List</h3>
+              <h3 class="mb-0 text-white">
+                <i class="fas fa-users mr-2"></i>Customer List
+              </h3>
             </div>
             <div class="col text-right">
-              <button class="btn btn-sm btn-light">
+              <button class="btn btn-sm btn-light" id="exportbutton">
                 <i class="fas fa-file-export mr-1"></i> Export
               </button>
             </div>
@@ -258,14 +205,19 @@
         </div>
         <!-- Light table -->
         <div class="table-responsive">
-          <table id="customertable" class="table align-items-center table-flush">
+          <table
+            id="customertable"
+            class="table align-items-center table-flush"
+          >
             <thead class="thead-light">
               <tr>
                 <th scope="col" class="sort" data-sort="name">Customer Name</th>
                 <th scope="col" class="sort" data-sort="budget">Customer ID</th>
                 <th scope="col" class="sort" data-sort="status">Contact</th>
                 <th scope="col" class="sort">Registered On</th>
-                <th scope="col" class="sort" data-sort="completion">Recent Delivery</th>
+                <th scope="col" class="sort" data-sort="completion">
+                  Recent Delivery
+                </th>
                 <th scope="col" class="sort">Wallet Balance</th>
                 <th scope="col" class="sort" data-sort="completion">City</th>
                 <!-- <th scope="col" class="sort" data-sort="completion">Address</th> -->
@@ -275,24 +227,22 @@
               </tr>
             </thead>
             <tbody class="list">
-              <tr>
-                
-              </tr>
+              <tr></tr>
             </tbody>
           </table>
         </div>
         <!-- Card footer -->
-      
       </div>
     </div>
   </div>
-
 
   <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="orderDetailsModalLabel">Customer Information</h5>
+          <h5 class="modal-title" id="orderDetailsModalLabel">
+            Customer Information
+          </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -300,186 +250,435 @@
         <div class="modal-body">
           <div class="row mb-4">
             <div class="col-md-6">
-              <h6 class="font-weight-bold">Customer Information</h6>
-              <p>John Smith<br>
-              123 Main Street<br>
-              New York, NY 10001<br>
-              Phone: (555) 123-4567</p>
+              <h6 class="font-weight-bold">Basic Information</h6>
+              <p id="customerBasicInfo">
+                <!-- This will be populated by JavaScript -->
+              </p>
+              
+              <h6 class="font-weight-bold mt-3">Contact Information</h6>
+              <p id="customerContactInfo">
+                <!-- This will be populated by JavaScript -->
+              </p>
+              
+              <h6 class="font-weight-bold mt-3">Account Status</h6>
+              <p id="customerAccountInfo">
+                <!-- This will be populated by JavaScript -->
+              </p>
             </div>
             <div class="col-md-6">
               <h6 class="font-weight-bold">Delivery Information</h6>
-              <p>Order Date: May 15, 2023<br>
-              Delivery Date: May 16, 2023<br>
-              Truck: TRK-005<br>
-              Sales Rep: SR-008</p>
+              <p id="customerDeliveryInfo">
+                <!-- This will be populated by JavaScript -->
+              </p>
+<!--               
+              <h6 class="font-weight-bold mt-3">Bottle Information</h6>
+              <p id="customerBottleInfo">
+              </p>
+               -->
+              <h6 class="font-weight-bold mt-3">Financial Information</h6>
+              <p id="customerFinancialInfo">
+                <!-- This will be populated by JavaScript -->
+              </p>
             </div>
           </div>
-      
-          
-     
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <a href="/customerassethistory/216821" class="btn btn-primary" id="printInvoice">View Asset History</a>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+          <button class="btn btn-danger delete-btn" id="deletebutton">Delete Customer</button>
         </div>
       </div>
     </div>
   </div>
-  
-    <!-- Footer -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-    
-    <script>
-      $(document).ready(function () {
-        
-        // Initialize DataTable
-       var datatable = $('#customertable').DataTable({
-        responsive: true,
-              processing: true,
-              serverSide: true,
-          ajax: {
-            url: '/getcustomers', // Backend API endpoint
-            dataSrc: 'docs', // Key that holds the array of data in the API response
-                data: function (d) {
-                  return d;
-      
-                  // Add any additional parameters you want to send to the server here
-                },// Data source is the root of the response array
-          },   language: {
-      paginate: {
-        next: '<i class="fas fa-chevron-right"></i>',
-        previous: '<i class="fas fa-chevron-left"></i>'
-      },
-      search: "_INPUT_",
-      searchPlaceholder: "Search orders...",
-      lengthMenu: "Show _MENU_ orders",
-      info: "Showing _START_ to _END_ of _TOTAL_ orders"
-    },
-          columns: [
-  { 
-    data: 'name', 
-    title: 'Customer Name',
-    render: function(data) {
-      return data ? data : 'N/A';
-    }
-    // render: function (data, type, row) {
-    //   return `<a href="creditpayment/${row.id}" class="salesman-link" data-id="${row.id}">${data}</a>`;
 
-    //   // return data ? data : 'N/A';
-    // }
-  },
-  { 
-    data: 'id', 
-    title: 'Customer ID',
-    render: function(data) {
-      return data ? data : 'N/A';
-    }
-  },
-  { 
-    data: 'mobileNumber', 
-    title: 'Contact',
-    render: function(data) {
-      return data ? data : 'N/A';
-    }
-  },
-  { 
-    data: 'createdAt', 
-    title: 'Registered On', 
-    render: function(data) {
-      return data ? new Date(data).toLocaleDateString() : 'N/A';
-    }
-  },
-  { 
-    data: 'lastOrderedAt', 
-    title: 'Recent Order', 
-    render: function(data) {
-      return data ? new Date(data).toLocaleDateString() : 'N/A';
-    }
-  },
-  { 
-    data: 'walletBalance', 
-    title: 'Wallet Balance',
-    render: function(data) {
-      return (data !== null && data !== undefined) ? data : 'N/A';
-    }
-  },
-  { 
-    data: 'city', 
-    title: 'City',
-    render: function(data) {
-      return data ? data : 'N/A';
-    }
-  },
-  // { 
-  //   data: 'address', 
-  //   title: 'Address',
-  //   render: function(data) {
-  //     return data ? data : 'N/A';
-  //   }
-  // },
-  // { 
-  //   data: 'verified', 
-  //   title: 'Status', 
-  //   render: function(data) {
-  //     return (data !== null && data !== undefined) ? (data ? 'Verified' : 'Not Verified') : 'N/A';
-  //   }
-  // },
-  // {
-  //   data: null, 
-  //   title: 'Caption',
-  //   render: function(data, type, row) {
-  //     if (row.otherDetails && row.otherDetails.trim() !== '') {
-  //       return row.otherDetails;
-  //     } else if (row.city && row.city.trim() !== '') {
-  //       return row.city;
-  //     }
-  //     return 'N/A';
-  //   }
-  // },
-        {
-          data: null,
-          title: 'Actions',
-          render: function(data, type, row) {
-            return `<button class="btn btn-action btn-view edit-zone" data-id="${row.id}">Details</button>
-            <a class="btn btn-action btn-manage edit-zone" href="/customerorderhistory/${row.id}">Transactions</a>`;
-          }
-        }
-]
+  <!-- Footer -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
-});
-$('#customertable tbody').on('click', '.btn-view', function() {
-    
-    // Show loading state
-    $('#orderDetailsModal').modal('show');
-    
-})
-  // Handle Delete Button Click
-  $('#customertable').on('click', '.delete-btn', function () {
-      var customerId = $(this).data('id');
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
 
-      if (!confirm('Are you sure you want to delete this customer?')) {
-        return;
-      }
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
 
-      // Send DELETE request
-      $.ajax({
-        url: '/deletecustomer/' + customerId,
-        type: 'DELETE',
-        success: function(response) {
-          alert('Customer deleted successfully!');
-          datatable.ajax.reload(null, false); // Reload table without resetting pagination
+  <!-- Include Select2 CSS -->
+
+  <!-- Include Select2 JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"
+    defer
+  ></script>
+  <script>
+    $(document).ready(function () {
+      // Initialize Select2 dropdowns with Bootstrap theme
+      $(".customer-name-js").select2({
+        theme: "bootstrap4",
+        placeholder: "Search customer name...",
+        allowClear: true,
+        dropdownParent: $("#cardb"),
+        ajax: {
+          url: "/customersee",
+          dataType: "json",
+          delay: 250,
+          data: function (params) {
+            return {
+              search: params.term || "",
+              customerId: $("#customerCode").val() || "",
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(function (item) {
+                return { id: item.name, text: item.name };
+              }),
+            };
+          },
         },
-        error: function(xhr, status, error) {
-          alert('Error deleting customer: ' + xhr.responseText);
-        }
+      });
+
+      $(".customer-code-js").select2({
+        theme: "bootstrap4",
+        placeholder: "Search customer code...",
+        allowClear: true,
+        ajax: {
+          url: "/customersee",
+          dataType: "json",
+          delay: 250,
+          data: function (params) {
+            return {
+              search: params.term || "",
+              customerName: $("#customerName").val() || "",
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(function (item) {
+                return { id: item.id, text: item.id };
+              }),
+            };
+          },
+        },
+      });
+
+      $(".zone-js").select2({
+        theme: "bootstrap4",
+        placeholder: "Search zone...",
+        allowClear: true,
+        ajax: {
+          url: "/zoneids",
+          dataType: "json",
+          delay: 250,
+          data: function (params) {
+            return {
+              q: params.term,
+              truckid: $("#truckId").val(),
+              route: $("#routeSelect").val(),
+
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(function (item) {
+                return { id: item.id, text: item.id };
+              }),
+            };
+          },
+        },
+      });
+
+      $(".routeids-js").select2({
+        dropdownParent: $("#cardb"),
+        placeholder: "Choose A Route..",
+        allowClear: true,
+
+        ajax: {
+          url: "/routeids", // Backend endpoint
+          dataType: "json",
+          delay: 250, // Debounce for performance
+          processResults: function (data) {
+            return {
+              results: data.map(function (item) {
+                return { id: item.id, text: item.id }; // Customize text display
+              }),
+            };
+          },
+        },
+      });
+   $(".products-js").select2({
+        dropdownParent: $("#cardb"),
+        
+        ajax: {
+          url: "/getproductsnames",
+          dataType: "json",
+          delay: 250,
+          processResults: function (data) {
+            if (data.results) {
+              // If your backend already returns { results: [...] }
+              return data;
+            } else {
+              // If your backend returns an array of products directly
+              return {
+                results: data.map(function (item) {
+                  return {
+                    id: item._id || item.id, // Handle both MongoDB _id and regular id
+                    text: item.name || item.text, // Handle both name and text
+                    price: item.price || 0,
+                  };
+                }),
+              };
+            }
+          },
+        },
+        multiple: true,
+        placeholder: "Select commission schemes",
       });
     });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      // Initialize DataTable
+      var datatable = $("#customertable").DataTable({
+        responsive: true,
+        processing: true,
+        serverSide: true,
+        ajax: {
+          url: "/getcustomers", // Backend API endpoint
+          dataSrc: "docs", // Key that holds the array of data in the API response
+          data: function (d) {
+          // Add filter parameters to the DataTable request
+          d.customerType = $('#customertype').val();
+          d.deliveryDay = $('#deliveryday').val();
+          d.lendProducts = $('.products-js').val();
+          d.productLendType = $('#lendtype').val();
+          d.route = $('#routeSelect').val();
+          d.zone = $('#zoneSelect').val();
+          d.orderStatus = $('#orderStatus').val();
+          d.fromDate = $('#fromDate').val();
+          d.toDate = $('#toDate').val();
+          return d;
+        }
+        },
+        language: {
+          paginate: {
+            next: '<i class="fas fa-chevron-right"></i>',
+            previous: '<i class="fas fa-chevron-left"></i>',
+          },
+          search: "_INPUT_",
+          searchPlaceholder: "Search Customers...",
+          lengthMenu: "Show _MENU_ Customers",
+          info: "Showing _START_ to _END_ of _TOTAL_ Customers",
+        },
+        columns: [
+          {
+            data: "name",
+            title: "Customer Name",
+            render: function (data) {
+              return data ? data : "N/A";
+            },
+            // render: function (data, type, row) {
+            //   return `<a href="creditpayment/${row.id}" class="salesman-link" data-id="${row.id}">${data}</a>`;
+
+            //   // return data ? data : 'N/A';
+            // }
+          },
+          {
+            data: "id",
+            title: "Customer ID",
+            render: function (data) {
+              return data ? data : "N/A";
+            },
+          },
+          {
+            data: "mobileNumber",
+            title: "Contact",
+            render: function (data) {
+              return data ? data : "N/A";
+            },
+          },
+          {
+            data: "createdAt",
+            title: "Registered On",
+            render: function (data) {
+              return data ? new Date(data).toLocaleDateString() : "N/A";
+            },
+          },
+          {
+            data: "lastOrderedAt",
+            title: "Recent Order",
+            render: function (data) {
+              return data ? new Date(data).toLocaleDateString() : "N/A";
+            },
+          },
+          {
+            data: "walletBalance",
+            title: "Wallet Balance",
+            render: function (data) {
+              return data !== null && data !== undefined ? data : "N/A";
+            },
+          },
+          {
+            data: "city",
+            title: "City",
+            render: function (data) {
+              return data ? data : "N/A";
+            },
+          },
+      
+          {
+            data: null,
+            title: "Actions",
+            render: function (data, type, row) {
+              return `<button class="btn btn-action btn-view edit-zone" data-id="${row.id}" data-data='${JSON.stringify(row)}'>Details</button>
+              <a class="btn btn-action btn-manage edit-zone" href="/customerassethistory/${row.id}">Transactions</a>`;
+            },
+          },
+        ],
       });
-    </script>
+          // Handle filter button click
+    $('.filter-btn').on('click', function() {
+      // Reload DataTable with new filter parameters
+      datatable.ajax.reload();
+    });
 
-<%- include('../includes/footer.ejs') -%>
+    // Handle reset button click
+    $('.btn-outline-secondary').on('click', function() {
+      // Reset all filter inputs
+      $('select').val('').trigger('change');
+      $('input[type="date"]').val('');
+      
+      // Reload DataTable without filters
+      datatable.ajax.reload();
+    });
+      $("#customertable tbody").on("click", ".btn-view", function () {
+  var customerData = $(this).data("data");
+  console.log(customerData)
+  var customerId = $(this).data("id");
+  $('#deletebutton').data("id", customerId);
 
-<%- include('../includes/end.ejs') -%>
+  // Format dates
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Not available';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  // Basic Information
+  $('#customerBasicInfo').html(`
+    <strong>Name:</strong> ${customerData.name || 'N/A'}<br>
+    <strong>Customer ID:</strong> ${customerData.uid || 'N/A'}<br>
+    <strong>Registered On:</strong> ${formatDate(customerData.createdAt)}<br>
+    <strong>TRN Number:</strong> ${customerData.trnNumber || 'N/A'}<br>
+    <strong>Language:</strong> ${customerData.language || 'N/A'}
+  `);
+
+  // Contact Information
+  $('#customerContactInfo').html(`
+    <strong>Primary Phone:</strong> ${customerData.mobileNumber || 'N/A'}<br>
+    <strong>Secondary Phone:</strong> ${customerData.mobileNumber2 || 'N/A'}<br>
+    <strong>Address:</strong> ${customerData.address || 'N/A'}<br>
+    <strong>Apartment:</strong> ${customerData.apartmentNumber || 'N/A'}<br>
+    <strong>City:</strong> ${customerData.city || 'N/A'}
+  `);
+
+  // Account Status
+  $('#customerAccountInfo').html(`
+    <strong>Verified:</strong> ${customerData.verified ? 'Yes' : 'No'}<br>
+    <strong>Account Type:</strong> ${customerData.isCompany ? 'Company' : 'Individual'}<br>
+    <strong>Credit Account:</strong> ${customerData.isCredit ? 'Yes' : 'No'}<br>
+    <strong>Created By:</strong> ${customerData.createdByEmployee || 'N/A'}
+  `);
+
+  // Delivery Information
+  $('#customerDeliveryInfo').html(`
+    <strong>Delivery Day:</strong> ${customerData.deliveryDay || 'N/A'}<br>
+    <strong>Route ID:</strong> ${customerData.routeId || 'N/A'}<br>
+    <strong>Zone ID:</strong> ${customerData.zoneId || 'N/A'}<br>
+    <strong>Representative ID:</strong> ${customerData.representativeId || 'N/A'}<br>
+    <strong>Last Ordered:</strong> ${formatDate(customerData.lastOrderedAt)}
+  `);
+
+  // Bottle Information
+  // $('#customerBottleInfo').html(`
+  //   <strong>5gal Bottles:</strong> ${customerData.noOf5galBottles || 0}<br>
+  //   <strong>Bottle Price:</strong> ${customerData.priceForA5galBottle ? '₹' + customerData.priceForA5galBottle : 'N/A'}<br>
+  //   <strong>Bottle Security:</strong> ${customerData.bottleSecurityDeposit ? '₹' + customerData.bottleSecurityDeposit : 'N/A'}<br>
+  //   <strong>Bottle Lend Type:</strong> ${customerData.bottleLendType || 'N/A'}<br>
+  //   <strong>Coolers:</strong> ${customerData.noOfCoolers || 0}<br>
+  //   <strong>Cooler Security:</strong> ${customerData.coolerSecurityDeposit ? '₹' + customerData.coolerSecurityDeposit : 'N/A'}<br>
+  //   <strong>Cooler Lend Type:</strong> ${customerData.coolerLendType || 'N/A'}<br>
+  //   <strong>Has Cooler:</strong> ${customerData.haveCooler ? 'Yes' : 'No'}
+  // `);
+
+  // Financial Information
+  $('#customerFinancialInfo').html(`
+    <strong>Wallet Balance:</strong> ₹${customerData.walletBalance || 0}<br>
+    <strong>Contract Date:</strong> ${formatDate(customerData.contractDate)}<br>
+    <strong>Updated At:</strong> ${formatDate(customerData.updatedAt)}
+  `);
+
+  $("#orderDetailsModal").modal("show");
+});
+      // Handle Delete Button Click
+      $("#orderDetailsModal").on("click", ".delete-btn", function () {
+        var customerId = $(this).data("id");
+
+        if (!confirm("Are you sure you want to delete this customer?")) {
+          return;
+        }
+
+        // Send DELETE request
+        $.ajax({
+          url: "/deletecustomer/" + customerId,
+          type: "DELETE",
+          success: function (response) {
+            alert("Customer deleted successfully!");
+            $("#orderDetailsModal").modal("hide");
+
+            datatable.ajax.reload(null, false); // Reload table without resetting pagination
+
+          },
+          error: function (xhr, status, error) {
+            alert("Error deleting customer: " + xhr.responseText);
+          },
+        });
+      });
+
+      // Add this JavaScript to handle the export button click
+document.querySelector('#exportbutton').addEventListener('click', function() {
+  // Get all filter values
+  const filters = {
+    search: { value: document.querySelector('.dataTables_filter input').value },
+    customerType: document.getElementById('customertype').value,
+    deliveryDay: document.getElementById('deliveryday').value,
+    lendProducts: Array.from(document.querySelector('.products-js').selectedOptions).map(opt => opt.value),
+    productLendType: document.getElementById('lendtype').value,
+    route: document.getElementById('routeSelect').value,
+    zone: document.getElementById('zoneSelect').value,
+    orderStatus: document.getElementById('orderStatus').value,
+    fromDate: document.getElementById('fromDate').value,
+    toDate: document.getElementById('toDate').value
+  };
+
+  // Convert filters to query string
+  const queryString = Object.entries(filters)
+    .filter(([_, value]) => value !== '' && value !== undefined && value !== null)
+    .map(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.map(v => `${key}=${encodeURIComponent(v)}`).join('&');
+      }
+      return `${key}=${encodeURIComponent(value)}`;
+    })
+    .join('&');
+
+  // Trigger download
+  window.location.href = `/customersexport?${queryString}`;
+});
+    });
+
+    
+  </script>
+
+  <%- include('../includes/footer.ejs') -%> <%- include('../includes/end.ejs')
+  -%>
+</div>

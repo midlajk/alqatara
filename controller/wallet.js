@@ -6,6 +6,7 @@ const Customer = mongoose.model('Customer')
 const Recharge = mongoose.model('Recharge')
 const createError = require('http-errors');
 const { v4: uuidv4 } = require('uuid'); // For generating unique coupon IDs
+const Truck = mongoose.model('Truck')
 
 // Update your getrecharges function
 exports.getrecharges = async (req, res) => {
@@ -20,6 +21,7 @@ exports.getrecharges = async (req, res) => {
       $or: [
         { 'customer.name': regex },
         { salesmanId: regex },
+        { rechargeId: regex },
         { status: regex },
         { customerId: regex }
       ]
@@ -74,6 +76,7 @@ exports.getrecharges = async (req, res) => {
       {
         $project: {
           _id: 1,
+          rechargeId:1,
           amount: 1,
           'customer.name': 1,
           customerId: 1,
@@ -340,4 +343,69 @@ exports.addwalletmoney = async (req, res) => {
     console.error('Error processing wallet recharge:', error);
     res.status(500).json({ message: 'Internal Server Error' });
 }
+};
+
+
+// In your server routes
+exports.customercoupons = async (req, res) => {
+  try {
+    const { customerId, truckId, product } = req.params;
+
+    // 1. Fetch the truck to get its routeId
+    const truck = await Truck.findOne({ id: truckId }).select('routeId');
+    if (!truck) {
+      return res.status(404).json({
+        success: false,
+        message: `Truck ${truckId} not found`
+      });
+    }
+    const { routeId } = truck;
+
+    // 2. Aggregate recharges for this customer / route / product
+    const couponsSummary = await Recharge.aggregate([
+      // Match customer + route + item
+      {
+        $match: {
+          customerId: customerId,
+          // routes: routeId,
+          // item: product
+        }
+      },
+      // Unwind the coupons array
+      { $unwind: '$coupons' },
+      // Only keep active coupons
+      { $match: { 'coupons.status': 'ACTIVE' } },
+      // Group by recharge
+      {
+        $group: {
+          _id: '$_id',
+          rechargeId: { $first: '$rechargeId' },
+          activeCount: { $sum: 1 },
+          totalAmt: { $sum: '$coupons.couponamt' }
+        }
+      },
+      // Project into clean shape
+      {
+        $project: {
+          _id: 0,
+          rechargeId: 1,
+          activeCount: 1,
+          totalAmt: 1
+        }
+      }
+    ]);
+    console.log(couponsSummary)
+
+    res.json({
+      success: true,
+      data: couponsSummary
+    });
+  } catch (error) {
+    console.error('Error fetching customer coupons:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching coupons',
+      details: error.message
+    });
+  }
 };

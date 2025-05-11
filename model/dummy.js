@@ -1,4 +1,4 @@
-// Mongoose models for Customer, Recharge, Route, CreditOrderHistory, CustomerAssetHistory, DeletedCustomer, Employee, Order, Salesman, Truck, and TruckHistory
+// Mongoose models for Customer, Recharge, Route, Payments, CustomerAssetHistory, DeletedCustomer, Employee, Order, Salesman, Truck, and TruckHistory
 
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
@@ -119,7 +119,7 @@ const routeSchema = new mongoose.Schema({
   id:String,
 });
 
-const creditOrderHistorySchema = new mongoose.Schema({
+const PaymentsSchema = new mongoose.Schema({
   orderId: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
@@ -434,7 +434,7 @@ const stockAdditionSchema = new mongoose.Schema({
     Customer: mongoose.model('Customer', customerSchema),
     Recharge: mongoose.model('Recharge', rechargeSchema),
     Route: mongoose.model('Route', routeSchema),
-    CreditOrderHistory: mongoose.model('CreditOrderHistory', creditOrderHistorySchema),
+    Payments: mongoose.model('Payments', PaymentsSchema),
     CustomerAssetHistory: mongoose.model('CustomerAssetHistory', customerAssetHistorySchema),
     DeletedCustomer: mongoose.model('DeletedCustomer', deletedCustomerSchema),
     Employee: mongoose.model('Employee', employeeSchema),

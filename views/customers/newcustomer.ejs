@@ -72,7 +72,7 @@
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
                     <div class="custom-control custom-checkbox mb-3">
-                      <input type="checkbox" class="custom-control-input" id="isCompany" name="isCompany">
+                      <input type="checkbox" class="custom-control-input" id="isCompany" >
                       <label class="custom-control-label" for="isCompany">Is Company</label>
                     </div>
                   </div>
@@ -161,71 +161,11 @@
                 </div>
 
                 <!-- Bottle and Cooler Information -->
-                <h4 class="mt-4 mb-3">Product Details</h4>
-                <div class="form-row">
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="haveCooler">Has Cooler</label>
-                    <div class="custom-control custom-checkbox">
-                      <input type="checkbox" class="custom-control-input" id="haveCooler" name="haveCooler">
-                      <label class="custom-control-label" for="haveCooler">Yes</label>
-                    </div>
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="noOfCoolers">Number of Coolers</label>
-                    <input type="number" class="form-control" id="noOfCoolers" name="noOfCoolers" min="0" value="0">
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="coolerLendType">Cooler Lend Type</label>
-                    <select class="form-control" id="coolerLendType" name="coolerLendType">
-                      <option value="">Select type</option>
-                      <option value="Rental">Rental</option>
-                      <option value="Purchase">Purchase</option>
-                      <option value="Free">Free</option>
-                    </select>
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="coolerSecurityDeposit">Cooler Security Deposit</label>
-                    <input type="number" class="form-control" id="coolerSecurityDeposit" name="coolerSecurityDeposit" min="0" step="0.01" value="0">
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="noOf5galBottles">Number of 5gal Bottles</label>
-                    <input type="number" class="form-control" id="noOf5galBottles" name="noOf5galBottles" min="0" value="0">
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="priceForA5galBottle">Price per 5gal Bottle</label>
-                    <input type="number" class="form-control" id="priceForA5galBottle" name="priceForA5galBottle" min="0" step="0.01">
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="bottleLendType">Bottle Lend Type</label>
-                    <select class="form-control" id="bottleLendType" name="bottleLendType">
-                      <option value="">Select type</option>
-                      <option value="Rental">Rental</option>
-                      <option value="Purchase">Purchase</option>
-                      <option value="Free">Free</option>
-                    </select>
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <label class="form-control-label" for="bottleSecurityDeposit">Bottle Security Deposit</label>
-                    <input type="number" class="form-control" id="bottleSecurityDeposit" name="bottleSecurityDeposit" min="0" step="0.01" value="0">
-                  </div>
-                </div>
-
-                <!-- Financial Information -->
-                <h4 class="mt-4 mb-3">Financial Information</h4>
-                <div class="form-row">
-                  <div class="col-md-6 mb-3">
-                    <label class="form-control-label" for="walletBalance">Wallet Balance</label>
-                    <input type="number" class="form-control" id="walletBalance" name="walletBalance" min="0" step="0.01" value="0">
-                  </div>
-                </div>
-
+           
                 <!-- Submit Button -->
                 <div class="mt-4">
                   <button type="submit" class="btn btn-success">Add New Customer</button>
-                  <a href="/" class="btn btn-danger">Cancel</a>
+                  <a href="/customers" class="btn btn-danger">Cancel</a>
                 </div>
               </form>
             </div>

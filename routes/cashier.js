@@ -1,23 +1,22 @@
 var express = require('express');
 var router = express.Router();
-const inventory = require('../controller/inventory');
+const cashier = require('../controller/cashier');
 // const authMiddleware = require('../middleware/authcheck.js');
 const apiprev = require('../middleware/apiprevilage');
 const WritePrivilage = require('../middleware/previlagewrite');
 const authMiddleware = require('../middleware/auth');
 
-// function setCustomHeader(customValue) {
-//     return function (req, res, next) {
-//         req.query.customKey = customValue;
-//         req.body.customKey = customValue;
-//         next();
-//     };
-// }
+
 const setCustomHeader = require('../middleware/customkeyadd');
+router.get('/salesman-collections',setCustomHeader('routes'),apiprev.Getapiprev, cashier.getsalesmanpayment);
+router.get('/customer-credits',setCustomHeader('routes'),apiprev.Getapiprev, cashier.getcustomerpayment);
 
 /* GET home page. */
 router.get('/cashier', setCustomHeader('utilities'),authMiddleware, function(req, res, next) {
   res.render('moneymanagement/cashier', { title: 'Al Qattara' ,route:'Cashier',sub :'Money Management'});
+});
+router.get('/customer-pending', setCustomHeader('utilities'),authMiddleware, function(req, res, next) {
+  res.render('moneymanagement/customer-pending', { title: 'Al Qattara' ,route:'Cashier',sub :'Money Management'});
 });
 router.get('/customercollection', setCustomHeader('utilities'),authMiddleware, function(req, res, next) {
   res.render('moneymanagement/customercollection', { title: 'Al Qattara' ,route:'Cashier',sub :'Customer Credit Collection'});

@@ -23,6 +23,8 @@
               <table class="table align-items-center table-flush" id="rechargeTable">
                 <thead class="thead-light">
                   <tr>
+                    <th scope="col" class="sort" data-sort="name">Reacharge ID</th>
+
                     <th scope="col" class="sort" data-sort="name">Customer ID</th>
                     <th scope="col" class="sort" data-sort="status">Amount</th>
                     <th scope="col" class="sort">SalesMan ID</th>
@@ -195,6 +197,13 @@
         info: "Showing _START_ to _END_ of _TOTAL_ trucks"
       },
       columns: [
+      {
+    data: 'rechargeId',
+    render: function (data, type, row) {
+      return data ? data : 'N/A'; // or '—' or any placeholder text
+    }
+  },
+
         { data: 'customerId' },
         { data: 'amount' },
         { data: 'salesmanId' },

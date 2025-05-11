@@ -541,8 +541,9 @@ $(document).ready(function() {
         </td>
         <td data-label="Type">
           <select class="form-control" name="products[${productCount}][type]" required>
+                        <option value="Sold">Sold</option>
+
             <option value="Lend">Lend</option>
-            <option value="Return">Return</option>
           </select>
         </td>
         <td data-label="Unit Price">
@@ -595,8 +596,9 @@ $(document).ready(function() {
         </td>
         <td data-label="Type">
           <select class="form-control" name="products[0][type]" required>
+                        <option value="Sold">Sold</option>
+
             <option value="Lend">Lend</option>
-            <option value="Return">Return</option>
           </select>
         </td>
         <td data-label="Unit Price">
@@ -655,7 +657,9 @@ $(document).ready(function() {
     $('#productsTable tbody tr').each(function() {
       const row = $(this);
       const productid = row.find('select[name$="[name]"]').val();
-      var productName = row.find("option:selected").text(); // Get selected text
+      var productName = row.find('select[name$="[name]"]').val(); // Get selected text
+
+
 
       
       // Only include products that have been selected

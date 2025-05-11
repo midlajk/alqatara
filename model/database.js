@@ -1,4 +1,4 @@
-// Mongoose models for Customer, Recharge, Route, CreditOrderHistory, CustomerAssetHistory, DeletedCustomer, Employee, Order, Salesman, Truck, and TruckHistory
+// Mongoose models for Customer, Recharge, Route, Payments, CustomerAssetHistory, DeletedCustomer, Employee, Order, Salesman, Truck, and TruckHistory
 
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
@@ -89,6 +89,10 @@ customerSchema.pre('save', async function (next) {
   next();
 });
 const rechargeSchema = new mongoose.Schema({
+  rechargeId: { type: String, unique: true },
+  offer: { type: String },
+  item: { type: String },
+  routes:{type:[String]},
   amount: { type: Number, required: true },
   customerId: String,
   createdAt: { type: Date, default: Date.now },
@@ -100,6 +104,7 @@ const rechargeSchema = new mongoose.Schema({
   freecoupons:Number,
   coupons : [{
     couponid:String,
+    order:String,
     couponamt:Number,
     coupontype:String,
     created:{ type: Date, default: Date.now },
@@ -107,6 +112,25 @@ const rechargeSchema = new mongoose.Schema({
     updated:Date,
 
   }]
+});
+
+rechargeSchema.pre('save', async function (next) {
+  if (this.isNew && !this.rechargeId) {
+    let unique = false;
+
+    while (!unique) {
+      const id = Date.now().toString(36); // Example: 'l4f4u1f'
+      const exists = await mongoose.models.Recharge.findOne({ rechargeId: id });
+
+      if (!exists) {
+        this.rechargeId = id;
+        unique = true;
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 1));
+      }
+    }
+  }
+  next();
 });
 
 const routeSchema = new mongoose.Schema({
@@ -119,14 +143,15 @@ const routeSchema = new mongoose.Schema({
   id:String,
 });
 
-const creditOrderHistorySchema = new mongoose.Schema({
+const payments = new mongoose.Schema({
   orderId: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   modeOfPayment: { type: String, required: true },
   creditAmountPaid: { type: Number, required: true },
   totalCreditAmountDue: { type: Number, required: true },
-  salesmanid:{ type: String }
+  salesmanid:{ type: String },
+  customerid:{ type: String },
 });
 
 const customerAssetHistorySchema = new mongoose.Schema({
@@ -194,11 +219,7 @@ const employeeSchema = new mongoose.Schema({
 
 const orderSchema = new mongoose.Schema({
   
-  // noOf200mlBottles: { type: Number, default: 0 },
-  // noOf5galBottles: { type: Number, default: 0 },
-  // // noOfCoolers: { type: Number, default: 0 },
-  // // priceFor200mlBottles: { type: Number, default: 0 },
-  // priceFor5galBottles: { type: Number, default: 0 },
+
   id: { type: String,unique: true},
   name: { type: String, required: true },
   area: { type: String,},
@@ -223,6 +244,9 @@ const orderSchema = new mongoose.Schema({
     productid: { type: String },
     productname: { type:String}, 
     quantity: { type: Number },
+    couponQty: { type: Number },
+    rechargeId:{ type:String}, 
+    redeamedcoupons:{type:[String]},
     price:{ type:String}, 
     total: { type: Date }, // If product is returned
     itemtype: { type:String}, // If product is damaged
@@ -263,6 +287,8 @@ const salesmanSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   city: { type: String, required: true },
   commissionschmes:[String],
+  lastpaymentcollected:Date,
+  pendingpayment:Number,
   tok:String,
   collectedBottleSecurityDeposits: { type: [{
     date: { type: Date},
@@ -448,10 +474,11 @@ const stockdelivery = new mongoose.Schema({
 //   reason: { type: String } // (e.g., "stock purchase", "return", etc.)
 // });
 const couponSchema = new mongoose.Schema({
-  code: { type: String },
+  code: { type: String, unique: true, required: true },
   amount: { type: Number },
+  routes:{type:[String]},
   creationdate: { type: Date, default: Date.now },
-  items: { type: [String] } ,
+  items: { type: String } ,
   paidcoupon:{ type: Number },
   freecopon:{ type: Number },
   // (e.g., "stock purchase", "return", etc.)
@@ -479,7 +506,7 @@ const commissionSchema = new mongoose.Schema({
     Customer: mongoose.model('Customer', customerSchema),
     Recharge: mongoose.model('Recharge', rechargeSchema),
     Route: mongoose.model('Route', routeSchema),
-    CreditOrderHistory: mongoose.model('CreditOrderHistory', creditOrderHistorySchema),
+    Payments: mongoose.model('Payments', payments),
     CustomerAssetHistory: mongoose.model('CustomerAssetHistory', customerAssetHistorySchema),
     DeletedCustomer: mongoose.model('DeletedCustomer', deletedCustomerSchema),
     Employee: mongoose.model('Employee', employeeSchema),

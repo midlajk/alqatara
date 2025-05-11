@@ -23,6 +23,7 @@ router.get('/getorderhistorydata',setCustomHeader('orders'),apiprev.Getapiprev, 
 router.post('/delete-order',setCustomHeader('orders'),apiprev.Postapiprev, ordersapi.deleteorder);
 router.post('/updateOrderStatus',setCustomHeader('orders'),apiprev.Postapiprev, ordersapi.updateOrderStatus);
 router.post('/add-payment',setCustomHeader('orders'),apiprev.Postapiprev, ordersapi.addpayments);
+router.delete('/payments/:paymentId',setCustomHeader('orders'),apiprev.Getapiprev, ordersapi.deletePayment);
 router.get('/orderdashboard-stats',setCustomHeader('orders'),apiprev.Getapiprev, ordersapi.getDashboardStats);
 
 ////apuis

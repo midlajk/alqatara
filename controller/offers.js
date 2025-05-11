@@ -13,18 +13,14 @@ const createError = require('http-errors');
     exports.addOffer = async (req, res) => {
         try {
           // Extract form data
-          const { code, amount, paidcoupon, freecopon } = req.body;
+          const { code, amount, paidcoupon, freecopon,items,routes } = req.body;
           
-          // Convert items string to array (splitting by comma)
-          const items = Array.isArray(req.body['items[]']) 
-          ? req.body['items[]'] 
-          : [req.body['items[]']].filter(Boolean); // Ensure it's always an array
-                console.log(req.body)
           // Create new coupon
           const newCoupon = new CouponSchema({
             code: code,
             amount: Number(amount),
             items: items,
+            routes:routes,
             paidcoupon: Number(paidcoupon),
             freecopon: Number(freecopon),
             creationdate: new Date() // This will be set to current date automatically

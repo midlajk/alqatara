@@ -161,6 +161,15 @@ include('../includes/navigation.ejs') -%>
           </div>
           <div class="col-md-3 mb-1">
             </div>
+            <div class="col-md-3 mb-1">
+              <label class="form-label small font-weight-bold">Company</label>
+              <select class="form-control" id="iscompany">
+                <option value="" disabled selected hidden>Select type</option>
+  
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
           <!-- Date -->
           <div class="col-md-3 mb-1">
             <label class="form-label small font-weight-bold">Route</label>
@@ -238,60 +247,84 @@ include('../includes/navigation.ejs') -%>
 
   <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="orderDetailsModalLabel">
-            Customer Information
-          </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="row mb-4">
-            <div class="col-md-6">
-              <h6 class="font-weight-bold">Basic Information</h6>
-              <p id="customerBasicInfo">
-                <!-- This will be populated by JavaScript -->
-              </p>
-              
-              <h6 class="font-weight-bold mt-3">Contact Information</h6>
-              <p id="customerContactInfo">
-                <!-- This will be populated by JavaScript -->
-              </p>
-              
-              <h6 class="font-weight-bold mt-3">Account Status</h6>
-              <p id="customerAccountInfo">
-                <!-- This will be populated by JavaScript -->
-              </p>
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bold text-white" id="orderDetailsModalLabel">
+                    <i class="fas fa-user-circle mr-2"></i>Customer Details
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="col-md-6">
-              <h6 class="font-weight-bold">Delivery Information</h6>
-              <p id="customerDeliveryInfo">
-                <!-- This will be populated by JavaScript -->
-              </p>
-<!--               
-              <h6 class="font-weight-bold mt-3">Bottle Information</h6>
-              <p id="customerBottleInfo">
-              </p>
-               -->
-              <h6 class="font-weight-bold mt-3">Financial Information</h6>
-              <p id="customerFinancialInfo">
-                <!-- This will be populated by JavaScript -->
-              </p>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 border-right">
+                        <div class="info-section mb-4">
+                            <h6 class="section-title bg-light p-2 rounded">
+                                <i class="fas fa-id-card mr-2"></i>Basic Information
+                            </h6>
+                            <div class="info-content pl-3" id="customerBasicInfo">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="info-section mb-4">
+                            <h6 class="section-title bg-light p-2 rounded">
+                                <i class="fas fa-phone-alt mr-2"></i>Contact Information
+                            </h6>
+                            <div class="info-content pl-3" id="customerContactInfo">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h6 class="section-title bg-light p-2 rounded">
+                                <i class="fas fa-user-shield mr-2"></i>Account Status
+                            </h6>
+                            <div class="info-content pl-3" id="customerAccountInfo">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="info-section mb-4">
+                            <h6 class="section-title bg-light p-2 rounded">
+                                <i class="fas fa-truck mr-2"></i>Delivery Information
+                            </h6>
+                            <div class="info-content pl-3" id="customerDeliveryInfo">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h6 class="section-title bg-light p-2 rounded">
+                                <i class="fas fa-wallet mr-2"></i>Financial Information
+                            </h6>
+                            <div class="info-content pl-3" id="customerFinancialInfo">
+                                <!-- Populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Notes Section -->
+        
             </div>
-          </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times mr-2"></i>Close
+                </button>
+                <button class="btn btn-primary mr-2">
+                    <i class="fas fa-edit mr-2"></i>Edit Customer
+                </button>
+                <button class="btn btn-danger delete-btn" id="deletebutton">
+                    <i class="fas fa-trash-alt mr-2"></i>Delete Customer
+                </button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Close
-          </button>
-          <button class="btn btn-danger delete-btn" id="deletebutton">Delete Customer</button>
-        </div>
-      </div>
     </div>
-  </div>
-
+</div>
   <!-- Footer -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>

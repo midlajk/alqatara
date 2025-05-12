@@ -224,228 +224,450 @@ exports.getorders = async (req, res) => {
     }
   };
 
-  exports.updateOrder = async (req, res) => {
+  // exports.updateOrder = async (req, res) => {
 
-    try {
-      const {
-        orderId,
-        name,
-        customerId,
-        area,
-        truckId,
-        notes,
-        products,
-        status,
-        city,
-        salesman
-      } = req.body;
-      console.log(products)
-      const existingOrder = await Order.findOne({ id: orderId });
-      if (!existingOrder) {
-        return res.status(404).json({
-          success: false,
-          message: 'Order not found'
-        });
-      }
+  //   try {
+  //     const {
+  //       orderId,
+  //       name,
+  //       customerId,
+  //       area,
+  //       truckId,
+  //       notes,
+  //       products,
+  //       status,
+  //       city,
+  //       salesman
+  //     } = req.body;
+  //     const existingOrder = await Order.findOne({ id: orderId });
+  //     if (!existingOrder) {
+  //       return res.status(404).json({
+  //         success: false,
+  //         message: 'Order not found'
+  //       });
+  //     }
   
-      if (existingOrder.status !== 'PENDING') {
-        return res.status(400).json({
-          success: false,
-          message: `Order cannot be updated because its status is '${existingOrder.status}'`
-        });
-      }
+  //     if (existingOrder.status !== 'PENDING') {
+  //       return res.status(400).json({
+  //         success: false,
+  //         message: `Order cannot be updated because its status is '${existingOrder.status}'`
+  //       });
+  //     }
   
-      const truck = await Truck.findOne({ id: truckId });
-      const salesmanId = salesman || truck?.salesmanId;
+  //     const truck = await Truck.findOne({ id: truckId });
+  //     const salesmanId = salesman || truck?.salesmanId;
   
-      let totalPrice = 0;
-      const orderItems = [];
-      const unavailableProducts = [];
+  //     let totalPrice = 0;
+  //     const orderItems = [];
+  //     const unavailableProducts = [];
   
-      for (const product of products) {
-        product.newcouponQty =0;
+  //     for (const product of products) {
+  //       product.newcouponQty =0;
 
-        if (product.rechargeId) {
-          const recharge = await Recharge.findOne({ rechargeId: product.rechargeId });
+  //       if (product.rechargeId) {
+  //         let conditionmatch = true
+  //         let previousmatch = {}
+
+  //         const recharge = await Recharge.findOne({ rechargeId: product.rechargeId });
+  //         if (product._id) {
+  //           matchedProduct = existingOrder.order.find(p => 
+  //             p._id.toString() === product._id.toString()
+  //           )
+  //           if(matchedProduct && matchedProduct.couponQty>0){
+  //             product.couponQty = product.couponQty - matchedProduct.couponQty
+  //             previousmatch = matchedProduct;
+  //             conditionmatch = matchedProduct.rechargeId==product.rechargeId?true:false;
+  //           }
+  //         }
+
+
 
         
-          if (
-            recharge 
-            // &&
-            // recharge.routes.includes(truck.routeid) &&
-            // recharge.item === product.name
-          ) {
-            const activeCoupons = recharge.coupons.filter(c => c.status === 'ACTIVE');
+  //         if (
+  //           conditionmatch &&
+  //            recharge 
+  //           // &&
+  //           // recharge.routes.includes(truck.routeid) &&
+  //           // recharge.item === product.name
+  //         ) {
+  //           const activeCoupons = recharge.coupons.filter(c => c.status === 'ACTIVE');
         
-            const availableCount = activeCoupons.length;
-            const requiredQty = product.couponQty;
+  //           const availableCount = activeCoupons.length;
+  //           const requiredQty = product.couponQty;
         
-            const claimCount = Math.min(availableCount, requiredQty);
+  //           const claimCount = Math.min(availableCount, requiredQty);
         
-            const claimedCouponIds = activeCoupons.slice(0, claimCount).map(c => c._id);
+  //           const claimedCouponIds = activeCoupons.slice(0, claimCount).map(c => c._id);
         
-            await Recharge.updateOne(
-              { rechargeId: product.rechargeId },
-              {
-                $set: {
-                  'coupons.$[elem].status': 'Claimed',
-                  'coupons.$[elem].updated': new Date(),
-                  'coupons.$[elem].orderid': orderId
-                }
-              },
-              {
-                arrayFilters: [
-                  {
-                    'elem.status': 'Active',
-                    'elem._id': { $in: claimedCouponIds } // ✅ fixed here
-                  }
-                ]
-              }
-            );
+  //           await Recharge.updateOne(
+  //             { rechargeId: product.rechargeId },
+  //             {
+  //               $set: {
+  //                 'coupons.$[elem].status': 'Claimed',
+  //                 'coupons.$[elem].updated': new Date(),
+  //                 'coupons.$[elem].orderid': orderId
+  //               }
+  //             },
+  //             {
+  //               arrayFilters: [
+  //                 {
+  //                   'elem.status': 'Active',
+  //                   'elem._id': { $in: claimedCouponIds } // ✅ fixed here
+  //                 }
+  //               ]
+  //             }
+  //           );
             
 
-            // Push claimed IDs to product.redeemedCoupons
-            product.newredeemedCoupons = claimedCouponIds;
+  //           // Push claimed IDs to product.redeemedCoupons
+  //           product.newredeemedCoupons = claimedCouponIds;
         
-            // Update couponQty to actual claimed count
-            product.newcouponQty = claimCount||0;
-            product.newrechargeId = claimCount > 0 ? product.rechargeId : '';
+  //           // Update couponQty to actual claimed count
+  //           product.newcouponQty = claimCount||0;
+  //           product.newrechargeId = claimCount > 0 ? product.rechargeId : '';
 
-          }
-        }
+  //          if(previousmatch){
+  //           product.newredeemedCoupons = {...product.newredeemedCoupons,...previousmatch.redeamedcoupons}
+  //           product.newcouponQty = product.newcouponQty + previousmatch.couponQty
+
+  //          }
+
+  //         }
+  //       }
         
         
 
-        const matchingEntries = truck.productDetails.filter(p => p.productname === product.productname);
+  //       const matchingEntries = truck.productDetails.filter(p => p.productname === product.productname);
   
-        const outwardQty = matchingEntries
-          .filter(p => p.inwardoutward === 'outward')
-          .reduce((sum, p) => sum + (p.quantity || 0), 0);
+  //       const outwardQty = matchingEntries
+  //         .filter(p => p.inwardoutward === 'outward')
+  //         .reduce((sum, p) => sum + (p.quantity || 0), 0);
   
-        const inwardQty = matchingEntries
-          .filter(p => p.inwardoutward === 'inward')
-          .reduce((sum, p) => sum + (p.quantity || 0), 0);
+  //       const inwardQty = matchingEntries
+  //         .filter(p => p.inwardoutward === 'inward')
+  //         .reduce((sum, p) => sum + (p.quantity || 0), 0);
   
-        const deliveredQty = matchingEntries.reduce((sum, p) => sum + (p.delivered || 0), 0);
+  //       const deliveredQty = matchingEntries.reduce((sum, p) => sum + (p.delivered || 0), 0);
   
-        const availableQty = outwardQty - inwardQty - deliveredQty;
-        const requestedQty = Number(product.quantity) || 0;
-        const price = Number(product.price) || 0;
-        const quantity = Number(product.quantity) || 0;
+  //       const availableQty = outwardQty - inwardQty - deliveredQty;
+  //       const requestedQty = Number(product.quantity) || 0;
+  //       const price = Number(product.price) || 0;
+  //       const quantity = Number(product.quantity) || 0;
         
-        totalPrice += price * (quantity-product.newcouponQty);
+  //       totalPrice += price * (quantity-product.newcouponQty);
   
-        // Track insufficient stock only if status is DELIVERED
-        if (status === 'DELIVERED' && availableQty - requestedQty < 0) {
-          unavailableProducts.push({
-            productname: product.productname,
-            requested: requestedQty,
-            available: availableQty
-          });
-          continue; // Skip adding this product to the order
-        }
-        if (status === 'DELIVERED') {
-          const existingDeliveredEntry = truck.productDetails.find(p =>
-            p.productid == product.productid ||
-            p.productname == product.productname &&
-            p.inwardoutward == 'delivered'
-          );
+  //       // Track insufficient stock only if status is DELIVERED
+  //       if (status === 'DELIVERED' && availableQty - requestedQty < 0) {
+  //         unavailableProducts.push({
+  //           productname: product.productname,
+  //           requested: requestedQty,
+  //           available: availableQty
+  //         });
+  //         continue; // Skip adding this product to the order
+  //       }
+  //       if (status === 'DELIVERED') {
+  //         const existingDeliveredEntry = truck.productDetails.find(p =>
+  //           p.productid == product.productid ||
+  //           p.productname == product.productname &&
+  //           p.inwardoutward == 'delivered'
+  //         );
           
-          if (existingDeliveredEntry) {
-            existingDeliveredEntry.delivered = (existingDeliveredEntry.delivered || 0) + quantity;
-            existingDeliveredEntry.time = new Date(); // optional: update time
-            existingDeliveredEntry.doneby = salesmanId; // optional: track who did the update
-          } else {
-            truck.productDetails.push({
-              productid: product.productid,
-              productname: product.productname,
-              quantity: 0, // not used for delivered
-              inwardoutward: 'delivered',
-              delivered: quantity,
-              time: new Date(),
-              itemtype: product.itemtype || 'Normal',
-              doneby: salesmanId,
-              city
-            });
-          }
+  //         if (existingDeliveredEntry) {
+  //           existingDeliveredEntry.delivered = (existingDeliveredEntry.delivered || 0) + quantity;
+  //           existingDeliveredEntry.time = new Date(); // optional: update time
+  //           existingDeliveredEntry.doneby = salesmanId; // optional: track who did the update
+  //         } else {
+  //           truck.productDetails.push({
+  //             productid: product.productid,
+  //             productname: product.productname,
+  //             quantity: 0, // not used for delivered
+  //             inwardoutward: 'delivered',
+  //             delivered: quantity,
+  //             time: new Date(),
+  //             itemtype: product.itemtype || 'Normal',
+  //             doneby: salesmanId,
+  //             city
+  //           });
+  //         }
           
-        }
+  //       }
   
-        if (status === 'DELIVERED' && product.lendtype === 'Lend') {
-          const newAsset = new CustomerAssetHistory({
-            assetType: product.productname,
-            noOfAssets: quantity,
-            securityDeposit: price * quantity,
-            customerId,
-            salesmanId,
-            truckId,
-            lendType: 'CUSTODY'
-          });
-          await newAsset.save();
-        }
+  //       if (status === 'DELIVERED' && product.lendtype === 'Lend') {
+  //         const newAsset = new CustomerAssetHistory({
+  //           assetType: product.productname,
+  //           noOfAssets: quantity,
+  //           securityDeposit: price * quantity,
+  //           customerId,
+  //           salesmanId,
+  //           truckId,
+  //           lendType: 'CUSTODY'
+  //         });
+  //         await newAsset.save();
+  //       }
   
-        orderItems.push({
-          productname: product.productname,
-          productid: product.productid,
-          quantity,
-          price,
-          total:totalPrice,
-          lendtype: product.lendtype || 'LEND',
-          itemtype: product.itemtype || 'Normal',     // Push claimed IDs to product.redeemedCoupons
-          couponQty:  product.newcouponQty,
-          rechargeId:product.newrechargeId , 
-          redeamedcoupons: product.newredeemedCoupons
-        });
-      }
-    truck.save()
-      const updatedOrder = await Order.findOneAndUpdate(
-        { id: orderId },
-        {
-          name,
-          customerId,
-          area,
-          truckId,
-          notes,
-          salesmanId,
-          status: status || 'PENDING',
-          totalPrice,
-          city,
-          order: orderItems,
-          updatedAt: new Date()
-        },
-        { new: true }
-      );
+  //       orderItems.push({
+  //         productname: product.productname,
+  //         productid: product.productid,
+  //         quantity,
+  //         price,
+  //         total:totalPrice,
+  //         lendtype: product.lendtype || 'LEND',
+  //         itemtype: product.itemtype || 'Normal',     // Push claimed IDs to product.redeemedCoupons
+  //         couponQty:  product.newcouponQty,
+  //         rechargeId:product.newrechargeId , 
+  //         redeamedcoupons: product.newredeemedCoupons
+  //       });
+  //     }
+  //   truck.save()
+  //     const updatedOrder = await Order.findOneAndUpdate(
+  //       { id: orderId },
+  //       {
+  //         name,
+  //         customerId,
+  //         area,
+  //         truckId,
+  //         notes,
+  //         salesmanId,
+  //         status: status || 'PENDING',
+  //         totalPrice,
+  //         city,
+  //         order: orderItems,
+  //         updatedAt: new Date()
+  //       },
+  //       { new: true }
+  //     );
   
-      let message = 'Order updated successfully.';
-      if (unavailableProducts.length > 0) {
-        const productDetails = unavailableProducts
-          .map(p => `${p.productname} (Requested: ${p.requested ?? 'N/A'}, Available: ${p.available ?? 'N/A'})`)
-          .join('; ');
-        message += ` Note: These products had insufficient stock at delivery time: ${productDetails}`;
-      }
+  //     let message = 'Order updated successfully.';
+  //     if (unavailableProducts.length > 0) {
+  //       const productDetails = unavailableProducts
+  //         .map(p => `${p.productname} (Requested: ${p.requested ?? 'N/A'}, Available: ${p.available ?? 'N/A'})`)
+  //         .join('; ');
+  //       message += ` Note: These products had insufficient stock at delivery time: ${productDetails}`;
+  //     }
       
       
-      return res.json({
-        success: true,
-        message,
-        unavailableProducts,
-        order: updatedOrder
-      });
+  //     return res.json({
+  //       success: true,
+  //       message,
+  //       unavailableProducts,
+  //       order: updatedOrder
+  //     });
   
-    } catch (error) {
-      console.error('Error updating order:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Error updating order',
-        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-      });
-    }
-  };
+  //   } catch (error) {
+  //     console.error('Error updating order:', error);
+  //     return res.status(500).json({
+  //       success: false,
+  //       message: 'Error updating order',
+  //       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+  //     });
+  //   }
+  // };
   
   
 
 
 ////unwanted//
+
+exports.updateOrder = async (req, res) => {
+  try {
+    const {
+      orderId,
+      name,
+      customerId,
+      area,
+      truckId,
+      notes,
+      products,
+      status,
+      city,
+      salesman
+    } = req.body;
+
+    const existingOrder = await Order.findOne({ id: orderId });
+    if (!existingOrder) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    if (existingOrder.status !== 'PENDING') {
+      return res.status(400).json({ success: false, message: `Order cannot be updated because its status is '${existingOrder.status}'` });
+    }
+
+    const truck = await Truck.findOne({ id: truckId });
+    const salesmanId = salesman || truck?.salesmanId;
+
+    let totalPrice = 0;
+    const orderItems = [];
+    const unavailableProducts = [];
+
+    for (const product of products) {
+      product.newcouponQty = 0;
+      let matchedProduct = null;
+      let previousQty = 0;
+      let previousCoupons = [];
+
+      if (product._id) {
+        matchedProduct = existingOrder.order.find(p => p._id.toString() === product._id.toString());
+        if (matchedProduct && matchedProduct.couponQty > 0) {
+          product.couponQty = product.couponQty - matchedProduct.couponQty;
+          previousQty = matchedProduct.couponQty;
+          previousCoupons = matchedProduct.redeamedcoupons || [];
+        }
+      }
+
+      if (product.rechargeId) {
+        if (matchedProduct && matchedProduct.rechargeId && matchedProduct.rechargeId !== product.rechargeId) {
+          product.couponQty = previousQty;
+          product.newcouponQty = previousQty;
+          product.newredeemedCoupons = previousCoupons;
+          product.newrechargeId = matchedProduct.rechargeId;
+        } else {
+          const recharge = await Recharge.findOne({ rechargeId: product.rechargeId });
+          if (recharge) {
+            const activeCoupons = recharge.coupons.filter(c => c.status === 'ACTIVE');
+            const requiredQty = product.couponQty || 0;
+            const claimCount = Math.min(activeCoupons.length, requiredQty);
+            const claimedCouponIds = activeCoupons.slice(0, claimCount).map(c => c._id);
+
+            if (claimCount > 0) {
+              await Recharge.updateOne(
+                { rechargeId: product.rechargeId },
+                {
+                  $set: {
+                    'coupons.$[elem].status': 'Claimed',
+                    'coupons.$[elem].updated': new Date(),
+                    'coupons.$[elem].orderid': orderId
+                  }
+                },
+                {
+                  arrayFilters: [
+                    {
+                      'elem.status': 'ACTIVE',
+                      'elem._id': { $in: claimedCouponIds }
+                    }
+                  ]
+                }
+              );
+
+              product.newredeemedCoupons = [...claimedCouponIds, ...previousCoupons];
+              product.newcouponQty = claimCount + previousQty;
+              product.newrechargeId = product.rechargeId;
+            }
+          }
+        }
+      }
+
+      const matchingEntries = truck.productDetails.filter(p => p.productname === product.productname);
+
+      const outwardQty = matchingEntries.filter(p => p.inwardoutward === 'outward').reduce((sum, p) => sum + (p.quantity || 0), 0);
+      const inwardQty = matchingEntries.filter(p => p.inwardoutward === 'inward').reduce((sum, p) => sum + (p.quantity || 0), 0);
+      const deliveredQty = matchingEntries.reduce((sum, p) => sum + (p.delivered || 0), 0);
+      const availableQty = outwardQty - inwardQty - deliveredQty;
+
+      const requestedQty = Number(product.quantity) || 0;
+      const price = Number(product.price) || 0;
+      const quantity = Number(product.quantity) || 0;
+
+      totalPrice += price * (quantity - product.newcouponQty);
+
+      if (status === 'DELIVERED' && availableQty - requestedQty < 0) {
+        unavailableProducts.push({ productname: product.productname, requested: requestedQty, available: availableQty });
+        continue;
+      }
+
+      if (status === 'DELIVERED') {
+        const existingDeliveredEntry = truck.productDetails.find(p =>
+          (p.productid == product.productid || p.productname == product.productname) &&
+          p.inwardoutward == 'delivered'
+        );
+
+        if (existingDeliveredEntry) {
+          existingDeliveredEntry.delivered = (existingDeliveredEntry.delivered || 0) + quantity;
+          existingDeliveredEntry.time = new Date();
+          existingDeliveredEntry.doneby = salesmanId;
+        } else {
+          truck.productDetails.push({
+            productid: product.productid,
+            productname: product.productname,
+            quantity: 0,
+            inwardoutward: 'delivered',
+            delivered: quantity,
+            time: new Date(),
+            itemtype: product.itemtype || 'Normal',
+            doneby: salesmanId,
+            city
+          });
+        }
+      }
+
+      if (status === 'DELIVERED' && product.lendtype === 'Lend') {
+        const newAsset = new CustomerAssetHistory({
+          assetType: product.productname,
+          noOfAssets: quantity,
+          securityDeposit: price * quantity,
+          customerId,
+          salesmanId,
+          truckId,
+          lendType: 'CUSTODY'
+        });
+        await newAsset.save();
+      }
+
+      orderItems.push({
+        productname: product.productname,
+        productid: product.productid,
+        quantity,
+        price,
+        total: totalPrice,
+        lendtype: product.lendtype || 'LEND',
+        itemtype: product.itemtype || 'Normal',
+        couponQty: product.newcouponQty,
+        rechargeId: product.newrechargeId,
+        redeamedcoupons: product.newredeemedCoupons
+      });
+    }
+
+    await truck.save();
+
+    const updatedOrder = await Order.findOneAndUpdate(
+      { id: orderId },
+      {
+        name,
+        customerId,
+        area,
+        truckId,
+        notes,
+        salesmanId,
+        status: status || 'PENDING',
+        totalPrice,
+        city,
+        order: orderItems,
+        updatedAt: new Date()
+      },
+      { new: true }
+    );
+
+    let message = 'Order updated successfully.';
+    if (unavailableProducts.length > 0) {
+      const productDetails = unavailableProducts.map(p => `${p.productname} (Requested: ${p.requested ?? 'N/A'}, Available: ${p.available ?? 'N/A'})`).join('; ');
+      message += ` Note: These products had insufficient stock at delivery time: ${productDetails}`;
+    }
+
+    return res.json({
+      success: true,
+      message,
+      unavailableProducts,
+      order: updatedOrder
+    });
+  } catch (error) {
+    console.error('Error updating order:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error updating order',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+};
+
 exports.orderhistory = async (req, res) => {
   try {
       const id = req.params.id;

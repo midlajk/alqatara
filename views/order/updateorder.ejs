@@ -743,6 +743,8 @@
   const couponQty = parseFloat(row.find('.coupon-qty-input').val()) || 0;
   const rechargeId = row.find('.recharge-id-input').val();
   const lendType = row.find('select[name$="[lrndtype]"]').val();
+  const productDbId = row.find('.product-id-input').val(); // Get the _id
+
     // Check if this product already exists in our products array
     const existingProductIndex = products.findIndex(p => 
       (p.productid === productId) || 
@@ -750,6 +752,7 @@
     );
     
     const updatedProduct = {
+      _id: productDbId, // Include the existing _id
     productid: productId || null,
     productname: productName,
     quantity: quantity,
@@ -792,8 +795,10 @@
     const couponQty = parseFloat(row.find('.coupon-qty-input').val()) || 0;
     const rechargeId = row.find('.recharge-id-input').val();
     const lendType = row.find('select[name$="[lrndtype]"]').val();
-    
+    const productDbId = row.find('.product-id-input').val(); // Get the _id
+
     products.push({
+      _id: productDbId, // Include the existing _id
       productid: productId || null,
       productname: productName,
       quantity: quantity,
@@ -836,6 +841,7 @@
                 </select>
               </td>
               <td data-label="Quantity">
+                  <input type="hidden" class="product-id-input" name="products[${index}][_id]" value="${product._id || ''}">
                 <input type="number" class="form-control quantity-input" name="products[${index}][quantity]" 
                       value="${product.quantity || 1}" min="1" required>
               </td>
@@ -1252,10 +1258,10 @@ $(document).on('click', '.select-coupon-btn', function() {
   $('#couponModal').data('product-index', productIndex);
   $('#couponModal').data('current-quantity', currentQuantity);
   $('#couponModal').data('current-couponquantity', currentcouponQuantity);
-  if(currentcouponQuantity>0){
-    alert('Please add as new Demand already claimed coupon for this demand if you try to add ,it you may lose previous coupon in waste  ')
-    return
-  }
+  // if(currentcouponQuantity>0){
+  //   alert('Please add as new Demand already claimed coupon for this demand if you try to add ,it you may lose previous coupon in waste  ')
+  //   return
+  // }
   // Load available coupons for this customer
   loadCustomerCoupons(customerId,truckid);
   

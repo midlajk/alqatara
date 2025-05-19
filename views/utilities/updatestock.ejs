@@ -95,12 +95,13 @@
                   <table class="table table-flush">
                       <thead>
                           <tr>
-                              <th>Product</th>
-                              <th>Added</th>
-                              <th>Returned</th>
-                              <th>Used</th>
-                              <th>Damaged</th>
-                              <th>Balance</th>
+                               <th>Product</th>
+                <th>Added</th>
+                <th>Delivered</th>
+                <th>Returned</th>
+                <th>Used</th>
+                <th>Damaged</th>
+                <th>Balance</th>
                           </tr>
                       </thead>
                       <tbody id="stockTableBody">
@@ -246,6 +247,7 @@ function updateStockTable(productDetails = []) {
         if (!summary[item.productname]) {
             summary[item.productname] = {
                 added: 0,
+                delivered: 0,
                 returned: 0,
                 used: 0,
                 damaged: 0
@@ -259,6 +261,11 @@ function updateStockTable(productDetails = []) {
             if (item.itemtype === 'Old') summary[item.productname].used += item.quantity || 0;
             if (item.itemtype === 'Damaged') summary[item.productname].damaged += item.quantity || 0;
         }
+        
+        // Add delivered quantity if it exists
+        if (item.delivered) {
+            summary[item.productname].delivered += item.delivered || 0;
+        }
     });
     
     $("#stockTableBody").empty();
@@ -268,14 +275,16 @@ function updateStockTable(productDetails = []) {
             <tr>
                 <td>${product}</td>
                 <td>${data.added}</td>
+                <td>${data.delivered}</td>
                 <td>${data.returned}</td>
                 <td>${data.used}</td>
                 <td>${data.damaged}</td>
-                <td>${data.added - data.returned}</td>
+                <td>${data.added - data.returned - data.delivered}</td>
             </tr>
         `);
     });
 }
+
   // function formatProductName(name) {
   //     const names = {
   //         '5galBottles': '5 Gallon Bottles',

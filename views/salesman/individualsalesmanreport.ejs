@@ -1,0 +1,565 @@
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<style>
+  /* Modern dashboard styling */
+  .dashboard-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+  }
+  
+  .summary-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    border: none;
+  }
+  
+  .summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+  }
+  
+  .card-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  
+  .card-label {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .card-icon {
+    font-size: 40px;
+    opacity: 0.2;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+  }
+  
+  .payment-method-card {
+    border-left: 4px solid;
+  }
+  
+  .payment-method-card.cash {
+    border-left-color: #27ae60;
+  }
+  
+  .payment-method-card.card {
+    border-left-color: #2980b9;
+  }
+  
+  .payment-method-card.wallet {
+    border-left-color: #f39c12;
+  }
+  
+  .filter-container {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  
+  .product-category-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .category-tab {
+    padding: 8px 15px;
+    background-color: #ecf0f1;
+    border-radius: 20px;
+    margin-right: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+  }
+  
+  .category-tab.active {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .product-card {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .salesman-info {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+  }
+  
+  .payment-method-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-left: 5px;
+  }
+  
+  .badge-cash {
+    background-color: #e8f5e9;
+    color: #27ae60;
+  }
+  
+  .badge-card {
+    background-color: #e3f2fd;
+    color: #2980b9;
+  }
+  
+  .badge-wallet {
+    background-color: #fff8e1;
+    color: #f39c12;
+  }
+  
+  @media (max-width: 768px) {
+    .card-value {
+      font-size: 20px;
+    }
+    
+    .card-icon {
+      font-size: 30px;
+    }
+  }
+</style>
+
+<div class="dashboard-container">
+  <div class="row">
+    <div class="col">
+      <!-- Salesman Info Header -->
+      <div class="salesman-info">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h2 id="salesman-name">Salesman Report</h2>
+            <p id="salesman-info" class="text-muted">Loading...</p>
+          </div>
+          <div class="col-md-4 text-md-right">
+            <a href="#" id="download-report" class="btn btn-dark">
+              <i class="fas fa-download mr-2"></i>Download Report
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Date Filter -->
+      <div class="filter-container">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-row align-items-center">
+              <div class="col-md-5 mb-2 mb-md-0">
+                <label class="date-input d-flex align-items-center">
+                  <span class="mr-2">From</span>
+                  <input type="date" id="start-date" class="form-control">
+                </label>
+              </div>
+              <div class="col-md-5 mb-2 mb-md-0">
+                <label class="date-input d-flex align-items-center">
+                  <span class="mr-2">To</span>
+                  <input type="date" id="end-date" class="form-control">
+                </label>
+              </div>
+              <div class="col-md-2">
+                <button id="apply-filter" class="btn btn-primary btn-block">Apply</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 text-md-right">
+            <div id="report-period" class="text-muted">Today's Report</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Loading Spinner -->
+      <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      
+      <!-- Dashboard Content (initially hidden) -->
+      <div id="dashboard-content" style="display: none;">
+        <!-- Summary Cards Row 1 -->
+        <div class="row">
+          <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-shopping-cart card-icon text-primary"></i>
+                <h6 class="card-label">Total Sales</h6>
+                <h3 class="card-value" id="total-sales">$0.00</h3>
+                <div class="text-muted small mt-2">
+                  <span class="badge payment-method-badge badge-cash">
+                    Total Sale value in the filtered date
+                  </span>
+                 
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-money-bill-wave card-icon text-success"></i>
+                <h6 class="card-label">Order Collection</h6>
+                <h3 class="card-value" id="total-collection">$0.00</h3>
+                <div class="text-muted small mt-2">
+                  <span class="badge payment-method-badge badge-cash">
+                    <i class="fas fa-money-bill-wave mr-1"></i> <span id="cash-collection">$0.00</span>
+                  </span>
+                  <span class="badge payment-method-badge badge-card">
+                    <i class="fas fa-credit-card mr-1"></i> <span id="card-collection">$0.00</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-wallet card-icon text-warning"></i>
+                <h6 class="card-label">Wallet Collection</h6>
+                <h3 class="card-value" id="wallet-collection">$0.00</h3>
+                <div class="text-muted small mt-2">
+                  <span class="badge payment-method-badge badge-wallet">
+                    Wallet Recharge
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-ticket-alt card-icon text-danger"></i>
+                <h6 class="card-label">Coupons Redeemed</h6>
+                <h3 class="card-value" id="coupons-count">0</h3>
+                <div class="text-muted small mt-2">
+                  Total value: <span id="coupon-value">$0.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Summary Cards Row 2 -->
+        <div class="row mt-4">
+          <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-users card-icon text-info"></i>
+                <h6 class="card-label">Customers Serviced</h6>
+                <h3 class="card-value" id="customers-serviced">0</h3>
+                <div class="text-muted small mt-2">
+                  New customers: <span id="new-customers">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-truck card-icon text-secondary"></i>
+                <h6 class="card-label">Orders Delivered</h6>
+                <h3 class="card-value" id="delivered-orders">0</h3>
+                <div class="text-muted small mt-2">
+                  <span id="pending-orders-text">0 pending</span>
+                </div>
+              </div>
+            </div>
+          </div>
+            <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-clock card-icon text-dark"></i>
+                <h6 class="card-label">Latest Collection</h6>
+                <h3 class="card-value" id="lastcollection-payment">$0.00</h3>
+                <div class="text-muted small mt-2">
+                  Pending Payment <span id="pending-payment"></span>
+                </div>
+              </div>
+            </div>
+          </div>  
+          <div class="col-md-6 col-lg-3">
+            <div class="card summary-card bg-white">
+              <div class="card-body">
+                <i class="fas fa-hand-holding-usd card-icon text-purple"></i>
+                <h6 class="card-label">Cash in Hand</h6>
+                <h3 class="card-value" id="cash-in-hand">$0.00</h3>
+                <div class="text-muted small mt-2">
+                  Amount collectable from <span id="collectabledate"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      
+        </div>
+        
+        <!-- Product Sales by Category -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header bg-white">
+                <h5 class="mb-0">Product Sales by Category</h5>
+              </div>
+              <div class="card-body">
+                <div class="product-category-tabs" id="category-tabs">
+                  <!-- Categories will be loaded dynamically -->
+                </div>
+                
+                <div id="product-category-content">
+                  <!-- Product data will be loaded dynamically -->
+                  <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Select a category to view product sales</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0"></script>
+
+<script>
+$(document).ready(function() {
+  // Get salesman ID from URL or other source
+  const salesmanId = '<%= salesmanId %>'; // Replace with your actual way to get salesman ID
+  
+  // Set default dates (today)
+  const today = new Date();
+  const startDateInput = $('#start-date');
+  const endDateInput = $('#end-date');
+  
+  startDateInput.val(today.toISOString().split('T')[0]);
+  endDateInput.val(today.toISOString().split('T')[0]);
+  let data ={}
+  // Format date for display
+  function formatDateDisplay(date) {
+    return new Date(date).toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  }
+  
+  // Load salesman report data
+  function loadSalesmanReport() {
+    const startDate = startDateInput.val();
+    const endDate = endDateInput.val();
+    
+    $('#loading-spinner').show();
+    $('#dashboard-content').hide();
+    
+    $.ajax({
+      url: `/api/salesman/report/${salesmanId}?startDate=${startDate}&endDate=${endDate}`,
+      method: 'GET',
+      success: function(data) {
+        data = data
+        updateDashboard(data);
+        $('#loading-spinner').hide();
+        $('#dashboard-content').fadeIn();
+      },
+      error: function(error) {
+        console.log('Error loading salesman report:', error);
+        $('#loading-spinner').hide();
+        alert('Failed to load salesman report. Please try again.');
+      }
+    });
+  }
+  
+  // Update dashboard with data
+  function updateDashboard(data) {
+    console.log(data)
+    // Update salesman info
+    $('#salesman-name').text(`${data.salesman.name}'s Performance Report`);
+    $('#salesman-info').html(`
+      <span class="badge badge-primary">${data.salesman.city}</span>
+      <span class="ml-2">Report Period: ${formatDateDisplay(data.dateRange.start)} to ${formatDateDisplay(data.dateRange.end)}</span>
+    `);
+    
+    // Update summary cards
+    $('#total-sales').text(`$${data.summary.totalSales.toFixed(2)}`);
+    $('#total-collection').text(`$${data.summary.totalCollection.toFixed(2)}`);
+    $('#wallet-collection').text(`$${data.walletMetrics.totalWalletRecharge.toFixed(2)}`);
+    $('#customers-serviced').text(data.summary.customersServiced);
+    $('#new-customers').text(data.summary.newCustomers || 0);
+    $('#cash-in-hand').text(`$${data.summary.cashInHand.toFixed(2)}`);
+    $('#delivered-orders').text(data.summary.deliveredOrders);
+    $('#pending-orders-text').text(`${data.summary.pendingOrders} pending`);
+    $('#wallet-recharge').text(`$${data.walletMetrics.walletSales.toFixed(2)}`);
+    $('#coupons-count').text(0);
+    $('#coupon-value').text(0);
+    $('#pending-payment').text(`$${data.summary.pendingPayment.toFixed(2)}`);
+        $('#lastcollection-payment').text(`$${data.salesman.cashCollectedSinceLastPayment}`);
+
+$('#collectabledate').text(new Date(data.salesman.lastPaymentCollected).toLocaleDateString());
+
+    // Update payment method breakdowns
+    $('#cash-sales').text(0);
+    $('#card-sales').text(0);
+    
+    $('#cash-collection').text(0);
+    $('#card-collection').text(0);
+    
+    // Update category tabs
+    const categoryTabs = $('#category-tabs');
+    categoryTabs.empty();
+    
+    data.productCategories.forEach((category, index) => {
+      const activeClass = index === 0 ? 'active' : '';
+      categoryTabs.append(`
+        <div class="category-tab ${activeClass}" data-category="${category.category}">
+          ${category.category} (${category.totalQuantity})
+        </div>
+      `);
+    });
+    
+    // Load first category by default
+    if (data.productCategories.length > 0) {
+      loadCategoryData(data.productCategories[0]);
+    }
+    
+    // Set up category tab click handlers
+    $('.category-tab').click(function() {
+      $('.category-tab').removeClass('active');
+      $(this).addClass('active');
+      
+      const categoryName = $(this).data('category');
+      const categoryData = data.productCategories.find(c => c.category === categoryName);
+      if (categoryData) {
+        loadCategoryData(categoryData);
+      }
+    });
+    
+    // Update report period text
+    const isToday = new Date(data.dateRange.start).toDateString() === today.toDateString() && 
+                    new Date(data.dateRange.end).toDateString() === today.toDateString();
+    
+    $('#report-period').text(isToday ? "Today's Report" : 
+      `Report from ${formatDateDisplay(data.dateRange.start)} to ${formatDateDisplay(data.dateRange.end)}`);
+    
+    // Update download link
+    // $('#download-report').attr('href', 
+    //   `/api/salesman/report/${salesmanId}/download?startDate=${startDateInput.val()}&endDate=${endDateInput.val()}`);
+  }
+  
+  // Load product category data
+  function loadCategoryData(categoryData) {
+    const content = $('#product-category-content');
+    content.empty();
+    
+    if (categoryData.products.length === 0) {
+      content.html(`
+        <div class="text-center py-5">
+          <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+          <p class="text-muted">No products sold in this category</p>
+        </div>
+      `);
+      return;
+    }
+    
+    // Create a row for the products
+    const row = $('<div class="row"></div>');
+    
+    // Add product cards
+    categoryData.products.forEach(product => {
+      const percent = (product.totalSales / categoryData.totalSales) * 100;
+      
+      row.append(`
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card product-card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">${product.name}</h5>
+                <span class="badge badge-primary">$${product.price.toFixed(2)}</span>
+              </div>
+              <div class="mb-3">
+                <small class="text-muted">SKU: ${product.id}</small>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Quantity Sold:</span>
+                <strong>${product.quantity}</strong>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span>Total Sales:</span>
+                <strong class="text-primary">$${product.totalSales.toFixed(2)}</strong>
+              </div>
+            
+            </div>
+          </div>
+        </div>
+      `);
+    });
+    
+    // Add category summary
+    content.append(`
+      <div class="alert alert-info">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <strong>${categoryData.category}</strong>
+            <div class="mt-1">
+              <span class="mr-3"><i class="fas fa-box mr-1"></i> ${categoryData.totalQuantity} units</span>
+              <span><i class="fas fa-dollar-sign mr-1"></i> $${categoryData.totalSales.toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="text-right">
+            
+          </div>
+        </div>
+      </div>
+    `);
+    
+    content.append(row);
+  }
+  
+  // Apply filter button
+  $('#apply-filter').click(function() {
+    loadSalesmanReport();
+  });
+  
+  // Initialize the dashboard
+  loadSalesmanReport();
+});
+</script>
+
+<%- include('../includes/footer.ejs') -%>
+<%- include('../includes/end.ejs') -%>

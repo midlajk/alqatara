@@ -16,7 +16,13 @@ router.get('/getsalesman',setCustomHeader('salesman'),apiprev.Getapiprev, salesm
 router.post('/addsalesman',setCustomHeader('salesman'),WritePrivilage, salesmanapiapi.newsalesman);
 router.get('/salesmanids', salesmanapiapi.salesmanids);
 
+router.get('/individualsalesmanreport/:id', setCustomHeader('wallet'),authMiddleware, async function(req, res, next) {
+      const salesman = await Salesman.findOne({id:req.params.id})
 
+    res.render('salesman/individualsalesmanreport', { title: 'Al Qattara' ,route:'Salesman',sub :'Salesman Report of '+req.params.id,salesmanId:req.params.id});
+  });
+
+router.get('/api/salesman/report/:salesmanId',setCustomHeader('salesman'),apiprev.Getapiprev, salesmanapiapi.salesmanreport);
 
 router.get('/updatesalesman/:id', setCustomHeader('salesman'),authMiddleware, async function(req, res, next) {
    

@@ -77,54 +77,6 @@
               }
           }
       </style>
-  <!-- City Dropdown 
-  <div class="col-lg-6 col-5 row justify-content-end align-items-center" id="cardb">
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
-        <select class="city-js form-control" name="city" id="city" required>
-          <option value="<%= selectedCity %>" selected><%= selectedCity %></option> 
-            
-        </select>
-    </div>
-
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 text-center text-sm-start">
-        <button class="btn  btn-primary w-100" data-bs-toggle="modal" data-bs-target="#dateModal">
-            Filter By Date
-        </button>
-    </div>
-
-  <div class="col-12 col-md-4 col-lg-3 text-center text-md-start">
-        <span id="selectedDate" class="ml-2 font-weight-bold"></span>
-        
-    </div>
-</div>
-
--->
-
-
-<!-- Bootstrap Modal -->
-<!-- <div class="modal fade" id="dateModal" tabindex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="dateModalLabel">Select Date Range</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-              <form id="dateForm">
-                  <div class="mb-3">
-                      <label for="fromDate" class="form-label">From:</label>
-                      <input type="date" class="form-control" id="fromDate">
-                  </div>
-                  <div class="mb-3">
-                      <label for="toDate" class="form-label">To:</label>
-                      <input type="date" class="form-control" id="toDate">
-                  </div>
-                  <button type="button" class="btn btn-primary" id="applyFilterBtn">Apply</button>
-              </form>
-          </div>
-      </div>
-  </div>
-</div> -->
 
 <!-- Bootstrap CSS & JS (Include in your project if not already included) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -154,22 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
 // }
 
 </script>
-<!-- <script>
-  function selectButton(button) {
-      // Remove the 'selected' class from all buttons
-      document.querySelectorAll('.toggle-btn').forEach(btn => {
-          btn.classList.remove('selected');
-      });
-
-      // Add the 'selected' class to the clicked button
-      button.classList.add('selected');
-  }
-
-  // Ensure Al Ain button is selected on page load
-  document.addEventListener("DOMContentLoaded", function () {
-      document.querySelector('.toggle-btn.selected').click();
-  });
-</script> -->
 
 </div>
 <div class="row">
@@ -207,20 +143,15 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
 <!-- Key Metrics Section -->
-<div class="row">
+<div class="row flex-nowrap overflow-auto pb-2" style="scrollbar-width: thin;">
   <!-- Deliveries -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">Number of Deliveries</span>
             <h2 class="metric-value" id="deliveries">0</h2>
-            <div class="mt-2">
-              <span class="trend-up">
-                <i class="fas fa-arrow-up mr-1"></i> 12% from last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-red text-white">
@@ -233,18 +164,13 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <!-- Active Vehicles -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">Active Vehicles</span>
             <h2 class="metric-value" id="activeVehicles">0</h2>
-            <div class="mt-2">
-              <span class="trend-down">
-                <i class="fas fa-arrow-down mr-1"></i> 5% from last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-orange text-white">
@@ -257,18 +183,13 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <!-- New Customers -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">New Customers</span>
             <h2 class="metric-value" id="newCustomers">0</h2>
-            <div class="mt-2">
-              <span class="trend-up">
-                <i class="fas fa-arrow-up mr-1"></i> 18% from last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-green text-white">
@@ -281,18 +202,13 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <!-- Credit Sales -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">Total Credit Sales</span>
             <h2 class="metric-value" id="creditSales">0</h2>
-            <div class="mt-2">
-              <span class="trend-neutral">
-                <i class="fas fa-equals mr-1"></i> Same as last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-info text-white">
@@ -303,21 +219,15 @@ document.addEventListener("DOMContentLoaded", function () {
       </div>
     </div>
   </div>
-</div>
-<div class="row">
+
   <!-- Companies Credits -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">Companies Credits</span>
             <h2 class="metric-value" id="companyCredits">0</h2>
-            <div class="mt-2">
-              <span class="trend-up">
-                <i class="fas fa-arrow-up mr-1"></i> 8% from last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-blue text-white">
@@ -330,18 +240,13 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <!-- Customers Credits -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">Customers Credits</span>
             <h2 class="metric-value" id="customerCredits">0</h2>
-            <div class="mt-2">
-              <span class="trend-down">
-                <i class="fas fa-arrow-down mr-1"></i> 3% from last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-purple text-white">
@@ -354,18 +259,13 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <!-- Today Cash to Bank -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">Today Cash to Bank</span>
             <h2 class="metric-value" id="cashToBank">0</h2>
-            <div class="mt-2">
-              <span class="trend-up">
-                <i class="fas fa-arrow-up mr-1"></i> 22% from last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-yellow text-white">
@@ -378,18 +278,13 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 
   <!-- Bottle Returns -->
-  <div class="col-xl-3 col-md-6 mb-4">
-    <div class="card dashboard-card">
+  <div class="col-xl-3 col-md-6 mb-4" style="min-width: 300px;">
+    <div class="card dashboard-card h-100">
       <div class="card-body">
         <div class="row align-items-center">
           <div class="col">
             <span class="metric-label">Bottle Returns</span>
             <h2 class="metric-value" id="bottleReturns">0</h2>
-            <div class="mt-2">
-              <span class="trend-up">
-                <i class="fas fa-arrow-up mr-1"></i> 15% from last period
-              </span>
-            </div>
           </div>
           <div class="col-auto">
             <div class="card-icon bg-gradient-teal text-white">

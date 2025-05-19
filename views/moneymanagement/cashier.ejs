@@ -3,7 +3,9 @@
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-
+ <a href="/collectedpayments" class="btn btn-add-new bg-gradient-success float-right">
+        <i class="ni ni-collection"></i> <span class="btn-inner--text">Collected Payments</span>
+      </a>
 </div>
 </div>
 </div>
@@ -19,8 +21,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Total Collection</h5>
-              <span class="h2 font-weight-bold mb-0" id="totalCollection">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Total Recievable</h5>
+              <span class="h2 font-weight-bold mb-0" id="totalrecievable">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
@@ -37,8 +39,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Customer Payments</h5>
-              <span class="h2 font-weight-bold mb-0" id="customerPayments">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Recent Collection</h5>
+              <span class="h2 font-weight-bold mb-0" id="recentcollection">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
@@ -55,8 +57,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Salesman Payment</h5>
-              <span class="h2 font-weight-bold mb-0" id="salesmanPayments">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
+              <span class="h2 font-weight-bold mb-0" id="pendingpayments">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
@@ -72,8 +74,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Pending Collection</h5>
-              <span class="h2 font-weight-bold mb-0" id="pendingCollection">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Wallet Recharges</h5>
+              <span class="h2 font-weight-bold mb-0" id="walletrecharge">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
@@ -87,13 +89,13 @@
   </div>
 
   <!-- Action Buttons -->
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-12">
       <a href="/collectedpayments" class="btn btn-add-new bg-gradient-success float-right">
         <i class="ni ni-collection"></i> <span class="btn-inner--text">Collected Payments</span>
       </a>
     </div>
-  </div>
+  </div> -->
 
   <!-- Tabs Navigation -->
   <div class="row">
@@ -133,12 +135,15 @@
                   <tr>
                     <th>Salesman ID</th>
                     <th>Name</th>
-                    <th>Today Sale</th>
+                    <th>Latest Collection</th>
+                                        <th>Recharge</th>
+                    <!-- <th>Credit</th> -->
+
                     <th>Cash</th>
-                    <th>Wallet</th>
-                    <th>Deposit</th>
-                    <th>Credit</th>
-                    <th>Recharge</th>
+                    <th>Card</th>
+                    <th>Pending Payment</th>
+                    <th>Total Collectable</th>
+
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -188,9 +193,9 @@
               <label for="paymentMethod">Payment Method</label>
               <select class="form-control" id="paymentMethod">
                 <option value="cash">Cash</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="check">Check</option>
-                <option value="mobile_payment">Mobile Payment</option>
+                <option value="card">Card</option>
+                <!-- <option value="check">Check</option>
+                <option value="mobile_payment">Mobile Payment</option> -->
               </select>
             </div>
           </div>
@@ -281,7 +286,7 @@
 <script>
   $(document).ready(function() {
     // Initialize DataTables
-    const salesmanTable = $('#salesmanTable').DataTable({
+ const salesmanTable = $('#salesmanTable').DataTable({
   "processing": true,
   "serverSide": true,
   "ajax": {
@@ -293,11 +298,12 @@
     { "data": "salesman_id" },
     { "data": "name" },
     { "data": "today_sale", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-    { "data": "cash", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
     { "data": "wallet", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-    { "data": "deposit", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-    { "data": "credit", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-    { "data": "recharge", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+    // { "data": "credit", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+    { "data": "cash", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+    { "data": "card", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+    { "data": "pending_amount", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+    { "data": "can_collect", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
     { 
       "data": null,
       "render": function(data, type, row) {
@@ -306,7 +312,7 @@
             <button class="btn btn-sm btn-primary collect-payment action-btn" 
                     data-id="${row.salesman_id}" 
                     data-name="${row.name}"
-                    data-cash="${row.cash}"
+                    data-cash="${row.can_collect}"
                     data-pending="${row.pending_amount}">
               <i class="ni ni-money-coins mr-1"></i> Collect
             </button>
@@ -331,8 +337,7 @@
       "last": "<i class='fas fa-angle-double-right'></i>"
     }
   }
-});
-   $(document).on('click', '.collect-payment', function() {
+});  $(document).on('click', '.collect-payment', function() {
       const salesmanId = $(this).data('id');
       const salesmanName = $(this).data('name');
       const cashAmount = $(this).data('cash');
@@ -353,7 +358,7 @@
       };
       
       $.ajax({
-        url: '/api/collect-salesman-payment',
+        url: '/collect-salesman-payment',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(formData),
@@ -374,8 +379,27 @@
       window.location.href = '/api/export-salesman-collections';
     });
     
+function loadSummaryData() {
+  $.ajax({
+    url: '/salesman-collections-summary',
+    type: 'GET',
+    success: function(response) {
+      if (response.success) {
+        $('#totalrecievable').text('$' + response.data.totalRecievable.toFixed(2));
+        $('#recentcollection').text('$' + response.data.recentCollection.toFixed(2));
+        $('#pendingpayments').text('$' + response.data.pendingPayments.toFixed(2));
+        $('#walletrecharge').text('$' + response.data.walletRecharge.toFixed(2));
+      }
+    },
+    error: function(xhr) {
+      console.error('Error loading summary data:', xhr.responseText);
+    }
+  });
+}
+      loadSummaryData();
 
-    
+  // Set interval to refresh summary data every 5 minutes
+
   
   });
 </script>

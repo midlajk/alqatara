@@ -427,8 +427,8 @@
                       <label class="form-label"><i class="fas fa-money-bill-wave"></i> Payment Method</label>
                       <select id="paymentMethod" class="form-control" required>
                         <option value="Cash">Cash</option>
-                        <option value="Credit Card">Credit Card</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Card">Card</option>
+                        <!-- <option value="Bank Transfer">Bank Transfer</option> -->
                       </select>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
@@ -847,8 +847,9 @@
               </td>
               <td data-label="Lend/Return">
                 <select class="form-control" name="products[${index}][lrndtype]">
-                  <option value="Lend" ${product.lendtype === 'Lend' ? 'selected' : ''}>Lend</option>
-                  <option value="Return" ${product.lendtype === 'Return' ? 'selected' : ''}>Return</option>
+                  <option value="SOLD" ${product.lendtype === 'SOLD' ? 'selected' : ''}>Sold</option>
+                  <option value="CUSTODY" ${product.lendtype === 'CUSTODY' ? 'selected' : ''}>Custody</option>
+                  <option value="DEPOSIT" ${product.lendtype === 'DEPOSIT' ? 'selected' : ''}>Deposit</option>
                 </select>
               </td>
               <td data-label="Unit Price">
@@ -953,8 +954,10 @@
         </td>
         <td data-label="Lend/Return">
           <select class="form-control" name="products[${productCount}][lrndtype]">
-            <option value="Lend" selected>Lend</option>
-            <option value="Return">Return</option>
+            <option value="SOLD">Sold</option>
+
+            <option value="CUSTODY">Custody</option>
+                          <option value="DEPOSIT">Desposit</option>
           </select>
         </td>
         <td data-label="Unit Price">

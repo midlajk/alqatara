@@ -14,6 +14,7 @@ router.get('/getrecharges',setCustomHeader('wallet'),apiprev.Getapiprev, walletc
 router.get('/recharges/:rechargeId/coupons',setCustomHeader('wallet'),apiprev.Getapiprev, walletclass.getCouponsByRecharge);
 router.get('/downloadcoupon/:downloadid',setCustomHeader('wallet'),apiprev.Getapiprev, walletclass.downloadcoupon);
 router.get('/getrecharges',setCustomHeader('wallet'),apiprev.Getapiprev, walletclass.getrecharges);
+router.post('/addwalletmoney',setCustomHeader('wallet'),WritePrivilage, walletclass.addwalletmoney);
 
 
 router.get('/addwalletrecharge', setCustomHeader('wallet'),authMiddleware, function(req, res, next) {

@@ -1,14 +1,11 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="#" class="btn btn-danger ml-3" type="button" aria-label="Add New">Bulk Pay Credit</a>
+<!-- <a href="#" class="btn btn-danger ml-3" type="button" aria-label="Add New">Bulk Pay Credit</a> -->
 </div>
 </div>
-
-
 </div>
 </div>
 </div>
@@ -21,252 +18,323 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 10px;
     }
-</style>
-
+  </style>
 
   <div class="row">
-
-
-    
     <div class="col-12">
-
-    <div class="filter-box">
-    <h5 class="mb-3">Filter By</h5>
-    <div class="row g-3">
-        <!-- ID -->
-        <div class="col-md-3">
+      <div class="filter-box">
+        <h5 class="mb-3">Filter By</h5>
+        <div class="row g-3">
+          <!-- Salesman ID -->
+          <div class="col-md-3">
             <label class="form-label">Sales Man I.D</label>
-            <input type="text" class="form-control" placeholder="Search ID Here">
-        </div>
-        
-        <div class="col-md-3">
+ <select name="salesmanFilter" id="salesmanFilter" class="form-control salesman-js">
+     
+        </select>             </div>
+          
+          <!-- Date Range -->
+          <div class="col-md-3">
             <label class="form-label">From</label>
-            <input type="date" class="form-control">
-        </div>
-        <!-- Date -->
-        <div class="col-md-3">
-            <label class="form-label">To</label>
-            <input type="date" class="form-control">
-        </div>
-    </div>
-</div>
-  
-
-    </div>
-    <div class="col-12">
-    <div class="row">    
-      <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <!-- Card body -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-orange  text-white rounded-circle shadow">
-                      <i class="ni ni-delivery-fast" ></i>
-                    </div>
-                  </div>
-                </div>
-              
-              </div>
-            </div>
+            <input type="date" id="fromDateFilter" class="form-control">
           </div>
+          <div class="col-md-3">
+            <label class="form-label">To</label>
+            <input type="date" id="toDateFilter" class="form-control">
+          </div>
+          
+          <!-- Payment Mode -->
+          <div class="col-md-3">
+            <label class="form-label">Mode of payment</label>
+            <select id="paymentModeFilter" class="form-control">
+              <option value="ALL">ALL</option>
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+              <option value="Wallet">Wallet</option>
+            </select>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="col-md-3 mb-1 d-flex align-items-end">
+            <button id="applyFilter" class="btn btn-sm filter-btn mr-2">
+              <i class="fas fa-filter mr-1"></i> Apply
+            </button>
+            <button id="resetFilter" class="btn btn-outline-secondary">
+              <i class="fas fa-sync-alt mr-1"></i> Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Dashboard Cards -->
+    <div class="col-12">
+      <div class="row">    
         <div class="col-xl-3 col-md-6">
           <div class="card card-stats">
-            <!-- Card body -->
             <div class="card-body">
               <div class="row">
                 <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Total Value</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Payments</h5>
+                  <span class="h2 font-weight-bold mb-0" id="totalpayments">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                    <i class="ni ni-delivery-fast"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Wallet Recharge</h5>
+                  <span class="h2 font-weight-bold mb-0" id="totalwalletrecharge">0</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                    <i class="fa-solid fa-credit-card"></i>
-                                  </div>
+                    <i class="fa-solid fa-wallet"></i>
+                  </div>
                 </div>
               </div>
-            
             </div>
           </div>
         </div>
+        
         <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <!-- Card body -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Today Paid</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
-                        <i class="fa-solid fa-money-bill"></i>
-                                        </div>
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Cash Payment</h5>
+                  <span class="h2 font-weight-bold mb-0" id="totalcashpayment">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
+                    <i class="fa-solid fa-money-bill"></i>
                   </div>
                 </div>
-              
               </div>
             </div>
           </div>
+        </div>
        
-          <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <!-- Card body -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Mobile Number</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                        <i class="fa-solid fa-phone"></i>
-                                        </div>
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Card Payment</h5>
+                  <span class="h2 font-weight-bold mb-0" id="totalcardpayment">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                    <i class="fa-solid fa-credit-card"></i>
                   </div>
                 </div>
-              
               </div>
             </div>
           </div>
+        </div>
+      </div>
     </div>
-</div>
-<div class="col-12">
-  <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
-   <li class="nav-item">
-      <a class="nav-link " id="salesman-tab"  href="/customerassethistory/<%=id%>">
-        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
-        <i class="fa-solid fa-list"></i>
-        Order History
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" id="salesman-tab"  href="/creditpayment/<%=id%>">
-        <i class="fa-solid fa-money-bill-wave"></i>
-                Payments History
-      </a>
-    </li>
     
-    </ul>
+    <!-- Tabs -->
+    <div class="col-12">
+      <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link" id="salesman-tab" href="/customerassethistory/<%=id%>">
+            <i class="fa-solid fa-boxes-stacked"></i> Asset History
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="salesman-tab" href="/customerorderhistory/<%=id%>">
+            <i class="fa-solid fa-list"></i> Order History
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" id="salesman-tab" href="/creditpayment/<%=id%>">
+            <i class="fa-solid fa-money-bill-wave"></i> Payments History
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="salesman-tab" href="/walletrecharges/<%=id%>">
+            <i class="fa-solid fa-wallet"></i> Wallet Recharge
+          </a>
+        </li>
+      </ul>
     </div>
+    
+    <!-- Main Table -->
     <div class="col">
       <div class="card">
-        <!-- Card header -->
         <div class="card-header border-0 mb-2">
-          <h3 class="mb-0 text-white">Payment History of f <%=id%></h3>
+          <h3 class="mb-0 text-white">Payment History of <%=id%></h3>
         </div>
-        <!-- Light table -->
         <div class="table-responsive">
           <table id="paymenttable" class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
                 <th scope="col" class="sort" data-sort="orderId">Order ID</th>
+                <th scope="col" class="sort" data-sort="createdAt">Date</th>
                 <th scope="col" class="sort" data-sort="salesmanid">Salesman</th>
-                <th scope="col" class="sort" data-sort="totalCreditAmountDue">Total Credit</th>
-                <th scope="col" class="sort" data-sort="creditAmountPaid">Credit Received</th>
-                <th scope="col" class="sort" data-sort="creditBalance">Credit Balance</th>
-                <th scope="col" class="sort" data-sort="createdAt">Last Received</th>
+                <th scope="col" class="sort" data-sort="modeOfPayment">Mode of Payment</th>
+                <th scope="col" class="sort" data-sort="creditAmountPaid">Payment Received</th>
+                <th scope="col" class="sort" data-sort="totalCreditAmountDue">Balance Payment</th>
               </tr>
             </thead>
-            
-            <tbody class="list">
-              <tr>
-                
-              </tr>
-            </tbody>
+            <tbody class="list"></tbody>
           </table>
         </div>
-        <!-- Card footer -->
-      
       </div>
     </div>
   </div>
-    <!-- Footer -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-    
+</div>
 
-    <script>
-      $(document).ready(function () {
-        var datatable = $("#paymenttable").DataTable({
-          responsive: true,
-          processing: true,
-          serverSide: true,
-          ajax: {
-            url: "/getcustomerpayments", // Updated route to payment API
-            dataSrc: "docs",
-            data: function (d) {
-              d.customer = '<%= id %>'; // Pass customerId to server
-              return d;
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+  <script>
+    $(document).ready(function () {
+          $('.salesman-js').select2({
+            placeholder: "Select Salesman",
+
+  ajax: {
+    url: '/salesmanids', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    data: function (params) {
+      return {
+        search: params.term, // Select2 search term
+        customKey: 'utilities' // Custom query parameter
+      };
+    },
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.id, text: item.id }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+    let datatable;
+    
+    function initializeDataTable(filters = {}) {
+      if ($.fn.DataTable.isDataTable("#paymenttable")) {
+        datatable.destroy();
+      }
+      
+      datatable = $("#paymenttable").DataTable({
+        responsive: true,
+        processing: true,
+        serverSide: true,
+        ajax: {
+          url: "/getcustomerpayments",
+          dataSrc: function(json) {
+            // Update dashboard cards with stats from server
+            updateDashboardCards(json.stats);
+            return json.docs;
+          },
+          data: function(d) {
+            d.customer = '<%= id %>';
+            d.salesmanid = $('#salesmanFilter').val();
+            d.fromDate = $('#fromDateFilter').val();
+            d.toDate = $('#toDateFilter').val();
+            d.modeofpayment = $('#paymentModeFilter').val();
+            return d;
+          }
+        },
+        language: {
+          paginate: {
+            next: '<i class="fas fa-chevron-right"></i>',
+            previous: '<i class="fas fa-chevron-left"></i>',
+          },
+          search: "_INPUT_",
+          searchPlaceholder: "Search payments...",
+          lengthMenu: "Show _MENU_ records",
+          info: "Showing _START_ to _END_ of _TOTAL_ records",
+        },
+        columns: [
+          {
+            data: "orderId",
+            title: "Order ID",
+            render: function(data) {
+              return data || "Wallet Recharge";
             }
           },
-          language: {
-            paginate: {
-              next: '<i class="fas fa-chevron-right"></i>',
-              previous: '<i class="fas fa-chevron-left"></i>',
-            },
-            search: "_INPUT_",
-            searchPlaceholder: "Search payments...",
-            lengthMenu: "Show _MENU_ records",
-            info: "Showing _START_ to _END_ of _TOTAL_ records",
-          },
-          columns: [
-            {
-              data: "orderId",
-              title: "Order ID",
-              render: function (data) {
-                return data || "N/A";
-              }
-            },
-            {
-              data: "createdAt",
-              title: "Date",
-              render: function (data) {
-                return data ? new Date(data).toLocaleDateString() : "N/A";
-              }
-            },
-            {
-              data: "salesmanid",
-              title: "Salesman",
-              render: function (data) {
-                return data || "N/A";
-              }
-            },
-            {
-              data: "modeOfPayment",
-              title: "Mode of Payment",
-              render: function (data) {
-                return data || "N/A";
-              }
-            },
-            {
-              data: "creditAmountPaid",
-              title: "Payment Received",
-              render: function (data) {
-                return data !== undefined ? `₹${data}` : "N/A";
-              }
-            },
-            {
-              data: "totalCreditAmountDue",
-              title: "Balance Payment",
-              render: function (data) {
-                return data !== undefined ? `₹${data}` : "N/A";
-              }
+          {
+            data: "createdAt",
+            title: "Date",
+            render: function(data) {
+              return data ? new Date(data).toLocaleDateString() : "N/A";
             }
-          ]
-        });
+          },
+          {
+            data: "salesmanid",
+            title: "Salesman",
+            render: function(data) {
+              return data || "N/A";
+            }
+          },
+          {
+            data: "modeOfPayment",
+            title: "Mode of Payment",
+            render: function(data) {
+              return data || "N/A";
+            }
+          },
+          {
+            data: "creditAmountPaid",
+            title: "Payment Received",
+            render: function(data) {
+              return data !== undefined ? `₹${data.toFixed(2)}` : "N/A";
+            }
+          },
+          {
+            data: "totalCreditAmountDue",
+            title: "Balance Payment",
+            render: function(data) {
+              return data !== undefined ? `₹${data.toFixed(2)}` : "N/A";
+            }
+          }
+        ]
       });
-    </script>
+    }
     
-<%- include('../includes/footer.ejs') -%>
+    function updateDashboardCards(stats) {
+      $('#totalpayments').text('₹' + (stats?.totalPayments?.toFixed(2) || '0.00'));
+      $('#totalwalletrecharge').text('₹' + (stats?.walletRecharge?.toFixed(2) || '0.00'));
+      $('#totalcashpayment').text('₹' + (stats?.cashPayment?.toFixed(2) || '0.00'));
+      $('#totalcardpayment').text('₹' + (stats?.cardPayment?.toFixed(2) || '0.00'));
+    }
+    
+    // Initialize the table
+    initializeDataTable();
+    
+    // Apply filter button click handler
+    $('#applyFilter').click(function() {
+      datatable.ajax.reload();
+    });
+    
+    // Reset filter button click handler
+    $('#resetFilter').click(function() {
+      $('#salesmanFilter').val('');
+      $('#fromDateFilter').val('');
+      $('#toDateFilter').val('');
+      $('#paymentModeFilter').val('ALL');
+      datatable.ajax.reload();
+    });
+  });
+</script>
 
+<%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

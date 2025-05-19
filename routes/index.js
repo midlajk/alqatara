@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const setCustomHeader = require('../middleware/customkeyadd');
-
+require("../model/database");
+const mongoose = require("mongoose");
+const Customer = mongoose.model("Customer");
 /* GET home page. */
 router.get('/dashboard', setCustomHeader('dashboard'),authMiddleware, function(req, res, next) {
   res.render('index', { title: 'Al Qattara',route:'Dashboard',sub :'Default' ,selectedCity: req.session.city || 'All' });
@@ -25,10 +27,40 @@ router.get('/orders/neworder', setCustomHeader('orders'),authMiddleware, functio
 router.get('/customers', setCustomHeader('customers'),authMiddleware, function(req, res, next) {
   res.render('customers/customers', { title: 'Al Qattara',route:'Customer',sub :'Manage Customer' });
 });
-router.get('/customers/newcustomer', setCustomHeader('customers'),authMiddleware, function(req, res, next) {
-  res.render('customers/newcustomer', { title: 'Al Qattara',route:'Customer',sub :'New Customer' });
+// router.get('/customers/newcustomer', setCustomHeader('customers'),authMiddleware, function(req, res, next) {
+//   res.render('customers/newcustomer', { title: 'Al Qattara',route:'Customer',sub :'New Customer' });
+// });
+// For new customer
+router.get('/customers/newcustomer', setCustomHeader('customers'), authMiddleware, function(req, res, next) {
+  res.render('customers/newcustomer', { 
+    title: 'Al Qattara',
+    route: 'Customer',
+    sub: 'New Customer',
+    customer: null, // Pass null for new customer
+    formAction: '/addCustomer',
+    formTitle: 'Add New Customer'
+  });
 });
 
+// For edit customer
+router.get('/customers/edit/:id', setCustomHeader('customers'), authMiddleware, async (req, res, next) => {
+  try {
+    const customer = await Customer.findById(req.params.id);
+    if (!customer) {
+      return next(createError(404, 'Customer not found'));
+    }
+    res.render('customers/newcustomer', { 
+      title: 'Al Qattara',
+      route: 'Customer',
+      sub: 'Edit Customer',
+      customer: customer,
+      formAction: `/customers/update/${customer._id}`,
+      formTitle: 'Edit Customer'
+    });
+  } catch (error) {
+    console.error('sdsd')
+  }
+});
 
 router.get('/zones', setCustomHeader('zones'),authMiddleware, function(req, res, next) {
   res.render('zones/zones', { title: 'Al Qattara',route:'Zones',sub :'Manage Zones' });

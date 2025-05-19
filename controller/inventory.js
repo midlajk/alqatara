@@ -93,7 +93,7 @@ exports.updatestockinventory = async (req, res) => {
 
 exports.addOrUpdateProduct = async (req, res) => {
     try {
-        const { productid, name, type, priority, description } = req.body;
+        const { productid, name, type, priority, description,isasset ,baseprice} = req.body;
 
         if (!productid) {
             return res.status(400).json({ error: 'Product ID is required' });
@@ -106,6 +106,8 @@ exports.addOrUpdateProduct = async (req, res) => {
                 type:type||'New',
                 priority,
                 description,
+                baseprice,
+                isasset,
                 updatedAt: Date.now()
             },
             { new: true, upsert: true, runValidators: true } // Creates if not exists

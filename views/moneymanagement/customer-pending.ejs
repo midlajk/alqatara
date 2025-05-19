@@ -19,8 +19,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Total Collection</h5>
-              <span class="h2 font-weight-bold mb-0" id="totalCollection">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Total Due</h5>
+              <span class="h2 font-weight-bold mb-0" id="totaldue">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
@@ -37,8 +37,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Customer Payments</h5>
-              <span class="h2 font-weight-bold mb-0" id="customerPayments">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Pending Orders</h5>
+              <span class="h2 font-weight-bold mb-0" id="pendingorders">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
@@ -55,8 +55,8 @@
         <div class="card-body">
           <div class="row">
             <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Salesman Payment</h5>
-              <span class="h2 font-weight-bold mb-0" id="salesmanPayments">0</span>
+              <h5 class="card-title text-uppercase text-muted mb-0">Customer Count</h5>
+              <span class="h2 font-weight-bold mb-0" id="numberofcustomers">0</span>
             </div>
             <div class="col-auto">
               <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
@@ -67,33 +67,17 @@
         </div>
       </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-      <div class="card card-stats">
-        <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title text-uppercase text-muted mb-0">Pending Collection</h5>
-              <span class="h2 font-weight-bold mb-0" id="pendingCollection">0</span>
-            </div>
-            <div class="col-auto">
-              <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                <i class="fa-solid fa-hourglass-half"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> 
+  
   </div>
 
   <!-- Action Buttons -->
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-12">
       <a href="/collectedpayments" class="btn btn-add-new bg-gradient-success float-right">
         <i class="ni ni-collection"></i> <span class="btn-inner--text">Collected Payments</span>
       </a>
     </div>
-  </div>
+  </div> -->
 
   <!-- Tabs Navigation -->
   <div class="row">
@@ -124,7 +108,7 @@
                   <h3 class="mb-0 text-white">Customer Credits</h3>
                 </div>
                 <div class="col text-right">
-                  <button class="btn btn-sm btn-primary" id="exportCustomer">Download</button>
+                  <!-- <button class="btn btn-sm btn-primary" id="exportCustomer">Download</button> -->
                 </div>
               </div>
             </div>
@@ -135,8 +119,12 @@
                   <tr>
                     <th>Customer ID</th>
                     <th>Name</th>
+                                        <th>Mobile</th>
+
                     <th>Total Due</th>
                     <th>Last Pending</th>
+                                        <th>Pending Orders</th>
+
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -304,18 +292,22 @@
       "columns": [
         { "data": "customer_id" },
         { "data": "name" },
+                { "data": "mobileNumber" },
+
         { "data": "total_due", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
-        { "data": "last_pending", render: $.fn.dataTable.render.number(',', '.', 2, '$') },
+        { "data": "last_pending" },
+             { "data": "order_count" },
+
         { 
           "data": null,
           "render": function(data, type, row) {
             return `
-              <button class="btn btn-sm btn-primary collect-customer-payment action-btn" 
+              <a  href="/customerorderhistory/${row.customer_id}" class="btn btn-sm btn-primary collect-customer-payment action-btn" 
                       data-id="${row.customer_id}" 
                       data-name="${row.name}"
                       data-due="${row.total_due}">
                 <i class="ni ni-money-coins mr-1"></i> Collect
-              </button>
+              </a>
             `;
           }
         }
@@ -332,22 +324,24 @@
       }
     });
     
-    // function loadSummaryData() {
-    //   $.ajax({
-    //     url: '/api/collection-summary',
-    //     type: 'GET',
-    //     success: function(response) {
-    //       $('#totalCollection').text('$' + response.total_collection.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-    //       $('#customerPayments').text('$' + response.customer_payments.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-    //       $('#salesmanPayments').text('$' + response.salesman_payments.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-    //       $('#pendingCollection').text('$' + response.pending_collection.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-    //     },
-    //     error: function(xhr) {
-    //     }
-    //   });
-    // }
+function loadCustomerSummaryData() {
+  $.ajax({
+    url: '/customer-credits-summary',
+    type: 'GET',
+    success: function(response) {
+      if (response.success) {
+        $('#totaldue').text('$' + response.data.total_due.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+        $('#pendingorders').text(response.data.pending_orders);
+        $('#numberofcustomers').text(response.data.number_of_customers + ' / ' + response.data.total_credit_customers);
+      }
+    },
+    error: function(xhr) {
+      console.error('Error loading customer summary data:', xhr.responseText);
+    }
+  });
+}
     
-    // loadSummaryData();
+  loadCustomerSummaryData();
     
     // Collection modal handler for salesmen (using event delegation for dynamic content)
 
@@ -385,7 +379,7 @@
         success: function(response) {
           $('#customerCollectionModal').modal('hide');
           customerTable.ajax.reload();
-          loadSummaryData();
+          loadCustomerSummaryData();
         },
         error: function(xhr) {
         }

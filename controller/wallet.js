@@ -7,6 +7,7 @@ const Recharge = mongoose.model('Recharge')
 const createError = require('http-errors');
 const { v4: uuidv4 } = require('uuid'); // For generating unique coupon IDs
 const Truck = mongoose.model('Truck')
+const Payment = mongoose.model("Payments"); 
 
 // Update your getrecharges function
 exports.getrecharges = async (req, res) => {
@@ -277,73 +278,81 @@ exports.downloadcoupon = async (req, res) => {
 };
 
 
-
 exports.addwalletmoney = async (req, res) => {
   try {
-    const { customerId, salesman, offer } = req.body;
+    const { customerId, salesman, offer, paymentmethod } = req.body;
     const coupon = await CouponSchema.findById(offer);
-    console.log(coupon)
     if (!coupon) {
       return res.status(404).json({ error: 'Coupon not found' });
     }
 
-    // Convert input values to numbers
-    const amount = parseFloat(coupon.amount||0);
-    const numCoupons = parseInt(coupon.paidcoupon||0, 10);
+    const amount = parseFloat(coupon.amount || 0);
+    const numCoupons = parseInt(coupon.paidcoupon || 0, 10);
     const numFreeCoupons = parseInt(coupon.freecopon || 0, 10);
 
-
-    // Validate inputs
     if (!customerId || isNaN(amount) || isNaN(numCoupons) || isNaN(numFreeCoupons)) {
-        return res.status(400).json({ message: 'Invalid input values' });
+      return res.status(400).json({ message: 'Invalid input values' });
     }
 
     // Generate paid coupons
     let coupons = [];
-    if (numCoupons > 0) {
-        const couponAmount = amount / numCoupons; // Calculate amount per paid coupon
-        for (let i = 0; i < numCoupons; i++) {
-            coupons.push({
-                couponid: 'P-'+uuidv4(), // Unique ID for each coupon
-                couponamt: couponAmount,
-                coupontype: 'PAID',
-                created: new Date(),
-                status: 'ACTIVE'
-            });
-        }
+    const couponAmount = numCoupons > 0 ? amount / numCoupons : 0;
+
+    for (let i = 0; i < numCoupons; i++) {
+      coupons.push({
+        couponid: 'P-' + uuidv4(),
+        couponamt: couponAmount,
+        coupontype: 'PAID',
+        created: new Date(),
+        status: 'ACTIVE'
+      });
     }
 
-    // Generate free coupons with amount 0
-    if (numFreeCoupons > 0) {
-        for (let i = 0; i < numFreeCoupons; i++) {
-            coupons.push({
-                couponid: 'F-'+uuidv4(),
-                couponamt: 0,
-                coupontype: 'FREE',
-                created: new Date(),
-                status: 'ACTIVE'
-            });
-        }
+    // Generate free coupons
+    for (let i = 0; i < numFreeCoupons; i++) {
+      coupons.push({
+        couponid: 'F-' + uuidv4(),
+        couponamt: 0,
+        coupontype: 'FREE',
+        created: new Date(),
+        status: 'ACTIVE'
+      });
     }
-    // Create a new recharge entry
+
+    // Save recharge
     const recharge = new Recharge({
-        amount,
-        customerId,
-        salesmanId: salesman,
-        paidcoupons:numCoupons,
-        freecoupons:numFreeCoupons,
-        coupons,
+      item: coupon.items,
+      routes: coupon.routes.length > 0 ? coupon.routes : ['ALL'],
+      amount,
+      customerId,
+      salesmanId: salesman,
+      paidcoupons: numCoupons,
+      freecoupons: numFreeCoupons,
+      coupons,
     });
 
-    // Save to database
     await recharge.save();
 
-    res.redirect('/wallet')
-} catch (error) {
+    // Create and save payment entry
+    const payment = new Payment({
+      orderId: Date.now(), // or use a sequence if required
+      paymentfor: 'Wallet Recharge',
+      modeOfPayment: paymentmethod,
+      creditAmountPaid: amount,
+      totalCreditAmountDue: 0, // Assuming full payment made
+      salesmanid: salesman,
+      customerid: customerId
+    });
+
+    await payment.save();
+
+    res.redirect('/wallet');
+  } catch (error) {
     console.error('Error processing wallet recharge:', error);
     res.status(500).json({ message: 'Internal Server Error' });
-}
+  }
 };
+
 
 
 // In your server routes

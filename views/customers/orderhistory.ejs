@@ -1,14 +1,11 @@
-
 <%- include('../includes/head.ejs') -%>
 <%- include('../includes/navigation.ejs') -%>
 
 <%- include('../includes/header.ejs') -%>
 <%- include('../components/searchbartr.ejs') -%>
-<a href="#" class="btn btn-danger ml-3" type="button" aria-label="Add New">Bulk Pay Credit</a>
+
 </div>
 </div>
-
-
 </div>
 </div>
 </div>
@@ -21,157 +18,215 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         margin-bottom: 10px;
     }
+    .product-img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
 </style>
 
+  <!-- Modal for Order Products -->
+  <div class="modal fade" id="orderProductsModal" tabindex="-1" role="dialog" aria-labelledby="orderProductsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderProductsModalLabel">Order Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush" id="productsTable">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody">
+                <!-- Products will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+                    <a  class="btn btn-success" id="vieworderbutton">View Order</a>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
-
-
-    
     <div class="col-12">
-
-    <div class="filter-box">
-    <h5 class="mb-3">Filter By</h5>
-    <div class="row g-3">
-        <!-- ID -->
-        <div class="col-md-3">
+      <div class="filter-box">
+        <h5 class="mb-3">Filter By</h5>
+        <div class="row g-3">
+          <!-- Salesman ID -->
+          <div class="col-md-3">
             <label class="form-label">Sales Man I.D</label>
-            <input type="text" class="form-control" placeholder="Search ID Here">
-        </div>
-        
-        <div class="col-md-3">
+            <select name="salesmanFilter" id="salesmanFilter" class="form-control salesman-js">
+     
+        </select>   
+          </div>
+          
+          <!-- Date Range -->
+          <div class="col-md-3">
             <label class="form-label">From</label>
-            <input type="date" class="form-control">
-        </div>
-        <!-- Date -->
-        <div class="col-md-3">
+            <input type="date" id="fromDateFilter" class="form-control">
+          </div>
+          <div class="col-md-3">
             <label class="form-label">To</label>
-            <input type="date" class="form-control">
+            <input type="date" id="toDateFilter" class="form-control">
+          </div>
+          
+          <!-- Pending Payment -->
+          <div class="col-md-3">
+            <label class="form-label">Pending Payment</label>
+            <select id="pendingPaymentFilter" class="form-control">
+              <option value="">All</option>
+              <option value="YES">YES</option>
+              <option value="NO">NO</option>
+            </select>
+          </div>
+          
+          <!-- Status -->
+          <div class="col-md-3">
+            <label class="form-label">Status</label>
+            <select id="statusFilter" class="form-control">
+              <option value="">All</option>
+              <option value="PENDING">PENDING</option>
+              <option value="DELIVERED">DELIVERED</option>
+              <option value="CANCELLED">CANCELLED</option>
+            </select>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="col-md-3 mb-1 d-flex align-items-end">
+            <button id="applyFilter" class="btn btn-sm filter-btn mr-2">
+              <i class="fas fa-filter mr-1"></i> Apply
+            </button>
+            <button id="resetFilter" class="btn btn-outline-secondary">
+              <i class="fas fa-sync-alt mr-1"></i> Reset
+            </button>
+          </div>
         </div>
-
-        <div class="col-md-3 mb-1 d-flex align-items-end">
-          <button class="btn btn-sm filter-btn mr-2">
-            <i class="fas fa-filter mr-1"></i> Apply
-          </button>
-          <button class="btn btn-outline-secondary">
-            <i class="fas fa-sync-alt mr-1"></i> Reset
-          </button>
-        </div>
+      </div>
     </div>
-</div>
-  
-
-    </div>
+    
+    <!-- Dashboard Cards -->
     <div class="col-12">
-    <div class="row">    
-      <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <!-- Card body -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-orange  text-white rounded-circle shadow">
-                      <i class="ni ni-delivery-fast" ></i>
-                    </div>
+      <div class="row">    
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
+                  <span class="h2 font-weight-bold mb-0" id="totalOrdersCard">0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                    <i class="ni ni-delivery-fast"></i>
                   </div>
                 </div>
-              
               </div>
             </div>
           </div>
+        </div>
+        
         <div class="col-xl-3 col-md-6">
           <div class="card card-stats">
-            <!-- Card body -->
             <div class="card-body">
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Total Value</h5>
-                  <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
+                  <span class="h2 font-weight-bold mb-0" id="totalValueCard">₹0</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
                     <i class="fa-solid fa-credit-card"></i>
-                                  </div>
+                  </div>
                 </div>
               </div>
-            
             </div>
           </div>
         </div>
+        
         <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <!-- Card body -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Today Paid</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
-                        <i class="fa-solid fa-money-bill"></i>
-                                        </div>
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Total Paid</h5>
+                  <span class="h2 font-weight-bold mb-0" id="totalPaidCard">₹0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
+                    <i class="fa-solid fa-money-bill"></i>
                   </div>
                 </div>
-              
               </div>
             </div>
           </div>
+        </div>
        
-          <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <!-- Card body -->
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Mobile Number</h5>
-                    <span class="h2 font-weight-bold mb-0" id="deliveries">0</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                        <i class="fa-solid fa-phone"></i>
-                                        </div>
+        <div class="col-xl-3 col-md-6">
+          <div class="card card-stats">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
+                  <span class="h2 font-weight-bold mb-0" id="pendingPaymentCard">₹0</span>
+                </div>
+                <div class="col-auto">
+                  <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                    <i class="fa-solid fa-phone"></i>
                   </div>
                 </div>
-              
               </div>
             </div>
           </div>
+        </div>
+      </div>
     </div>
-</div>
-<div class="col-12">
-  <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
-   <li class="nav-item">
-      <a class="nav-link " id="salesman-tab"  href="/customerassethistory/<%=id%>">
-        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
-        <i class="fa-solid fa-list"></i>
-        Order History
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" id="salesman-tab"  href="/creditpayment/<%=id%>">
-        <i class="fa-solid fa-money-bill-wave"></i>
-                Payments History
-      </a>
-    </li>
     
-    </ul>
+    <!-- Tabs -->
+    <div class="col-12">
+      <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link" id="salesman-tab" href="/customerassethistory/<%=id%>">
+            <i class="fa-solid fa-boxes-stacked"></i> Asset History
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" id="salesman-tab" href="/customerorderhistory/<%=id%>">
+            <i class="fa-solid fa-list"></i> Order History
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="salesman-tab" href="/creditpayment/<%=id%>">
+            <i class="fa-solid fa-money-bill-wave"></i> Payments History
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="salesman-tab" href="/walletrecharges/<%=id%>">
+            <i class="fa-solid fa-wallet"></i> Wallet Recharge
+          </a>
+        </li>
+      </ul>
     </div>
+    
+    <!-- Main Table -->
     <div class="col">
       <div class="card">
-        <!-- Card header -->
         <div class="card-header border-0 mb-2">
           <h3 class="mb-0 text-white">Order History of <%=id%></h3>
         </div>
-        <!-- Light table -->
         <div class="table-responsive">
           <table id="ordertable" class="table align-items-center table-flush">
             <thead>
@@ -186,110 +241,204 @@
                 <th scope="col" class="sort" data-sort="action">Actions</th>
               </tr>
             </thead>
-         
           </table>
         </div>
-        <!-- Card footer -->
-      
       </div>
     </div>
   </div>
-    <!-- Footer -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
-    
-    <script>
-      $(document).ready(function () {
-        var datatable = $("#ordertable").DataTable({
-          responsive: true,
-          processing: true,
-          serverSide: true,
-          ajax: {
-            url: "/getcustomerorders", // Updated route
-            dataSrc: "docs",
-            data: function (d) {
-              d.customer = '<%= id %>'; // Pass customerId to server
-              return d;
+  
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+  <script>
+    $(document).ready(function () {
+          $('.salesman-js').select2({
+            placeholder: "Select Salesman",
+
+  ajax: {
+    url: '/salesmanids', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    data: function (params) {
+      return {
+        search: params.term, // Select2 search term
+        customKey: 'utilities' // Custom query parameter
+      };
+    },
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.id, text: item.id }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+      // Initialize DataTable
+      var datatable = $("#ordertable").DataTable({
+        responsive: true,
+        processing: true,
+        serverSide: true,
+        ajax: {
+          url: "/getcustomerorders",
+          dataSrc: "docs",
+          data: function (d) {
+            d.customer = '<%= id %>';
+            d.salesmanId = $('#salesmanFilter').val();
+            d.fromDate = $('#fromDateFilter').val();
+            d.toDate = $('#toDateFilter').val();
+            d.pendingPayment = $('#pendingPaymentFilter').val();
+            d.status = $('#statusFilter').val();
+            return d;
+          }
+        },
+        language: {
+          paginate: {
+            next: '<i class="fas fa-chevron-right"></i>',
+            previous: '<i class="fas fa-chevron-left"></i>',
+          },
+          search: "_INPUT_",
+          searchPlaceholder: "Search orders...",
+          lengthMenu: "Show _MENU_ records",
+          info: "Showing _START_ to _END_ of _TOTAL_ records",
+        },
+        columns: [
+          {
+            data: "createdAt",
+            title: "Created At",
+            render: function (data) {
+              return data ? new Date(data).toLocaleDateString() : "N/A";
             }
           },
-          language: {
-            paginate: {
-              next: '<i class="fas fa-chevron-right"></i>',
-              previous: '<i class="fas fa-chevron-left"></i>',
-            },
-            search: "_INPUT_",
-            searchPlaceholder: "Search orders...",
-            lengthMenu: "Show _MENU_ records",
-            info: "Showing _START_ to _END_ of _TOTAL_ records",
-          },
-          columns: [
-            {
-              data: "createdAt",
-              title: "Created At",
-              render: function (data) {
-                return data ? new Date(data).toLocaleDateString() : "N/A";
-              }
-            },
-        
-            {
-              data: "truckId",
-              title: "Truck ID",
-              render: function (data) {
-                return data || "N/A";
-              }
-            },
-            {
-              data: "salesmanId",
-              title: "Salesman ID",
-              render: function (data) {
-                return data || "N/A";
-              }
-            },
-            {
-              data: "status",
-              title: "Status",
-              render: function (data) {
-                return data || "PENDING";
-              }
-            },
-            {
-              data: "totalPrice",
-              title: "Order Value",
-              render: function (data) {
-                return data !== undefined ? `₹${data}` : "N/A";
-              }
-            },
-            {
-              data: "totalPrice",
-              title: "Payment Received",
-              render: function (data) {
-                return data !== undefined ? `₹${data}` : "N/A";
-              }
-            },
-            {
-              data: "totalPrice",
-              title: "Balance Payment",
-              render: function (data) {
-                return data !== undefined ? `₹${data}` : "N/A";
-              }
-            },
-            {
-              data: null,
-              title: "Actions",
-              render: function (data, type, row) {
-                return `
-                  <button class="btn btn-info btn-sm" data-id="${row._id}">View</button>
-                `;
-              }
+          {
+            data: "truckId",
+            title: "Truck ID",
+            render: function (data) {
+              return data || "N/A";
             }
-          ]
-        });
+          },
+          {
+            data: "salesmanId",
+            title: "Salesman ID",
+            render: function (data) {
+              return data || "N/A";
+            }
+          },
+          {
+            data: "status",
+            title: "Status",
+            render: function (data) {
+              let badgeClass = 'badge-warning';
+              if (data === 'DELIVERED') badgeClass = 'badge-success';
+              if (data === 'CANCELLED') badgeClass = 'badge-danger';
+              return `<span class="badge ${badgeClass}">${data || "PENDING"}</span>`;
+            }
+          },
+          {
+            data: "totalPrice",
+            title: "Order Value",
+            render: function (data) {
+              return data !== undefined ? `₹${data.toFixed(2)}` : "₹0.00";
+            }
+          },
+          {
+            data: "creditAmountPaid",
+            title: "Payment Received",
+            render: function (data) {
+              return data !== undefined ? `₹${data.toFixed(2)}` : "₹0.00";
+            }
+          },
+          {
+            data: null,
+            title: "Balance Payment",
+            render: function (data) {
+              const balance = (data.totalPrice || 0) - (data.creditAmountPaid || 0);
+              return `₹${balance.toFixed(2)}`;
+            }
+          },
+          {
+            data: null,
+            title: "Actions",
+            render: function (data, type, row) {
+              return `
+                <button class="btn btn-info btn-sm view-order" data-id="${row._id}" data-idb="${row.id}">
+                  <i class="fas fa-eye"></i> View
+                </button>
+              `;
+            }
+          }
+        ],
+        drawCallback: function(settings) {
+          // Update dashboard cards when data is loaded
+          if (settings.json && settings.json.summary) {
+            const summary = settings.json.summary;
+            $('#totalOrdersCard').text(summary.totalOrders);
+            $('#totalValueCard').text(`₹${summary.totalValue.toFixed(2)}`);
+            $('#totalPaidCard').text(`₹${summary.totalPaid.toFixed(2)}`);
+            $('#pendingPaymentCard').text(`₹${summary.pendingPayment.toFixed(2)}`);
+          }
+        }
       });
-    </script>
-    
+
+      // Apply filter button
+      $('#applyFilter').click(function() {
+        datatable.ajax.reload();
+      });
+
+      // Reset filter button
+      $('#resetFilter').click(function() {
+        $('#salesmanFilter').val('');
+        $('#fromDateFilter').val('');
+        $('#toDateFilter').val('');
+        $('#pendingPaymentFilter').val('');
+        $('#statusFilter').val('');
+        datatable.ajax.reload();
+      });
+
+      // View order details
+      $(document).on('click', '.view-order', function() {
+        const orderId = $(this).data('id');
+                const orderIdb = $(this).data('idb');
+
+        $('#vieworderbutton').attr('href',`/editorder/${orderIdb}`)
+        
+        // Find the order in the DataTable data
+        const order = datatable.rows().data().toArray().find(o => o._id === orderId);
+        
+        if (order) {
+          // Populate the modal with order products
+          const productsTableBody = $('#productsTableBody');
+          productsTableBody.empty();
+          
+          if (order.order && order.order.length > 0) {
+            order.order.forEach(product => {
+              productsTableBody.append(`
+                <tr>
+                
+                  <td>${product.productname || 'N/A'}</td>
+                  <td>${product.quantity || 0}</td>
+                  <td>₹${product.price || '0.00'}</td>
+                  <td>₹${(product.quantity * (parseFloat(product.price) || 0)).toFixed(2)}</td>
+                </tr>
+              `);
+            });
+          } else {
+            productsTableBody.append('<tr><td colspan="5" class="text-center">No products found in this order</td></tr>');
+          }
+          
+          // Set modal title with order ID and date
+          $('#orderProductsModalLabel').html(`Order Details - ${order._id} <small>(${new Date(order.createdAt).toLocaleDateString()})</small>`);
+          
+          // Show the modal
+          $('#orderProductsModal').modal('show');
+        }
+      });
+    });
+  </script>
 
 <%- include('../includes/footer.ejs') -%>
-
 <%- include('../includes/end.ejs') -%>

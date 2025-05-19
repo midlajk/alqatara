@@ -238,6 +238,7 @@
     background: #fff;
     height: 100%;
     border-radius: 5px;
+    position: relative;
   }
   
   .card-counter i {
@@ -262,8 +263,48 @@
     display: block;
     font-size: 18px;
   }
+  
+  /* New styles for vertical scrolling */
+  .summary-cards-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+  }
+  
+  .summary-card {
+    min-width: 250px;
+    flex: 0 0 auto;
+  }
+  
+  /* Payment method cards styling */
+  .payment-method-card {
+    border-left: 4px solid;
+  }
+  
+  .payment-method-card.cash {
+    border-left-color: #28a745;
+  }
+  
+  .payment-method-card.card {
+    border-left-color: #17a2b8;
+  }
+  
+  .payment-method-card.wallet {
+    border-left-color: #007bff;
+  }
+  
+  .payment-method-card.coupon {
+    border-left-color: #6f42c1;
+  }
+  
+  .payment-method-card.pending {
+    border-left-color: #ffc107;
+  }
+  
+  .payment-method-card.cash-in-hand {
+    border-left-color: #fd7e14;
+  }
 </style>
-<!-- <%- include('../components/datefilter.ejs') -%> -->
 
 </div>
 </div>
@@ -306,115 +347,199 @@
           <div class="col-12">
             <h3 class="mb-3">Sales Summary</h3>
           </div>
-          <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Total Sales</h5>
-                    <span class="h2 font-weight-bold mb-0">$2,350.75</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
-                      <i class="fas fa-chart-line"></i>
+          
+          <div class="summary-cards-container">
+            <!-- Total Sales Card -->
+            <div class="summary-card">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Total Sales</h5>
+                      <span class="h2 font-weight-bold mb-0">$2,350.75</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-primary text-white rounded-circle shadow">
+                        <i class="fas fa-chart-line"></i>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 8.5%</span>
-                  <span class="text-nowrap">From previous period</span>
-                </p>
               </div>
             </div>
-          </div>
-          <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Total Quantity</h5>
-                    <span class="h2 font-weight-bold mb-0">145</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                      <i class="fas fa-boxes"></i>
+            
+            <!-- Total Quantity Card -->
+           
+            
+            <!-- Collection Card -->
+            <div class="summary-card">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Collection</h5>
+                      <span class="h2 font-weight-bold mb-0">$1,820.35</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                        <i class="ni ni-money-coins"></i>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 12.5%</span>
-                  <span class="text-nowrap">From previous period</span>
-                </p>
               </div>
             </div>
-          </div>
-          <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Customers Serviced</h5>
-                    <span class="h2 font-weight-bold mb-0">58</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                      <i class="fas fa-users"></i>
+            
+            <!-- Pending Payments Card -->
+            <div class="summary-card">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Pending Payments</h5>
+                      <span class="h2 font-weight-bold mb-0">$530.40</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-warning text-white rounded-circle shadow">
+                        <i class="fas fa-clock"></i>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-danger mr-2"><i class="fa fa-arrow-down"></i> 3.2%</span>
-                  <span class="text-nowrap">From previous period</span>
-                </p>
               </div>
             </div>
-          </div>
-          <div class="col-xl-3 col-md-6">
-            <div class="card card-stats">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">Collection</h5>
-                    <span class="h2 font-weight-bold mb-0">$1,820.35</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                      <i class="ni ni-money-coins"></i>
+            
+            <!-- Cash in Hand Card -->
+            <div class="summary-card">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Cash in Hand</h5>
+                      <span class="h2 font-weight-bold mb-0">$420.00</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-danger text-white rounded-circle shadow">
+                        <i class="fas fa-hand-holding-usd"></i>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 5.7%</span>
-                  <span class="text-nowrap">From previous period</span>
-                </p>
+              </div>
+            </div> 
+            <div class="summary-card">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Total Quantity</h5>
+                      <span class="h2 font-weight-bold mb-0">145</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                        <i class="fas fa-boxes"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Customers Serviced Card -->
+            <div class="summary-card">
+              <div class="card card-stats">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Customers Serviced</h5>
+                      <span class="h2 font-weight-bold mb-0">58</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+                        <i class="fas fa-users"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+          
           <div class="col-12">
             <h3 class="mb-3">Payment Methods</h3>
           </div>
-          <div class="col-md-3">
-            <div class="card-counter primary">
-              <i class="fas fa-money-bill-wave text-success"></i>
-              <span class="count-numbers">$850.50</span>
-              <span class="count-name">Cash Sales</span>
+          
+          <div class="row">
+            <!-- Cash Sales Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+              <div class="card payment-method-card cash">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title text-muted mb-1">Cash Sales</h5>
+                      <h2 class="mb-0">$850.50</h2>
+                    </div>
+                    <div class="icon-shape bg-success text-white rounded-circle p-3">
+                      <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card-counter info">
-              <i class="fas fa-credit-card text-info"></i>
-              <span class="count-numbers">$560.25</span>
-              <span class="count-name">Card Sales</span>
+            
+            <!-- Card Sales Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+              <div class="card payment-method-card card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title text-muted mb-1">Card Sales</h5>
+                      <h2 class="mb-0">$560.25</h2>
+                    </div>
+                    <div class="icon-shape bg-info text-white rounded-circle p-3">
+                      <i class="fas fa-credit-card"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card-counter success">
-              <i class="fas fa-wallet text-primary"></i>
-              <span class="count-numbers">$410.00</span>
-              <span class="count-name">Wallet Sales</span>
+            
+            <!-- Wallet Sales Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+              <div class="card payment-method-card wallet">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title text-muted mb-1">Wallet Sales</h5>
+                      <h2 class="mb-0">$410.00</h2>
+                    </div>
+                    <div class="icon-shape bg-primary text-white rounded-circle p-3">
+                      <i class="fas fa-wallet"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Coupon Redeems Card -->
+            <div class="col-md-6 col-lg-3 mb-4">
+              <div class="card payment-method-card coupon">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title text-muted mb-1">Coupon Redeems</h5>
+                      <h2 class="mb-0">$120.00</h2>
+                    </div>
+                    <div class="icon-shape bg-purple text-white rounded-circle p-3">
+                      <i class="fas fa-ticket-alt"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        
         
         <!-- Payment Method Summary -->
  
@@ -529,7 +654,7 @@
         </div>
         
         <!-- Top Selling Products Chart -->
-        <div class="row mt-4">
+        <!-- <div class="row mt-4">
           <div class="col-5">
             <div class="card" style="width: 100%;">
               <div class="card-header">
@@ -605,7 +730,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
         
         <!-- Recent Transactions -->
       

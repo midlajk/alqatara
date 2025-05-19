@@ -136,7 +136,19 @@ include('../includes/navigation.ejs') -%>
 
             </select>
           </div>
+          <div class="col-md-3 mb-1">
+            <label class="form-label small font-weight-bold"
+              >Language</label
+            >
+            <select class="form-control" id="language">
+              <option value="" disabled selected hidden>Select Language</option>
 
+              <option value="English">English</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Hindi">Hindi</option>
+
+            </select>
+          </div>
           <!-- Route -->
  
 
@@ -159,8 +171,7 @@ include('../includes/navigation.ejs') -%>
               <!-- <option value="Cancelled">Cancelled</option> -->
             </select>
           </div>
-          <div class="col-md-3 mb-1">
-            </div>
+        
             <div class="col-md-3 mb-1">
               <label class="form-label small font-weight-bold">Company</label>
               <select class="form-control" id="iscompany">
@@ -315,9 +326,9 @@ include('../includes/navigation.ejs') -%>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
                     <i class="fas fa-times mr-2"></i>Close
                 </button>
-                <button class="btn btn-primary mr-2">
+                <a class="btn btn-primary mr-2" href="" id="editcustomerbutton">
                     <i class="fas fa-edit mr-2"></i>Edit Customer
-                </button>
+                </a>
                 <button class="btn btn-danger delete-btn" id="deletebutton">
                     <i class="fas fa-trash-alt mr-2"></i>Delete Customer
                 </button>
@@ -489,6 +500,8 @@ include('../includes/navigation.ejs') -%>
           d.orderStatus = $('#orderStatus').val();
           d.fromDate = $('#fromDate').val();
           d.toDate = $('#toDate').val();
+          d.language = $('#language').val();
+
           return d;
         }
         },
@@ -585,9 +598,9 @@ include('../includes/navigation.ejs') -%>
     });
       $("#customertable tbody").on("click", ".btn-view", function () {
   var customerData = $(this).data("data");
-  console.log(customerData)
   var customerId = $(this).data("id");
   $('#deletebutton').data("id", customerId);
+$('#editcustomerbutton').attr('href', `/customers/edit/${customerData._id}`);
 
   // Format dates
   const formatDate = (dateString) => {

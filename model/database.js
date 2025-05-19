@@ -147,6 +147,7 @@ const payments = new mongoose.Schema({
   orderId: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  paymentfor: { type: String, required: true, default: 'order' }, // <--- default is 'order'
   modeOfPayment: { type: String, required: true },
   creditAmountPaid: { type: Number, required: true },
   totalCreditAmountDue: { type: Number, required: true },
@@ -427,6 +428,8 @@ const productSchema = new mongoose.Schema({
   priority: { type: String },
   baseprice: { type: Number },
   description: { type: String },
+  isasset: { type: Boolean },
+
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   stock: [
@@ -495,6 +498,14 @@ const commissionSchema = new mongoose.Schema({
 });
 // const StockAddition = mongoose.model('StockAddition', stockAdditionSchema);
 
+const cashier = new mongoose.Schema({
+  salesman_id: { type: String},
+  updatedAt: { type: Date, default: Date.now },
+  payment_method: { type: String,  },
+  notes: { type: String },
+  amount: { type: Number, required: true },
+  collectionfrom:{ type: String },
+});
 
 
 // const PrevilageClass = mongoose.model('PrevilageClass', PrevilageClassSchema);
@@ -521,7 +532,8 @@ const commissionSchema = new mongoose.Schema({
     Stockdelivery:mongoose.model('Stockdelivery', stockdelivery),
     // StockAddition:mongoose.model('StockAddition', stockAdditionSchema),
     CouponSchema:mongoose.model('CouponSchema',couponSchema),
-    CommissionSchema:mongoose.model('CommissionSchema',commissionSchema)
+    CommissionSchema:mongoose.model('CommissionSchema',commissionSchema),
+    Cashier:mongoose.model('Cashier',cashier)
 
   };
   

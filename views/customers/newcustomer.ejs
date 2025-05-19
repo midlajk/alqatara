@@ -5,8 +5,6 @@
 <%- include('../components/searchbartr.ejs') -%>
 </div>
 </div>
-
-
 </div>
 </div>
 </div>
@@ -16,39 +14,47 @@
           <div class="card">
             <!-- Card header -->
             <div class="card-header">
-              <h3 class="mb-0  text-white">Customer Information</h3>
+              <h3 class="mb-0 text-white"><%= formTitle %></h3>
             </div>
             <!-- Card body -->
             <div class="card-body" id="cardb">
-              <form class="needs-validation" action="/addCustomer" method="POST" novalidate>
+              <form class="needs-validation" action="<%= formAction %>" method="POST" novalidate>
                 
                 <!-- Personal Information Section -->
                 <h4 class="mt-1 mb-3">Personal Information</h4>
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="name">Full Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name" required>
+                    <input type="text" class="form-control" id="name" name="name" 
+                      value="<%= customer ? customer.name : '' %>" 
+                      placeholder="Enter full name" required>
                     <div class="invalid-feedback">
                       Please provide a name.
                     </div>
                   </div>
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="mobileNumber">Mobile Number <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="Enter mobile number" required>
+                    <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" 
+                      value="<%= customer ? customer.mobileNumber : '' %>" 
+                      placeholder="Enter mobile number" required>
                     <div class="invalid-feedback">
                       Please provide a mobile number.
                     </div>
                   </div>
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="mobileNumber2">Alternate Mobile Number</label>
-                    <input type="text" class="form-control" id="mobileNumber2" name="mobileNumber2" placeholder="Enter alternate number">
+                    <input type="text" class="form-control" id="mobileNumber2" name="mobileNumber2" 
+                      value="<%= customer ? customer.mobileNumber2 : '' %>" 
+                      placeholder="Enter alternate number">
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="uid">Customer ID (UID) <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="uid" name="uid" placeholder="Enter unique ID" required>
+                    <input type="text" class="form-control" id="uid" name="uid" 
+                      value="<%= customer ? customer.uid : '' %>" 
+                      placeholder="Enter unique ID" required>
                     <div class="invalid-feedback">
                       Please provide a unique ID.
                     </div>
@@ -57,50 +63,58 @@
                     <label class="form-control-label" for="language">Preferred Language</label>
                     <select class="form-control" id="language" name="language">
                       <option value="">Select language</option>
-                      <option value="English">English</option>
-                      <option value="Arabic">Arabic</option>
-                      <option value="Hindi">Hindi</option>
-                      <option value="Urdu">Urdu</option>
+                      <option value="English" <%= customer && customer.language === 'English' ? 'selected' : '' %>>English</option>
+                      <option value="Arabic" <%= customer && customer.language === 'Arabic' ? 'selected' : '' %>>Arabic</option>
+                      <option value="Hindi" <%= customer && customer.language === 'Hindi' ? 'selected' : '' %>>Hindi</option>
+                      <option value="Urdu" <%= customer && customer.language === 'Urdu' ? 'selected' : '' %>>Urdu</option>
                     </select>
                   </div>
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="createdByEmployee">Created By</label>
-                    <input type="text" class="form-control" id="createdByEmployee" name="createdByEmployee" placeholder="Employee name">
+                    <input type="text" class="form-control" id="createdByEmployee" name="createdByEmployee" 
+                      value="<%= customer ? customer.createdByEmployee : '' %>" 
+                      placeholder="Employee name">
                   </div>
                 </div>
                 
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
                     <div class="custom-control custom-checkbox mb-3">
-                      <input type="checkbox" class="custom-control-input" id="isCompany" >
+                      <input type="checkbox" class="custom-control-input" id="isCompany" name="isCompany" 
+                        <%= customer && customer.isCompany ? 'checked' : '' %>>
                       <label class="custom-control-label" for="isCompany">Is Company</label>
                     </div>
                   </div>
                   <div class="col-md-4 mb-3">
                     <div class="custom-control custom-checkbox mb-3">
-                      <input type="checkbox" class="custom-control-input" id="isCredit" name="isCredit">
+                      <input type="checkbox" class="custom-control-input" id="isCredit" name="isCredit"
+                        <%= customer && customer.isCredit ? 'checked' : '' %>>
                       <label class="custom-control-label" for="isCredit">Credit Customer</label>
                     </div>
                   </div>
                   <div class="col-md-4 mb-3">
                     <div class="custom-control custom-checkbox mb-3">
-                      <input type="checkbox" class="custom-control-input" id="verified" name="verified">
+                      <input type="checkbox" class="custom-control-input" id="verified" name="verified"
+                        <%= customer && customer.verified ? 'checked' : '' %>>
                       <label class="custom-control-label" for="verified">Verified Customer</label>
                     </div>
                   </div>
                 </div>
 
                 <!-- Company Information (conditionally shown) -->
-                <div id="companyInfo" style="display: none;">
+                <div id="companyInfo" style="display: <%= customer && customer.isCompany ? 'block' : 'none' %>;">
                   <h4 class="mt-4 mb-3">Company Information</h4>
                   <div class="form-row">
                     <div class="col-md-6 mb-3">
                       <label class="form-control-label" for="trnNumber">TRN Number</label>
-                      <input type="text" class="form-control" id="trnNumber" name="trnNumber" placeholder="Enter TRN number">
+                      <input type="text" class="form-control" id="trnNumber" name="trnNumber" 
+                        value="<%= customer ? customer.trnNumber : '' %>" 
+                        placeholder="Enter TRN number">
                     </div>
                     <div class="col-md-6 mb-3">
                       <label class="form-control-label" for="contractDate">Contract Date</label>
-                      <input type="date" class="form-control" id="contractDate" name="contractDate">
+                      <input type="date" class="form-control" id="contractDate" name="contractDate" 
+                        value="<%= customer && customer.contractDate ? customer.contractDate.toISOString().split('T')[0] : '' %>">
                     </div>
                   </div>
                 </div>
@@ -110,172 +124,197 @@
                 <div class="form-row">
                   <div class="col-md-6 mb-3">
                     <label class="form-control-label" for="zoneId">Zone <span class="text-danger">*</span></label>
-                    <select class="zone-js form-control" name="zoneId" id="zoneId" required></select>
+                    <select class="zone-js form-control" name="zoneId" id="zoneId" required>
+                      <% if (customer && customer.zoneId) { %>
+                        <option value="<%= customer.zoneId %>" selected><%= customer.zoneId %></option>
+                      <% } %>
+                    </select>
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-control-label" for="routeId">Route <span class="text-danger">*</span></label>
-                    <select class="items-js form-control" name="routeId" id="routeId" required></select>
+                    <select class="items-js form-control" name="routeId" id="routeId" required>
+                      <% if (customer && customer.routeId) { %>
+                        <option value="<%= customer.routeId %>" selected><%= customer.routeId %></option>
+                      <% } %>
+                    </select>
                   </div>
                 </div>
       
                 <div class="form-row">
                   <div class="col-md-6 mb-3">
                     <label class="form-control-label" for="address">Address <span class="text-danger">*</span></label>
-                    <input class="form-control" id="address" name="address" placeholder="Enter street address" type="text" required>
+                    <input class="form-control" id="address" name="address" 
+                      value="<%= customer ? customer.address : '' %>"
+                      placeholder="Enter street address" type="text" required>
                     <div class="invalid-feedback">
                       Please provide an address.
                     </div>
                   </div>
                   <div class="col-md-3 mb-3">
                     <label class="form-control-label" for="apartmentNumber">Apartment/House No</label>
-                    <input class="form-control" id="apartmentNumber" name="apartmentNumber" placeholder="Enter apartment/house no" type="text">
+                    <input class="form-control" id="apartmentNumber" name="apartmentNumber" 
+                      value="<%= customer ? customer.apartmentNumber : '' %>"
+                      placeholder="Enter apartment/house no" type="text">
                   </div>
                   <div class="col-md-3 mb-3">
                     <label class="form-control-label" for="location">Location</label>
-                    <input class="form-control" id="location" name="location" placeholder="Enter location details" type="text">
+                    <input class="form-control" id="location" name="location" 
+                      value="<%= customer ? customer.location : '' %>"
+                      placeholder="Enter location details" type="text">
                   </div>
                 </div>
       
                 <div class="form-row">
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="city">City <span class="text-danger">*</span></label>
-                    <select class="city-js form-control" name="city" id="city" required></select>
+                    <select class="city-js form-control" name="city" id="city" required>
+                      <% if (customer && customer.city) { %>
+                        <option value="<%= customer.city %>" selected><%= customer.city %></option>
+                      <% } %>
+                    </select>
                   </div>
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="deliveryDay">Delivery Day</label>
                     <select class="form-control" id="deliveryDay" name="deliveryDay">
                       <option value="">Select delivery day</option>
-                      <option value="Monday">Monday</option>
-                      <option value="Tuesday">Tuesday</option>
-                      <option value="Wednesday">Wednesday</option>
-                      <option value="Thursday">Thursday</option>
-                      <option value="Friday">Friday</option>
-                      <option value="Saturday">Saturday</option>
-                      <option value="Sunday">Sunday</option>
+                      <option value="Monday" <%= customer && customer.deliveryDay === 'Monday' ? 'selected' : '' %>>Monday</option>
+                      <option value="Tuesday" <%= customer && customer.deliveryDay === 'Tuesday' ? 'selected' : '' %>>Tuesday</option>
+                      <option value="Wednesday" <%= customer && customer.deliveryDay === 'Wednesday' ? 'selected' : '' %>>Wednesday</option>
+                      <option value="Thursday" <%= customer && customer.deliveryDay === 'Thursday' ? 'selected' : '' %>>Thursday</option>
+                      <option value="Friday" <%= customer && customer.deliveryDay === 'Friday' ? 'selected' : '' %>>Friday</option>
+                      <option value="Saturday" <%= customer && customer.deliveryDay === 'Saturday' ? 'selected' : '' %>>Saturday</option>
+                      <option value="Sunday" <%= customer && customer.deliveryDay === 'Sunday' ? 'selected' : '' %>>Sunday</option>
                     </select>
                   </div>
                   <div class="col-md-4 mb-3">
                     <label class="form-control-label" for="representativeId">Representative</label>
-                    <input class="form-control" id="representativeId" name="representativeId" placeholder="Enter representative ID" type="text">
+                    <input class="form-control" id="representativeId" name="representativeId" 
+                      value="<%= customer ? customer.representativeId : '' %>"
+                      placeholder="Enter representative ID" type="text">
                   </div>
                 </div>
 
-                <!-- Bottle and Cooler Information -->
-           
+         
+
                 <!-- Submit Button -->
                 <div class="mt-4">
-                  <button type="submit" class="btn btn-success">Add New Customer</button>
+                  <button type="submit" class="btn btn-success">
+                    <%= customer ? 'Update Customer' : 'Add New Customer' %>
+                  </button>
                   <a href="/customers" class="btn btn-danger">Cancel</a>
+                  <% if (customer) { %>
+                    <button type="button" class="btn btn-warning" onclick="resetForm()">Reset Changes</button>
+                  <% } %>
                 </div>
               </form>
             </div>
           </div>
         </div>
       </div>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-      <!-- Include Select2 CSS -->
-      
-      <!-- Include Select2 JS -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-      <script>
-        $(document).ready(function () {
-          // Show/hide company information based on the checkbox
-          $('#isCompany').change(function() {
-            if(this.checked) {
-              $('#companyInfo').show();
-            } else {
-              $('#companyInfo').hide();
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Include Select2 CSS -->
+    
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script>
+const customer = <%- JSON.stringify(customer) %>;
+  $(document).ready(function () {
+    // Initialize with current state (for edit)
+    if (customer && customer.isCompany) {
+      $('#companyInfo').show();
+    }
+
+    // Toggle company info
+    $('#isCompany').change(function() {
+      if(this.checked) {
+        $('#companyInfo').show();
+      } else {
+        $('#companyInfo').hide();
+      }
+    });
+
+  
+
+    // Initialize Select2 for zone
+    $('.zone-js').select2({
+      dropdownParent: $("#cardb"),
+      placeholder: "Select a zone",
+      ajax: {
+        url: '/zoneids',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          return {
+            results: data.map(function (item) {
+              return { id: item.id, text: item.id };
+            }),
+          };
+        },
+      },
+    });
+
+    // Initialize Select2 for route
+    $('.items-js').select2({
+      dropdownParent: $("#cardb"),
+      placeholder: "Select a route",
+      ajax: {
+        url: '/routeids',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          return {
+            results: data.map(function (item) {
+              return { id: item.id, text: item.id };
+            }),
+          };
+        },
+      },
+    });
+
+    // Initialize Select2 for city
+    $('.city-js').select2({
+      dropdownParent: $("#cardb"),
+      placeholder: "Select a city",
+      ajax: {
+        url: '/citynames',
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          return {
+            results: data.map(function (item) {
+              return { id: item.city, text: item.city };
+            }),
+          };
+        },
+      },
+    });
+
+    // Initialize validation
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
             }
-          });
-
-          // Show/hide cooler fields based on haveCooler checkbox
-          $('#haveCooler').change(function() {
-            if(this.checked) {
-              $('#noOfCoolers').prop('disabled', false);
-              $('#coolerLendType').prop('disabled', false);
-              $('#coolerSecurityDeposit').prop('disabled', false);
-            } else {
-              $('#noOfCoolers').prop('disabled', true).val(0);
-              $('#coolerLendType').prop('disabled', true).val('');
-              $('#coolerSecurityDeposit').prop('disabled', true).val(0);
-            }
-          });
-
-          // Initialize validation
-          (function() {
-            'use strict';
-            window.addEventListener('load', function() {
-              // Fetch all the forms we want to apply custom Bootstrap validation styles to
-              var forms = document.getElementsByClassName('needs-validation');
-              // Loop over them and prevent submission
-              var validation = Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                  if (form.checkValidity() === false) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                  }
-                  form.classList.add('was-validated');
-                }, false);
-              });
-            }, false);
-          })();
-
-          // Initialize Select2 for zone
-          $('.zone-js').select2({
-            dropdownParent: $("#cardb"),
-            placeholder: "Select a zone",
-            ajax: {
-              url: '/zoneids', // Backend endpoint
-              dataType: 'json',
-              delay: 250, // Debounce for performance
-              processResults: function (data) {
-                return {
-                  results: data.map(function (item) {
-                    return { id: item.id, text: item.id }; // Customize text display
-                  }),
-                };
-              },
-            },
-          });
-
-          // Initialize Select2 for route
-          $('.items-js').select2({
-            dropdownParent: $("#cardb"),
-            placeholder: "Select a route",
-            ajax: {
-              url: '/routeids', // Backend endpoint
-              dataType: 'json',
-              delay: 250, // Debounce for performance
-              processResults: function (data) {
-                return {
-                  results: data.map(function (item) {
-                    return { id: item.id, text: item.id }; // Customize text display
-                  }),
-                };
-              },
-            },
-          });
-
-          // Initialize Select2 for city
-          $('.city-js').select2({
-            dropdownParent: $("#cardb"),
-            placeholder: "Select a city",
-            ajax: {
-              url: '/citynames', // Backend endpoint
-              dataType: 'json',
-              delay: 250, // Debounce for performance
-              processResults: function (data) {
-                return {
-                  results: data.map(function (item) {
-                    return { id: item.city, text: item.city }; // Customize text display
-                  }),
-                };
-              },
-            },
-          });
+            form.classList.add('was-validated');
+          }, false);
         });
-      </script>   
-<%- include('../includes/footer.ejs') -%>
+      }, false);
+    })();
+  });
 
+  function resetForm() {
+    // Reload the page to reset all changes
+    window.location.reload();
+  }
+</script>
+      
+<%- include('../includes/footer.ejs') -%>
 <%- include('../includes/end.ejs') -%>

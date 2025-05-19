@@ -1,0 +1,642 @@
+
+<%- include('../includes/head.ejs') -%>
+<%- include('../includes/navigation.ejs') -%>
+
+<%- include('../includes/header.ejs') -%>
+<%- include('../components/searchbartr.ejs') -%>
+
+
+<!-- <a href="/orders/neworder" class="btn btn-add-new">
+  <i class="fas fa-plus mr-2"></i> New Order
+</a> -->
+</div>
+</div>
+
+
+</div>
+</div>
+</div>
+<div class="container-fluid mt--6">
+  <style>
+    .filter-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+    }
+    /* Add to your stylesheet */
+
+
+
+.view-recharge, .edit-recharge {
+  margin-right: 5px;
+}
+
+#couponsTable {
+  font-size: 0.9rem;
+}
+
+#couponsTable th {
+  background-color: #f8f9fa;
+}
+</style>
+
+
+  <div class="row">
+
+
+    
+    <div class="col-12">
+
+    <div class="filter-box">
+    <h5 class="mb-3">Filter By</h5>
+    <div class="row g-3">
+        <!-- ID -->
+        <div class="col-md-3">
+            <label class="form-label">Sales Man I.D</label>
+<select name="salesman" id="salesman" class="form-control salesman-js">
+     
+        </select>           </div>
+        <div class="col-md-3">
+          <label class="form-label">Product</label>
+      <select name="product" id="product" class="form-control products-js">
+     
+        </select>      </div>   
+      <div class="col-md-3">
+        <label class="form-label">Offer</label>
+  <select name="offer" id="offer" class="form-control offer-js">
+     
+        </select>   
+       </div>
+    <div class="col-md-3">
+        <label class="form-label">Balance Coupon</label>
+  <select name="balance" id="balance" class="form-control">
+    <option value="">ALL</option>
+         <option value="Yes">Yes</option>
+    <option value="No">No</option>
+
+        </select>       </div>
+        <div class="col-md-3">
+            <label class="form-label">From</label>
+            <input type="date" class="form-control">
+        </div>
+        <!-- Date -->
+        <div class="col-md-3">
+            <label class="form-label">To</label>
+            <input type="date" class="form-control">
+        </div>
+        <div class="col-md-3 mb-1 d-flex align-items-end">
+          <button class="btn btn-sm filter-btn mr-2">
+            <i class="fas fa-filter mr-1"></i> Apply
+          </button>
+          <button class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt mr-1"></i> Reset
+          </button>
+        </div>
+    </div>
+</div>
+  
+
+    </div>
+    <div class="col-12">
+      <div class="row">    
+        <div class="col-xl-3 col-md-6">
+              <div class="card card-stats">
+                <!-- Card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Recharged Coupons</h5>
+                      <span class="h2 font-weight-bold mb-0" id="totalcoupons">0</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-orange  text-white rounded-circle shadow">
+<i class="fa-solid fa-receipt"></i>                      </div>
+                    </div>
+                  </div>
+                
+                </div>
+              </div>
+            </div>
+          <div class="col-xl-3 col-md-6">
+            <div class="card card-stats">
+              <!-- Card body -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h5 class="card-title text-uppercase text-muted mb-0">Coupon Value</h5>
+                    <span class="h2 font-weight-bold mb-0" id="couponvalue">0</span>
+                  </div>
+                  <div class="col-auto">
+                    <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
+<i class="fa-solid fa-dollar-sign"></i>                                    </div>
+                  </div>
+                </div>
+              
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-md-6">
+              <div class="card card-stats">
+                <!-- Card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Redeamed Coupons</h5>
+                      <span class="h2 font-weight-bold mb-0" id="redeemedCoupons">0</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-blue text-white rounded-circle shadow">
+<i class="fa-solid fa-ticket-simple"></i>                                          </div>
+                    </div>
+                  </div>
+                
+                </div>
+              </div>
+            </div>
+         
+            <div class="col-xl-3 col-md-6">
+              <div class="card card-stats">
+                <!-- Card body -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Balance Coupons</h5>
+                      <span class="h2 font-weight-bold mb-0" id="balancecoupon">0</span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
+<i class="fa-solid fa-ticket"></i>                                          </div>
+                    </div>
+                  </div>
+                
+                </div>
+              </div>
+            </div>
+      </div>
+  </div>
+<div class="col-12">
+  <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+   <li class="nav-item">
+      <a class="nav-link" id="salesman-tab"  href="/customerassethistory/<%=id%>">
+        <i class="fa-solid fa-boxes-stacked"></i>        Asset History
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="salesman-tab"  href="/customerorderhistory/<%=id%>">
+        <i class="fa-solid fa-list"></i>
+        Order History
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="salesman-tab"  href="/creditpayment/<%=id%>">
+        <i class="fa-solid fa-money-bill-wave"></i>
+                Payments History
+      </a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-link active" id="salesman-tab"  href="/walletrecharges/<%=id%>">
+        <i class="fa-solid fa-wallet"></i>
+                Wallet Recharge
+      </a>
+    </li>
+    
+    </ul>
+    </div>
+    <div class="col">
+      <div class="card">
+        <!-- Card header -->
+        <div class="card-header border-0 mb-2">
+          <h3 class="mb-0 text-white">Wallet Recharge of <%=id%></h3>
+        </div>
+        <!-- Light table -->
+  
+<div class="table-responsive">
+  <table id="rechargetable" class="table align-items-center table-flush">
+
+    <thead>
+      <tr>
+        <th scope="col" class="sort" data-sort="createdAt">Updated At</th>
+        <th scope="col" class="sort" data-sort="assetType">Recharge Code</th>
+        <th scope="col" class="sort" data-sort="salesmanId">Salesmanid</th>
+        <th scope="col" class="sort" data-sort="noOfAssets">Route</th>
+        <th scope="col" class="sort" data-sort="securityDeposit">Products</th>
+        <th scope="col" class="sort" data-sort="lendType">Coupon Available</th>
+        <th scope="col" class="sort" data-sort="truckId">Amount Paid</th>
+        <th scope="col" class="sort" data-sort="salesmanId">Balance Coupon</th>
+        <th scope="col" class="sort" data-sort="actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data will be loaded by DataTables -->
+    </tbody>
+  </table>
+</div>
+        <!-- Card footer -->
+      
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="rechargeDetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Recharge Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- <div class="row mb-4">
+            <div class="col-md-6">
+              <p><strong>Recharge ID:</strong> <span id="rechargeId"></span></p>
+              <p><strong>Amount:</strong> <span id="rechargeAmount"></span></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Date:</strong> <span id="rechargeDate"></span></p>
+              <p><strong>Status:</strong> <span id="rechargeStatus"></span></p>
+            </div>
+          </div>
+          
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <p><strong>Routes:</strong> <span id="rechargeRoutes"></span></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Product:</strong> <span id="rechargeItem"></span></p>
+            </div>
+          </div> -->
+          
+          <h6>Coupons</h6>
+          <div class="table-responsive">
+            <table id="couponsTable" class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Coupon ID</th>
+                  <th>Order</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                  <th>Created</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Coupons will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="exportCoupons">
+            <i class="fas fa-download mr-1"></i> Export Coupons
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- Footer -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+    <script>
+   $(document).ready(function () {
+
+
+      $('.products-js').select2({
+                    placeholder: "Select Product",
+
+          ajax: {
+              url: '/productids',
+              dataType: 'json',
+              delay: 250,
+              processResults: function (data) {
+                  return {
+                      results: data.results
+                  };
+              },
+              cache: true
+          }
+      })
+
+            $('.offer-js').select2({
+        placeholder: "Select Coupon Code",
+        ajax: {
+          url: '/offercodes', // Backend endpoint
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            return {
+              search: params.term,
+            };
+          },
+          processResults: function (data) {
+            return {
+              results: data.map(function (item) {
+                return {
+                  id: item.code,         // Use _id as the value
+                  text: item.code,      // Show the code in dropdown
+                };
+              }),
+            };
+          },
+        }
+      });
+
+      $('.salesman-js').select2({
+            placeholder: "Select Salesman",
+
+  ajax: {
+    url: '/salesmanids', // Backend endpoint
+    dataType: 'json',
+    delay: 250, // Debounce for performance
+    data: function (params) {
+      return {
+        search: params.term, // Select2 search term
+        customKey: 'utilities' // Custom query parameter
+      };
+    },
+    processResults: function (data) {
+      return {
+        results: data.map(function (item) {
+          return { id: item.id, text: item.id }; // Customize text display
+        }),
+      };
+    },
+  
+  },
+});
+  var datatable = $("#rechargetable").DataTable({
+    responsive: true,
+    processing: true,
+    serverSide: true,
+    ajax: {
+      url: "/getcustomerrecharge",
+      dataSrc: "data",
+      data: function (d) {
+              const filters = getCurrentFilters();
+
+        d.customer = '<%= id %>'; // Pass customerId to server
+        return  {
+        ...d,
+        ...filters
+      };
+      }
+    },
+    language: {
+      paginate: {
+        next: '<i class="fas fa-chevron-right"></i>',
+        previous: '<i class="fas fa-chevron-left"></i>',
+      },
+      search: "_INPUT_",
+      searchPlaceholder: "Search recharge history...",
+      lengthMenu: "Show _MENU_ records",
+      info: "Showing _START_ to _END_ of _TOTAL_ records",
+    },
+    columns: [
+      {
+        data: "updatedAt",
+        title: "Updated At",
+        render: function (data) {
+          return data ? new Date(data).toLocaleString() : "N/A";
+        }
+      },
+      {
+        data: "rechargeId",
+        title: "Recharge Code",
+        render: function (data) {
+          return data || "N/A";
+        }
+      },
+      {
+        data: "salesmanId",
+        title: "Salesman ID",
+        render: function (data) {
+          return data || "N/A";
+        }
+      },
+      {
+        data: "routes",
+        title: "Route",
+        render: function (data) {
+          return data && data.length > 0 ? data.join(', ') : "N/A";
+        }
+      },
+      {
+        data: "item",
+        title: "Products",
+        render: function (data) {
+          return data || "N/A";
+        }
+      },
+      {
+        data: "totalCoupons",
+        title: "Coupon Available",
+        render: function (data) {
+          return data !== undefined ? data : "N/A";
+        }
+      },
+      {
+        data: "amount",
+        title: "Amount Paid",
+        render: function (data) {
+          return data !== undefined ? `₹${data}` : "N/A";
+        }
+      },
+      {
+        data: "balanceCoupons",
+        title: "Balance Coupon",
+        render: function (data) {
+          return data !== undefined ? data : "N/A";
+        }
+      },
+      {
+        data: null,
+        title: "Actions",
+        render: function (data, type, row) {
+          return `
+            <button class="btn btn-info btn-sm view-recharge" data-id="${row._id}">View</button>
+          `;
+        }
+      }
+    ]
+  });
+
+  // Handle view button click
+  $('#rechargetable').on('click', '.view-recharge', function() {
+    const rechargeId = $(this).data('id');
+    viewRechargeDetails(rechargeId);
+  });
+
+async function loadDashboardSummary() {
+  const filters = getCurrentFilters();
+  
+  try {
+    const response = await fetch(`/api/wallet-recharge/summary?${new URLSearchParams(filters)}`);
+    const data = await response.json();
+    
+    if (data.success) {
+      $('#balancecoupon').text(data.data.balanceCoupons);
+            $('#totalcoupons').text(data.data.rechargedCoupons);
+      $('#couponvalue').text(data.data.couponValue);
+      $('#redeemedCoupons').text(data.data.redeemedCoupons);
+
+      // Update other card values similarly
+    }
+  } catch (error) {
+    console.error("Error loading dashboard summary:", error);
+  }
+}
+loadDashboardSummary()
+// Function to get current filter values
+function getCurrentFilters() {
+  return {
+    customer: '<%= id %>',
+    salesman: $('#salesman').val() || '',
+    product: $('#product').val() || '',
+    offer: $('#offer').val() || '',
+    balance: $('#balance').val() || '',
+    fromDate: $('input[type="date"]').eq(0).val() || '',
+    toDate: $('input[type="date"]').eq(1).val() || ''
+  };
+}
+$('.filter-btn').on('click', function() {
+  datatable.ajax.reload();
+  loadDashboardSummary();
+});
+});
+
+let downloadid
+function viewRechargeDetails(rechargeId) {
+  downloadid = rechargeId
+  // Show loading state
+  $('#rechargeDetailsModal .modal-body').html(`
+    <div class="text-center py-4">
+      <i class="fas fa-spinner fa-spin fa-2x"></i>
+      <p>Loading recharge details...</p>
+    </div>
+  `);
+  $('#rechargeDetailsModal').modal('show');
+
+  // Single API call to get both recharge and coupon data
+  fetch(`/recharges/${rechargeId}/coupons`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const recharge = data.recharge || {};
+        const coupons = data.coupons || [];
+        
+        const modalContent = `
+      
+          <div class="table-responsive">
+            <table class="table table-sm table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th>Coupon ID</th>
+                  <th>Order</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                  <th>Created</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${coupons.length > 0 ? 
+                  coupons.map(coupon => `
+                    <tr>
+                      <td>${coupon.couponid || 'N/A'}</td>
+                      <td>${coupon.order || 'N/A'}</td>
+                      <td>₹${coupon.couponamt || '0'}</td>
+                      <td>
+                        <span class="badge badge-${coupon.coupontype === 'PAID' ? 'primary' : 'success'}">
+                          ${coupon.coupontype || 'N/A'}
+                        </span>
+                      </td>
+                      <td>${coupon.created ? new Date(coupon.created).toLocaleDateString() : 'N/A'}</td>
+                      <td>
+                        <span class="badge badge-${coupon.status === 'USED' ? 'success' : 
+                          coupon.status === 'EXPIRED' ? 'danger' : 'warning'}">
+                          ${coupon.status || 'PENDING'}
+                        </span>
+                      </td>
+                    </tr>
+                  `).join('') :
+                  '<tr><td colspan="6" class="text-center py-4 text-muted">No coupons found</td></tr>'
+                }
+              </tbody>
+            </table>
+          </div>
+        `;
+        
+        $('#rechargeDetailsModal .modal-body').html(modalContent);
+      } else {
+        $('#rechargeDetailsModal .modal-body').html(`
+          <div class="alert alert-danger">
+            ${data.error || 'Error loading recharge details'}
+          </div>
+        `);
+      }
+    })
+    .catch(error => {
+      $('#rechargeDetailsModal .modal-body').html(`
+        <div class="alert alert-danger">
+          Error loading recharge details: ${error.message}
+        </div>
+      `);
+    });
+
+    
+}
+$('#exportCoupons').on('click', function () {
+          if (downloadid) {
+              window.open(`/downloadcoupon/${downloadid}`, '_blank');
+          } else {
+              alert("Download ID is missing.");
+          }
+      });
+</script>
+
+<%- include('../includes/footer.ejs') -%>
+
+<%- include('../includes/end.ejs') -%>
+
+<!-- 
+<div class="row mb-4">
+  <div class="col-md-6">
+    <p><strong>Recharge ID:</strong> ${recharge.rechargeId || 'N/A'}</p>
+    <p><strong>Amount:</strong> ₹${recharge.amount || '0'}</p>
+    <p><strong>Offer:</strong> ${recharge.offer || 'N/A'}</p>
+  </div>
+  <div class="col-md-6">
+    <p><strong>Date:</strong> ${new Date(recharge.createdAt).toLocaleString()}</p>
+    <p><strong>Status:</strong> 
+      <span class="badge badge-${recharge.status === 'PENDING' ? 'warning' : 'success'}">
+        ${recharge.status || 'N/A'}
+      </span>
+    </p>
+    <p><strong>Salesman ID:</strong> ${recharge.salesmanId || 'N/A'}</p>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <p><strong>Routes:</strong> ${recharge.routes && recharge.routes.length > 0 ? 
+      recharge.routes.join(', ') : 'N/A'}</p>
+  </div>
+  <div class="col-md-6">
+    <p><strong>Product:</strong> ${recharge.item || 'N/A'}</p>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between mb-3">
+  <h6>Coupons (${coupons.length})</h6>
+  <div>
+    <span class="badge badge-info mr-2">Paid: ${recharge.paidcoupons || 0}</span>
+    <span class="badge badge-success">Free: ${recharge.freecoupons || 0}</span>
+  </div>
+</div> -->

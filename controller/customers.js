@@ -1,5 +1,7 @@
 require("../model/database");
 const mongoose = require("mongoose");
+const Customer = mongoose.model("Customer");
+
 // const { Salesman } = require('../model/database');
 const Truck = mongoose.model("Truck");
 const DeletedCustomer = mongoose.model("DeletedCustomer");
@@ -7,7 +9,6 @@ const Salesman = mongoose.model("Salesman");
 const axios = require("axios");
 require("dotenv").config();
 const smssecret = process.env.SMS_SECRET;
-const Customer = mongoose.model("Customer");
 const CustomerAssetHistory = mongoose.model("CustomerAssetHistory");
 const Recharge = mongoose.model("Recharge");
 const createError = require("http-errors");
@@ -31,6 +32,7 @@ exports.getcustomer = async (req, res) => {
       orderStatus,
       fromDate,
       toDate,
+      language
     } = req.query;
     const searchQuery = search && search.value ? search.value : "";
     const limit = parseInt(length, 10) || 10;
@@ -73,7 +75,10 @@ exports.getcustomer = async (req, res) => {
     if (route) {
       query.routeId = route;
     }
-
+    if (language) {
+      console.log(language)
+      query.language = language;
+    }
     // Apply zone filter
     if (zone) {
       query.zoneId = zone;
@@ -152,7 +157,25 @@ exports.getcustomer = async (req, res) => {
 //   app.post('/addtruck', async (req, res) => {
 exports.newcustomer = async (req, res, next) => {
   try {
-    const customer = new Customer(req.body);
+     const updateData = req.body;
+
+    // Convert empty strings to null/undefined for cleaner database
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === '') {
+        updateData[key] = undefined;
+      }
+    });
+
+    // Handle date fields
+    if (updateData.contractDate) {
+      updateData.contractDate = new Date(updateData.contractDate);
+    }
+
+    // Handle checkbox fields to ensure they're boolean
+    updateData.isCompany = updateData.isCompany === 'on';
+    updateData.isCredit = updateData.isCredit === 'on';
+    updateData.verified = updateData.verified === 'on';
+    const customer = new Customer(updateData);
     await customer.save();
     res.redirect("/customers"); // Redirect to customers list on success
   } catch (error) {
@@ -160,73 +183,223 @@ exports.newcustomer = async (req, res, next) => {
     return next(createError(400, error.message));
   }
 };
-
-exports.getcustomerassets = async (req, res) => {
+exports.editcustomer = async (req, res, next) => {
   try {
-    const { start, length, draw, search, customer } = req.query;
+    const customerId = req.params.id;
+    const updateData = req.body;
 
-    const searchQuery = search && search.value ? search.value : "";
-    const limit = parseInt(length, 10) || 10;
-    const skip = parseInt(start, 10) || 0;
+    // Convert empty strings to null/undefined for cleaner database
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === '') {
+        updateData[key] = undefined;
+      }
+    });
 
-    // Build query object
-    let query = {};
-
-    if (customer) {
-      query.customerId = customer;
+    // Handle date fields
+    if (updateData.contractDate) {
+      updateData.contractDate = new Date(updateData.contractDate);
     }
 
-    // Apply search filter across selected fields
-    if (searchQuery) {
-      query.$or = [
-        { assetType: { $regex: searchQuery, $options: "i" } },
-        { lendType: { $regex: searchQuery, $options: "i" } },
-        { truckId: { $regex: searchQuery, $options: "i" } },
-        { salesmanId: { $regex: searchQuery, $options: "i" } },
-      ];
+    // Handle checkbox fields to ensure they're boolean
+    updateData.isCompany = updateData.isCompany === 'on';
+    updateData.isCredit = updateData.isCredit === 'on';
+    updateData.verified = updateData.verified === 'on';
+
+    // Add updatedAt timestamp
+    updateData.updatedAt = new Date();
+
+    const updatedCustomer = await Customer.findByIdAndUpdate(
+      customerId,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedCustomer) {
+      return next(createError(404, 'Customer not found'));
     }
 
-    // Optional: apply session-based city filter only if your schema has a 'city' field
-    // if (req.session.city && req.session.city !== 'ALL') {
-    //   query.city = { $regex: `^${req.session.city}$`, $options: 'i' };
-    // }
+    // Optionally: Add activity log here
+    // await ActivityLog.create({
+    //   action: 'update',
+    //   collection: 'customers',
+    //   documentId: customerId,
+    //   userId: req.user._id,
+    //   changes: updateData
+    // });
 
-    const [filteredAssets, totalRecords, totalFiltered] = await Promise.all([
-      CustomerAssetHistory.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      CustomerAssetHistory.countDocuments(
-        customer ? { customerId: customer } : {}
-      ), // Total for that customer
-      CustomerAssetHistory.countDocuments(query), // Filtered total
+    res.redirect('/customers');
+  } catch (error) {
+    // Handle duplicate UID error
+    if (error.code === 11000 && error.keyPattern.uid) {
+      req.flash('error', 'Customer UID must be unique');
+      return res.redirect(`/customers/edit/${req.params.id}`);
+    }
+
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      req.flash('error', messages.join(', '));
+      return res.redirect(`/customers/edit/${req.params.id}`);
+    }
+
+    next(createError(500, error.message));
+  }
+};
+exports.getcustomerassets = async (req, res) => {
+try {
+    const { customer, draw, start, length, order, search } = req.query;
+    const searchValue = search.value || '';
+    const sortColumn = order[0].column;
+    const sortDirection = order[0].dir;
+    const sortField = req.query.columns[sortColumn].data;
+
+    const query = {
+      customerId: customer,
+      $or: [
+        { assetType: { $regex: searchValue, $options: 'i' } },
+        { lendType: { $regex: searchValue, $options: 'i' } },
+        { truckId: { $regex: searchValue, $options: 'i' } },
+        { salesmanId: { $regex: searchValue, $options: 'i' } }
+      ]
+    };
+
+    // Apply additional filters if provided
+    if (req.query.asset) query.assetType = req.query.asset;
+    if (req.query.lendtype) query.lendType = req.query.lendtype;
+    if (req.query.fromDate) query.createdAt = { $gte: new Date(req.query.fromDate) };
+    if (req.query.toDate) {
+      query.createdAt = query.createdAt || {};
+      query.createdAt.$lte = new Date(req.query.toDate);
+    }
+
+    const totalRecords = await CustomerAssetHistory.countDocuments({ customerId: customer });
+    const filteredRecords = await CustomerAssetHistory.countDocuments(query);
+    
+    const data = await CustomerAssetHistory.find(query)
+      .sort({ [sortField]: sortDirection === 'asc' ? 1 : -1 })
+      .skip(parseInt(start))
+      .limit(parseInt(length));
+
+    res.json({
+      draw: parseInt(draw),
+      recordsTotal: totalRecords,
+      recordsFiltered: filteredRecords,
+      data: data,
+      docs: data // For DataTables compatibility
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+  exports.getcustomerassetsdashboard = async (req, res) => {
+  try {
+    const { customerId, fromDate, toDate } = req.query;
+    
+    const matchQuery = { customerId };
+    if (fromDate) matchQuery.createdAt = { $gte: new Date(fromDate) };
+    if (toDate) {
+      matchQuery.createdAt = matchQuery.createdAt || {};
+      matchQuery.createdAt.$lte = new Date(toDate);
+    }
+
+    // Get summary by asset type
+    const assetSummary = await CustomerAssetHistory.aggregate([
+      { $match: matchQuery },
+       {
+        $group: {
+          _id: "$assetType",
+          totalCUSTODY: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "CUSTODY"] }, "$noOfAssets", 0]
+            }
+          },
+          totalSOLD: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "SOLD"] }, "$noOfAssets", 0]
+            }
+          },
+          totalLEND: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "LEND"] }, "$noOfAssets", 0]
+            }
+          },
+          totalRETURN: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "RETURN"] }, "$noOfAssets", 0]
+            }
+          },
+          totalDeposit: { $sum: "$securityDeposit" },
+          count: { $sum: 1 } // total number of records per assetType
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          assetType: "$_id",
+          totalCUSTODY: 1,
+          totalSOLD: 1,
+          totalLEND: 1,
+          totalRETURN: 1,
+          totalDeposit: 1,
+          count: 1
+        }
+      },
+      {
+        $sort: { assetType: 1 }
+      }
+    ]);
+
+    // Get dashboard statistics
+    const dashboardStats = await CustomerAssetHistory.aggregate([
+      { $match: matchQuery},
+      {
+        $group: {
+          _id: null,
+          totalAssets: { $sum: {
+              $cond: [{ $ne: ["$lendType", "RETURN"] }, "$noOfAssets", 0]
+            }},
+          totalSecurityDeposit: { $sum: {
+              $cond: [{ $ne: ["$lendType", "RETURN"] }, "$securityDeposit", 0]
+            }},
+          returnedAssets: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "RETURN"] }, "$noOfAssets", 0]
+            }
+          },
+          returnedPayment: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "RETURN"] }, "$securityDeposit", 0]
+            }
+          }
+        }
+      }
+
     ]);
 
     res.json({
-      draw: parseInt(draw, 10) || 1,
-      recordsTotal: totalRecords,
-      recordsFiltered: totalFiltered,
-      docs: filteredAssets,
+      success: true,
+      data: assetSummary,
+      stats: dashboardStats.length > 0 ? dashboardStats[0] : {
+        totalAssets: 0,
+        totalSecurityDeposit: 0,
+        returnedAssets: 0,
+        returnedPayment: 0
+      }
     });
-  } catch (err) {
-    console.error("Error fetching customer assets:", err);
-    res.status(500).json({ error: "Failed to fetch customer assets" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
-
 exports.getcustomerorders = async (req, res) => {
   try {
-    const { start, length, draw, search, customer } = req.query;
+    const { start, length, draw, search, customer, salesmanId, fromDate, toDate, pendingPayment, status } = req.query;
 
     const searchQuery = search && search.value ? search.value.trim() : "";
     const limit = parseInt(length, 10) || 10;
     const skip = parseInt(start, 10) || 0;
 
     // Build base query
-    let query = {};
-    if (customer) {
-      query.customerId = customer;
-    }
+    let query = { customerId: customer };
 
     // Add search filter
     if (searchQuery) {
@@ -240,51 +413,141 @@ exports.getcustomerorders = async (req, res) => {
       ];
     }
 
+    // Add additional filters
+    if (salesmanId) {
+      query.salesmanId = salesmanId;
+    }
+
+    if (status) {
+      query.status = status;
+    }
+
+    if (fromDate || toDate) {
+      query.createdAt = {};
+      if (fromDate) query.createdAt.$gte = new Date(fromDate);
+      if (toDate) {
+        const endOfDay = new Date(toDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = endOfDay;
+      }
+    }
+
+    if (pendingPayment === "YES") {
+      query.$expr = { $gt: [{ $subtract: ["$totalPrice", "$creditAmountPaid"] }, 0] };
+    } else if (pendingPayment === "NO") {
+      query.$expr = { $lte: [{ $subtract: ["$totalPrice", "$creditAmountPaid"] }, 0] };
+    }
+
     const [orders, totalRecords, totalFiltered] = await Promise.all([
       Order.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
-      Order.countDocuments(customer ? { customerId: customer } : {}),
+      Order.countDocuments({ customerId: customer }),
       Order.countDocuments(query),
     ]);
-    console.log(orders);
+
+    // Calculate summary statistics
+    const summary = await Order.aggregate([
+      { $match: query },
+      { 
+        $group: {
+          _id: null,
+          totalOrders: { $sum: 1 },
+          totalValue: { $sum: "$totalPrice" },
+          totalPaid: { $sum: "$creditAmountPaid" },
+        }
+      },
+      {
+        $project: {
+          totalOrders: 1,
+          totalValue: { $ifNull: ["$totalValue", 0] },
+          totalPaid: { $ifNull: ["$totalPaid", 0] },
+          pendingPayment: { $subtract: ["$totalValue", "$totalPaid"] }
+        }
+      }
+    ]);
+
+    const summaryData = summary.length > 0 ? summary[0] : {
+      totalOrders: 0,
+      totalValue: 0,
+      totalPaid: 0,
+      pendingPayment: 0
+    };
 
     res.json({
       draw: parseInt(draw, 10) || 1,
       recordsTotal: totalRecords,
       recordsFiltered: totalFiltered,
       docs: orders,
+      summary: summaryData
     });
   } catch (err) {
     console.error("Error fetching customer orders:", err);
     res.status(500).json({ error: "Failed to fetch customer orders" });
   }
 };
-
 exports.getcustomerpayments = async (req, res) => {
   try {
-    const { start, length, draw, search, customer } = req.query;
+    const { start, length, draw, search, customer, salesmanid, fromDate, toDate, modeofpayment } = req.query;
 
     const searchQuery = search && search.value ? search.value.trim() : "";
     const limit = parseInt(length, 10) || 10;
     const skip = parseInt(start, 10) || 0;
 
     // Build base query
-    let query = {};
-    if (customer) {
-      query.customerid = customer; // Assuming customer is linked via orderId. Adjust if needed.
-    }
+    let query = { customerid: customer };
 
     // Add search filters
     if (searchQuery) {
       query.$or = [
         { modeOfPayment: { $regex: searchQuery, $options: "i" } },
         { salesmanid: { $regex: searchQuery, $options: "i" } },
+        { orderId: { $regex: searchQuery, $options: "i" } }
       ];
+    }
+
+    // Additional filters
+    if (salesmanid) {
+      query.salesmanid = salesmanid;
+    }
+    if (modeofpayment && modeofpayment !== "ALL") {
+      query.modeOfPayment = modeofpayment;
+    }
+    if (fromDate || toDate) {
+      query.createdAt = {};
+      if (fromDate) query.createdAt.$gte = new Date(fromDate);
+      if (toDate) query.createdAt.$lte = new Date(toDate + 'T23:59:59.999Z');
     }
 
     const [payments, totalRecords, totalFiltered] = await Promise.all([
       Payment.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
-      Payment.countDocuments(customer ? { orderId: customer } : {}),
+      Payment.countDocuments({ customerid: customer }),
       Payment.countDocuments(query),
+    ]);
+
+    // Calculate dashboard stats
+    const statsQuery = { customerid: customer };
+    if (fromDate || toDate) {
+      statsQuery.createdAt = {};
+      if (fromDate) statsQuery.createdAt.$gte = new Date(fromDate);
+      if (toDate) statsQuery.createdAt.$lte = new Date(toDate + 'T23:59:59.999Z');
+    }
+
+    const [totalPayments, walletRecharge, cashPayment, cardPayment] = await Promise.all([
+      Payment.aggregate([
+        { $match: statsQuery },
+        { $group: { _id: null, total: { $sum: "$creditAmountPaid" } } }
+      ]),
+      Payment.aggregate([
+        { $match: { ...statsQuery, paymentfor: "Wallet Recharge" } },
+        { $group: { _id: null, total: { $sum: "$creditAmountPaid" } } }
+      ]),
+      Payment.aggregate([
+        { $match: { ...statsQuery, modeOfPayment: "Cash" } },
+        { $group: { _id: null, total: { $sum: "$creditAmountPaid" } } }
+      ]),
+      Payment.aggregate([
+        { $match: { ...statsQuery, modeOfPayment: "Card" } },
+        { $group: { _id: null, total: { $sum: "$creditAmountPaid" } } }
+      ])
     ]);
 
     res.json({
@@ -292,6 +555,12 @@ exports.getcustomerpayments = async (req, res) => {
       recordsTotal: totalRecords,
       recordsFiltered: totalFiltered,
       docs: payments,
+      stats: {
+        totalPayments: totalPayments[0]?.total || 0,
+        walletRecharge: walletRecharge[0]?.total || 0,
+        cashPayment: cashPayment[0]?.total || 0,
+        cardPayment: cardPayment[0]?.total || 0
+      }
     });
   } catch (err) {
     console.error("Error fetching customer payments:", err);
@@ -845,5 +1114,309 @@ exports.exportCustomers = async (req, res) => {
   } catch (err) {
     console.error("Error exporting customers:", err);
     res.status(500).json({ error: "Failed to export customers" });
+  }
+};
+
+exports.gettassetdetailssummary = async (req, res) => {
+  try {
+    const { customerId } = req.query;
+
+    if (!customerId) {
+      return res.status(400).json({ error: "customerId is required" });
+    }
+
+    const summary = await CustomerAssetHistory.aggregate([
+      { $match: { customerId } },
+      {
+        $group: {
+          _id: "$assetType",
+          totalCUSTODY: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "CUSTODY"] }, "$noOfAssets", 0]
+            }
+          },
+          totalSOLD: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "SOLD"] }, "$noOfAssets", 0]
+            }
+          },
+          totalLEND: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "LEND"] }, "$noOfAssets", 0]
+            }
+          },
+          totalRETURN: {
+            $sum: {
+              $cond: [{ $eq: ["$lendType", "RETURN"] }, "$noOfAssets", 0]
+            }
+          },
+          totalDeposit: { $sum: "$securityDeposit" },
+          count: { $sum: 1 } // total number of records per assetType
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          assetType: "$_id",
+          totalCUSTODY: 1,
+          totalSOLD: 1,
+          totalLEND: 1,
+          totalRETURN: 1,
+          totalDeposit: 1,
+          count: 1
+        }
+      },
+      {
+        $sort: { assetType: 1 }
+      }
+    ]);
+    console.log(summary)
+
+    res.json({
+      success: true,
+      data: summary
+    });
+  } catch (error) {
+    console.error("Error fetching asset summary:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+
+exports.getcustomerrechargeB = async (req, res) => {
+  try {
+    const customerId = req.query.customer;
+    
+    // DataTables parameters
+    const start = parseInt(req.query.start) || 0;
+    const length = parseInt(req.query.length) || 10;
+    const searchValue = req.query.search.value;
+    const orderColumn = req.query.order[0].column;
+    const orderDir = req.query.order[0].dir;
+    
+    // Build query
+    let query = { customerId };
+    
+    // Add search filter if needed
+    if (searchValue) {
+      query.$or = [
+        { rechargeId: { $regex: searchValue, $options: 'i' } },
+        { item: { $regex: searchValue, $options: 'i' } },
+        { 'routes': { $regex: searchValue, $options: 'i' } }
+      ];
+    }
+    
+    // Get total count
+    const totalCount = await Recharge.countDocuments({ customerId });
+    
+    // Get filtered count
+    const filteredCount = await Recharge.countDocuments(query);
+    
+    // Determine sort field
+    const sortField = 
+      orderColumn === 0 ? 'updatedAt' :
+      orderColumn === 1 ? 'rechargeId' :
+      orderColumn === 2 ? 'salesmanId' :
+      orderColumn === 3 ? 'routes' : 'updatedAt';
+    
+    // Fetch data
+    const data = await Recharge.find(query)
+      .sort({ [sortField]: orderDir === 'asc' ? 1 : -1 })
+      .skip(start)
+      .limit(length)
+      .lean();
+    
+    // Calculate coupon stats
+    const enrichedData = data.map(item => {
+      const totalCoupons = (item.paidcoupons || 0) + (item.freecoupons || 0);
+      const usedCoupons = item.coupons ? item.coupons.filter(c => c.status === 'USED').length : 0;
+      const balanceCoupons = totalCoupons - usedCoupons;
+      
+      return {
+        ...item,
+        totalCoupons,
+        usedCoupons,
+        balanceCoupons
+      };
+    });
+    
+    res.json({
+      draw: parseInt(req.query.draw),
+      recordsTotal: totalCount,
+      recordsFiltered: filteredCount,
+      data: enrichedData
+    });
+    
+  } catch (error) {
+    console.error('Error fetching recharge data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+// Get wallet recharge summary for dashboard cards
+exports.getWalletRechargeSummary = async (req, res) => {
+  try {
+    const { 
+      customer,
+      salesman,
+      product,
+      offer,
+      balance,
+      fromDate,
+      toDate
+    } = req.query;
+    // Build the filter object
+    const filter = {};
+    
+    if (customer) filter.customerId = customer;
+    if (salesman) filter.salesmanId = salesman;
+    if (product) filter.item = product;
+    if (offer) filter.offer = offer;
+    console.log(filter)
+    
+    // Date range filter
+    if (fromDate && toDate) {
+      filter.createdAt = {
+        $gte: new Date(fromDate),
+        $lte: new Date(toDate)
+      };
+    }
+    
+    // Find matching recharges
+    const recharges = await Recharge.find(filter);
+
+    // Calculate summary statistics
+    let totalRechargedCoupons = 0;
+    let totalCouponValue = 0;
+    let totalRedeemedCoupons = 0;
+    let totalBalanceCoupons = 0;
+
+    recharges.forEach(recharge => {
+      // Total coupons (paid + free)
+      const totalCoupons = (recharge.paidcoupons || 0) + (recharge.freecoupons || 0);
+      totalRechargedCoupons += totalCoupons;
+      
+      // Total coupon value (amount paid)
+      totalCouponValue += recharge.amount || 0;
+      
+      // Count redeemed coupons (status USED or CLAIMED)
+      const redeemed = recharge.coupons.filter(c => 
+        c.status === 'USED' || c.status === 'CLAIMED'
+      ).length;
+      totalRedeemedCoupons += redeemed;
+      
+      // Balance coupons (total - redeemed)
+      totalBalanceCoupons += totalCoupons - redeemed;
+    });
+console.log(totalRechargedCoupons,totalCouponValue,totalRedeemedCoupons,totalBalanceCoupons)
+    res.status(200).json({
+      success: true,
+      data: {
+        rechargedCoupons: totalRechargedCoupons,
+        couponValue: totalCouponValue,
+        redeemedCoupons: totalRedeemedCoupons,
+        balanceCoupons: totalBalanceCoupons
+      }
+    });
+
+  } catch (error) {
+    console.error("Error getting wallet recharge summary:", error);
+    res.status(500).json({ 
+      success: false,
+      error: "Internal server error" 
+    });
+  }
+};
+// Get filtered wallet recharge data for table
+exports.getcustomerrecharge = async (req, res) => {
+  try {
+    const { 
+      customer,
+      salesman,
+      product,
+      offer,
+      balance,
+      fromDate,
+      toDate,
+      start = 0,
+      length = 10,
+      searchValue = '',
+      draw = 1
+    } = req.query;
+
+    // Build the filter object
+    const filter = {};
+    
+    if (customer) filter.customerId = customer;
+    if (salesman) filter.salesmanId = salesman;
+    if (product) filter.item = product;
+    if (offer) filter.offer = offer;
+    
+    // Balance coupon filter
+    if (balance === 'Yes') {
+      filter.$expr = { $gt: ['$totalCoupons', '$redeemedCoupons'] };
+    } else if (balance === 'No') {
+      filter.$expr = { $lte: ['$totalCoupons', '$redeemedCoupons'] };
+    }
+    
+    // Date range filter
+    if (fromDate && toDate) {
+      filter.createdAt = {
+        $gte: new Date(fromDate),
+        $lte: new Date(toDate)
+      };
+    }
+    
+    // Search filter
+    if (searchValue) {
+      filter.$or = [
+        { rechargeId: { $regex: searchValue, $options: 'i' } },
+        { salesmanId: { $regex: searchValue, $options: 'i' } },
+        { item: { $regex: searchValue, $options: 'i' } },
+        { offer: { $regex: searchValue, $options: 'i' } }
+      ];
+    }
+
+    // Get total count
+    const totalRecords = await Recharge.countDocuments({ customerId: customer });
+    
+    // Get filtered count
+    const filteredRecords = await Recharge.countDocuments(filter);
+    
+    // Get paginated data
+    const data = await Recharge.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(parseInt(start))
+      .limit(parseInt(length))
+      .lean();
+
+    // Format data for DataTables
+    const formattedData = data.map(recharge => ({
+      _id: recharge._id,
+      updatedAt: recharge.updatedAt,
+      rechargeId: recharge.rechargeId,
+      salesmanId: recharge.salesmanId,
+      routes: recharge.routes || [],
+      item: recharge.item,
+      totalCoupons: (recharge.paidcoupons || 0) + (recharge.freecoupons || 0),
+      amount: recharge.amount,
+      balanceCoupons: (recharge.paidcoupons || 0) + (recharge.freecoupons || 0) - 
+        recharge.coupons.filter(c => c.status === 'USED' || c.status === 'CLAIMED').length
+    }));
+
+    res.status(200).json({
+      draw: parseInt(draw),
+      recordsTotal: totalRecords,
+      recordsFiltered: filteredRecords,
+      data: formattedData
+    });
+
+  } catch (error) {
+    console.error("Error getting filtered wallet recharges:", error);
+    res.status(500).json({ 
+      success: false,
+      error: "Internal server error" 
+    });
   }
 };
